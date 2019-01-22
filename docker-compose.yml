@@ -14,7 +14,7 @@ services:
     depends_on:
       - django_nginx_secure_link_db
 
-  bi_frontend:
+  django_nginx_secure_frontend:
     build: ./frontend
     volumes:
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
@@ -26,17 +26,17 @@ services:
       - CHOKIDAR_USEPOLLING=true
 
   nginx:
-     build: ./nginx
+    build: ./config/nginx
     ports:
       - 80:80
-      - 8000:8000
       - 443:443
+      - 8000:8000
     volumes:
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
     depends_on:
       - django_nginx_secure_link
+      - django_nginx_secure_frontend
     networks:
       - nginx_network
 
