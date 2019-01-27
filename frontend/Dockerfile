@@ -1,7 +1,7 @@
 FROM node:latest
 
 ADD package.json /tmp/package.json
-RUN cd /tmp && yarn install
+RUN cd /tmp && npm install
 
 WORKDIR /opt/services/django_nginx_secure_link/frontend
 
