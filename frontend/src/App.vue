@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <v-app id="inspire">
-            <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed>
+            <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
                 <v-toolbar-side-icon></v-toolbar-side-icon>
                 <v-spacer></v-spacer>
                 <v-flex xs12 md4 text-xs-center>
@@ -18,23 +18,28 @@
                     <v-btn icon>
                         <v-icon>refresh</v-icon>
                     </v-btn>
-                    <v-btn
-                            flat
-                            value="exit"
-                    >
-                        <span>Выйти</span>
+                    <v-btn icon>
                         <v-icon>exit_to_app</v-icon>
                     </v-btn>
                 </v-toolbar-items>
             </v-toolbar>
+            <main>
+                <v-content>
+                    <file-list></file-list>
+                </v-content>
+            </main>
         </v-app>
     </div>
 </template>
 
 <script>
+    import FileList from '../src/components/FileList'
+
     export default {
         name: 'App',
-
+        components: {
+            FileList,
+        },
 
         data: () => ({
             rowsPerPageItems: [4, 8, 12],
