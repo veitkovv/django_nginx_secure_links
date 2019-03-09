@@ -7,6 +7,8 @@ WORKDIR /opt/services/django_nginx_secure_link/src
 
 ADD . /opt/services/django_nginx_secure_link/src
 
+RUN pip install --upgrade pip
+
 RUN pip install -r requirements.txt
 
 RUN python manage.py collectstatic --no-input

@@ -121,4 +121,18 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
 
+MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
+
+SHARE_URL = '/share/'
+
+SHARE_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'share')
+
+# App-specific config
+
+# время существования линка в секундах
+PUBLIC_URL_TTL = 86400 * 5  # 5 дней
+
+# Пароль для хеша - такой же в nginx.conf
+NGINX_SECRET = 'mLErOVGhYuM7'

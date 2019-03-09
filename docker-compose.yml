@@ -8,6 +8,7 @@ services:
       - ./backend:/opt/services/django_nginx_secure_link/src
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
+      - share_volume:/opt/services/django_nginx_secure_link/share
     networks:
       - nginx_network
       - db_network
@@ -34,6 +35,7 @@ services:
     volumes:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
+      - share_volume:/opt/services/django_nginx_secure_link/share
     depends_on:
       - django_nginx_secure_link
       - django_nginx_secure_frontend
@@ -59,3 +61,4 @@ volumes:
   db_volume:
   static_volume:  # <-- declare the static volume
   media_volume:  # <-- declare the media volume
+  share_volume: # files to share
