@@ -1,4 +1,7 @@
 Django
 psycopg2-binary
 gunicorn
-graphene_django
+graphene
+graphene-django
+django-filter
+django-graphql-jwt

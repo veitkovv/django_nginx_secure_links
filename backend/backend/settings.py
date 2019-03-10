@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
+    'graphene_django',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -125,8 +127,6 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 
-SHARE_URL = '/share/'
-
 SHARE_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'share')
 
 # App-specific config
@@ -136,3 +136,8 @@ PUBLIC_URL_TTL = 86400 * 5  # 5 дней
 
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'
+
+# Graphene
+GRAPHENE = {
+    'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
+}

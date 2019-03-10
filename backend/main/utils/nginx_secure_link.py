@@ -9,8 +9,6 @@ from django.conf import settings
 def secure_link(baselink):
     """
     :param baselink: base url for signing
-    :param secret: secret string shared only with web server
-    :param period: optional period in days
     :return: signed link as str
     """
 
@@ -26,4 +24,4 @@ def secure_link(baselink):
     protection_string = b64encode(m.digest(), altchars=b'-_').replace(b'=', b'').decode("ascii")
     protected_link = f'{baselink}?md5={protection_string}&expires={expires}'.replace(" ", "%20")
 
-    return protected_link, dt_expires
+    return protected_link

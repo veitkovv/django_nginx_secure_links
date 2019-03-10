@@ -1,16 +1,29 @@
 <template>
     <v-data-table
             :headers="headers"
-            :items="desserts"
+            :items="files"
             class="elevation-1"
     >
         <template v-slot:items="props">
-            <td>{{ props.item.name }}</td>
-            <td class="text-xs-right">{{ props.item.calories }}</td>
-            <td class="text-xs-right">{{ props.item.fat }}</td>
-            <td class="text-xs-right">{{ props.item.carbs }}</td>
-            <td class="text-xs-right">{{ props.item.protein }}</td>
-            <td class="text-xs-right">{{ props.item.iron }}</td>
+            <td>{{ props.item.filename }}</td>
+            <td>{{ props.item.size }}</td>
+            <td>{{ props.item.created_at }}</td>
+            <td>
+                <div v-if="props.item.secure_link.available">
+                    <v-btn color="success" block>Скопировать ссылку
+                        <v-icon right dark>public</v-icon>
+                    </v-btn>
+                    <v-btn color="primary" block>Пересоздать ссылку
+                        <v-icon right dark>file_copy</v-icon>
+                    </v-btn>
+                    <v-progress-linear v-model="valueDeterminate"></v-progress-linear>
+                </div>
+                <div v-else>
+                    <v-btn color="primary" block>Создать ссылку
+                        <v-icon right dark>cloud_upload</v-icon>
+                    </v-btn>
+                </div>
+            </td>
         </template>
     </v-data-table>
 </template>
@@ -22,99 +35,43 @@
             return {
                 headers: [
                     {
-                        text: 'Dessert (100g serving)',
+                        text: 'Имя файла',
                         align: 'left',
                         sortable: false,
-                        value: 'name'
+                        value: 'filename',
+                        width: '60%'
                     },
-                    {text: 'Calories', value: 'calories'},
-                    {text: 'Fat (g)', value: 'fat'},
-                    {text: 'Carbs (g)', value: 'carbs'},
-                    {text: 'Protein (g)', value: 'protein'},
-                    {text: 'Iron (%)', value: 'iron'}
+                    {text: 'Размер', value: 'size'},
+                    {text: 'Дата создания файла', value: 'created_at'},
+                    {
+                        text: 'Дейтсвия',
+                        value: 'actions',
+                        sortable: false,
+                        width: '10%'
+                    },
                 ],
-                desserts: [
+
+                files: [
                     {
-                        name: 'Frozen Yogurt',
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                        iron: '1%'
+                        filename: '1',
+                        size: 2,
+                        created_at: 3,
+                        secure_link: {
+                            available: false,
+                        }
                     },
                     {
-                        name: 'Ice cream sandwich',
-                        calories: 237,
-                        fat: 9.0,
-                        carbs: 37,
-                        protein: 4.3,
-                        iron: '1%'
-                    },
-                    {
-                        name: 'Eclair',
-                        calories: 262,
-                        fat: 16.0,
-                        carbs: 23,
-                        protein: 6.0,
-                        iron: '7%'
-                    },
-                    {
-                        name: 'Cupcake',
-                        calories: 305,
-                        fat: 3.7,
-                        carbs: 67,
-                        protein: 4.3,
-                        iron: '8%'
-                    },
-                    {
-                        name: 'Gingerbread',
-                        calories: 356,
-                        fat: 16.0,
-                        carbs: 49,
-                        protein: 3.9,
-                        iron: '16%'
-                    },
-                    {
-                        name: 'Jelly bean',
-                        calories: 375,
-                        fat: 0.0,
-                        carbs: 94,
-                        protein: 0.0,
-                        iron: '0%'
-                    },
-                    {
-                        name: 'Lollipop',
-                        calories: 392,
-                        fat: 0.2,
-                        carbs: 98,
-                        protein: 0,
-                        iron: '2%'
-                    },
-                    {
-                        name: 'Honeycomb',
-                        calories: 408,
-                        fat: 3.2,
-                        carbs: 87,
-                        protein: 6.5,
-                        iron: '45%'
-                    },
-                    {
-                        name: 'Donut',
-                        calories: 452,
-                        fat: 25.0,
-                        carbs: 51,
-                        protein: 4.9,
-                        iron: '22%'
-                    },
-                    {
-                        name: 'KitKat',
-                        calories: 518,
-                        fat: 26.0,
-                        carbs: 65,
-                        protein: 7,
-                        iron: '6%'
+                        filename: '2',
+                        size: 3,
+                        created_at: 4,
+                        secure_link: {
+                            available: true,
+                            url: 'http://123',
+                            expires: 11111
+                        }
                     }
-                ]
+                ],
+                valueDeterminate: 40
             }
         }
     }
