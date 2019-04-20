@@ -8,7 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "graphql-client": "^2.0.1",
     "vue": "^2.6.10",
+    "vue-apollo": "^3.0.0-beta.28",
+    "vue-cli-plugin-apollo": "^0.19.2",
     "vuetify": "^1.5.12"
   },
   "devDependencies": {
