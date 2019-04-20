@@ -2,6 +2,15 @@ version: '3'
 
 services:
 
+  django_nginx_secure_link_db:
+    image: postgres:10
+    env_file:
+      - config/db/db_env
+    networks:
+      - db_network
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+
   django_nginx_secure_link:
     build: ./backend
     volumes:
@@ -18,12 +27,12 @@ services:
     build: ./frontend
     volumes:
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
-    depends_on:
-      - django_nginx_secure_link
     networks:
       - nginx_network
     environment:
       - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - django_nginx_secure_link
 
   nginx:
     build: ./config/nginx
@@ -34,20 +43,12 @@ services:
     volumes:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
+    networks:
+      - nginx_network
     depends_on:
       - django_nginx_secure_link
       - django_nginx_secure_frontend
-    networks:
-      - nginx_network
 
-  django_nginx_secure_link_db:
-    image: postgres:10
-    env_file:
-      - config/db/db_env
-    networks:
-      - db_network
-    volumes:
-      - db_volume:/var/lib/postgresql/data
 
 networks:
   nginx_network:
