@@ -1,38 +1,46 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
-
-    <v-content>
-      <HelloWorld/>
-    </v-content>
-  </v-app>
+    <div id="app">
+        <v-app id="inspire">
+            <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
+                <v-toolbar-side-icon></v-toolbar-side-icon>
+                <v-spacer></v-spacer>
+                <v-flex xs12 md4 text-xs-center>
+                    <v-text-field v-model="search"
+                                  append-icon="search"
+                                  label="Поиск"
+                                  single-line
+                                  hide-details
+                                  color="secondary"
+                    ></v-text-field>
+                </v-flex>
+                <v-spacer></v-spacer>
+                <v-toolbar-items class="hidden-sm-and-down">
+                    <v-btn icon>
+                        <v-icon>refresh</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                        <v-icon>exit_to_app</v-icon>
+                    </v-btn>
+                </v-toolbar-items>
+            </v-toolbar>
+            <main>
+                <v-content>
+                    <file-list></file-list>
+                </v-content>
+            </main>
+        </v-app>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+    import FileList from '../src/components/FileList'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  },
-  data () {
-    return {
-      //
+    export default {
+        name: 'App',
+        components: {
+            FileList,
+        },
+
+
     }
-  }
-}
 </script>
