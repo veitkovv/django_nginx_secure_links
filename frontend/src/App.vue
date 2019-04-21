@@ -1,8 +1,32 @@
 <template>
     <div id="app">
         <v-app id="inspire">
+            <v-navigation-drawer
+                    fixed
+                    v-model="drawer"
+                    app
+            >
+                <v-list dense>
+                    <v-list-tile @click="">
+                        <v-list-tile-action>
+                            <v-icon>home</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Home</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile @click="">
+                        <v-list-tile-action>
+                            <v-icon>contact_mail</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Contact</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+            </v-navigation-drawer>
             <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
-                <v-toolbar-side-icon></v-toolbar-side-icon>
+                <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
                 <v-spacer></v-spacer>
                 <v-flex xs12 md4 text-xs-center>
                     <v-text-field v-model="search"
@@ -28,6 +52,10 @@
                     <file-list></file-list>
                 </v-content>
             </main>
+            <v-footer class="pa-3">
+                <v-spacer></v-spacer>
+                <div>&copy; {{ new Date().getFullYear() }}</div>
+            </v-footer>
         </v-app>
     </div>
 </template>
@@ -40,7 +68,9 @@
         components: {
             FileList,
         },
-
+        data: () => ({
+            drawer: null
+        })
 
     }
 </script>

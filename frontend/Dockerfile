@@ -1,6 +1,8 @@
 FROM node:latest
 
 ADD package.json /tmp/package.json
+ADD package-lock.json /tmp/package-lock.json
+
 RUN cd /tmp && npm install
 
 WORKDIR /opt/services/django_nginx_secure_link/frontend
