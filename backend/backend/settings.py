@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_filters'
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,8 +127,6 @@ STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
-
-SHARE_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'share')
 
 # App-specific config
 
