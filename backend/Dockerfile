@@ -2,10 +2,10 @@ FROM python:3.7.1-stretch
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /opt/services/django_nginx_secure_link/src
-WORKDIR /opt/services/django_nginx_secure_link/src
+RUN mkdir -p /opt/services/django_nginx_secure_link
+WORKDIR /opt/services/django_nginx_secure_link
 
-ADD . /opt/services/django_nginx_secure_link/src
+ADD . /opt/services/django_nginx_secure_link
 
 RUN pip install --upgrade pip
 

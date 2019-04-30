@@ -1,10 +1,13 @@
 import os
 
 import graphene
-from ..models import File
+
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from django.conf import settings
+
+from ..models import File
+from ..base import FileList
 
 
 class FileNode(DjangoObjectType):
@@ -17,18 +20,11 @@ class FileNode(DjangoObjectType):
 class Query(object):
     file = graphene.relay.Node.Field(FileNode)
     all_files = DjangoFilterConnectionField(FileNode)
-    disk_files = graphene.List(of_type=graphene.String)
+    file_list = graphene.List(of_type=graphene.String)
 
-    def resolve_disk_files(self, info):
+    def resolve_file_list(self, info):
         result = []
-        with os.scandir(settings.SHARE_ROOT) as dir_entries:
-            for entry in dir_entries:
-                if entry.is_file:
-                    file_info = {}
-                    info = entry.stat()
-                    file_info['filename'] = entry.name
-                    file_info['size'] = info.st_size
-                    file_info['created_at'] = info.st_mtime
-                    result.append(file_info)
+        fl = FileList(path=settings.MEDIA_ROOT)
+        fl.walk()
 
         return result

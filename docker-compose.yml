@@ -3,6 +3,7 @@ version: '3'
 services:
 
   django_nginx_secure_link_db:
+    container_name: pg10
     image: postgres:10
     env_file:
       - config/db/db_env
@@ -12,9 +13,10 @@ services:
       - db_volume:/var/lib/postgresql/data
 
   django_nginx_secure_link:
+    container_name: backend
     build: ./backend
     volumes:
-      - ./backend:/opt/services/django_nginx_secure_link/src
+      - ./backend:/opt/services/django_nginx_secure_link
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
     networks:
@@ -24,6 +26,7 @@ services:
       - django_nginx_secure_link_db
 
   nginx:
+    container_name: nginx
     build: ./config/nginx
     ports:
       - 80:80
@@ -36,6 +39,7 @@ services:
       - nginx_network
 
   django_nginx_secure_frontend:
+    container_name: frontend
     build: ./frontend
     volumes:
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
