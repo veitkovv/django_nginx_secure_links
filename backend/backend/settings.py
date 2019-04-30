@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django_filters'
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -129,6 +128,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
 # App-specific config
+
+SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure_link_files')
 
 # время существования линка в секундах
 PUBLIC_URL_TTL = 86400 * 5  # 5 дней
