@@ -7,6 +7,8 @@ class File(models.Model):
         verbose_name = 'Файл'
         verbose_name_plural = 'Файлы'
 
-    path = models.FilePathField(verbose_name='Путь до файла', path=settings.MEDIA_ROOT, max_length=255, unique=True,
+    path = models.FilePathField(verbose_name='Путь до файла', path=settings.SECURE_LINK_PATH, max_length=255,
+                                unique=True,
                                 editable=False)
     secure_link = models.URLField(verbose_name='Публичная ссылка', blank=True, null=True, editable=False)
+

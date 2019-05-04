@@ -1,10 +1,8 @@
 import os
 import mimetypes
-import time
-import datetime
+from .models import File
 
 from django.conf import settings
-from django.utils.functional import cached_property
 
 EXTENSIONS = getattr(settings, "FILEBROWSER_EXTENSIONS", {
     'Image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
@@ -25,7 +23,7 @@ class FileList:
     @property
     def _list_files(self):
         if self.is_folder:
-            return [f for f in os.listdir(self.path) if os.path.isfile(os.path.join(self.path, f))]
+            return [f for f in os.listdir(self.path)]
         return []
 
     def walk(self):
@@ -38,11 +36,15 @@ class FileObj:
     def __init__(self, file):
         self.file = file
 
+    @property
+    def abs_path(self):
+        return os.path.join(settings.SECURE_LINK_PATH, self.file)
+
     def __repr__(self):
         return f'File: {self.file}'
 
     def is_folder(self):
-        return os.path.isdir(self.file)
+        return os.path.isdir(self.abs_path)
 
     def get_filename(self):
         _, filename = os.path.split(self.file)
@@ -54,14 +56,18 @@ class FileObj:
 
     def get_size(self):
         """File size in bytes"""
-        statinfo = os.stat(os.path.join(settings.SECURE_LINK_PATH, self.file))
+        statinfo = os.stat(self.abs_path)
         return statinfo.st_size
 
     def get_time(self):
         """linux modified time"""
-        stat = os.stat(os.path.join(settings.SECURE_LINK_PATH, self.file))
+        stat = os.stat(self.abs_path)
         return stat.st_mtime
 
     def get_mimetype(self):
-        mtype, encoding = mimetypes.guess_type(os.path.join(settings.SECURE_LINK_PATH, self.file))
+        mtype, encoding = mimetypes.guess_type(self.abs_path)
         return mtype
+
+    def get_file_url(self):
+        file_model = File.objects.filter(path=self.abs_path)
+        return file_model.secure_link if file_model else ''
