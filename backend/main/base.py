@@ -4,13 +4,6 @@ from .models import File
 
 from django.conf import settings
 
-EXTENSIONS = getattr(settings, "FILEBROWSER_EXTENSIONS", {
-    'Image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
-    'Document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
-    'Video': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
-    'Audio': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
-})
-
 
 class FileList:
     def __init__(self, path=None):
@@ -71,3 +64,7 @@ class FileObj:
     def get_file_url(self):
         file_model = File.objects.filter(path=self.abs_path)
         return file_model.secure_link if file_model else ''
+
+    def get_file_type(self):
+        result = next((item for item in settings.EXTENSIONS.items() if self.get_extension() in item[1]), None)
+        return result[0] if result else ''

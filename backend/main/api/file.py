@@ -12,6 +12,7 @@ class File(graphene.ObjectType):
     size = graphene.Int()
     modified = graphene.Float()
     is_folder = graphene.Boolean()
+    file_type = graphene.String()
 
 
 class Query:
@@ -27,12 +28,13 @@ class Query:
         result.size = file.get_size()
         result.modified = file.get_time()
         result.is_folder = file.is_folder()
+        result.file_type = file.get_file_type()
 
         return result
 
-    file_list = graphene.List(of_type=File)
+    files = graphene.List(of_type=File)
 
-    def resolve_file_list(self, info):
+    def resolve_files(self, info):
         result = []
 
         fl = FileList(path=settings.SECURE_LINK_PATH)
@@ -46,6 +48,7 @@ class Query:
             f.size = file.get_size()
             f.modified = file.get_time()
             f.is_folder = file.is_folder()
+            f.file_type = file.get_file_type()
 
             result.append(f)
         return result

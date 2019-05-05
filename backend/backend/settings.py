@@ -127,7 +127,17 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
-# App-specific config
+# Graphene
+GRAPHENE = {
+    'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
+}
+
+EXTENSIONS = {
+    'Image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
+    'Document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
+    'Video': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
+    'Audio': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
+}
 
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure_link_files')
 
@@ -136,8 +146,3 @@ PUBLIC_URL_TTL = 86400 * 5  # 5 дней
 
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'
-
-# Graphene
-GRAPHENE = {
-    'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
-}
