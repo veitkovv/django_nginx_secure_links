@@ -24,7 +24,7 @@ SECRET_KEY = '=xf1@u4h_j5ze^@s!act52sn7cllw=uu7jpo9oo7-#2uwwc82j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,14 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'graphene_django',
-    'django_filters'
+    'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',  # CORS
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -132,11 +135,24 @@ GRAPHENE = {
     'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
 }
 
+CORS_ORIGIN_WHITELIST = (
+    '127.0.0.1:8000',
+    '127.0.0.1',
+    'localhost:8000',
+    'localhost'
+)
+CSRF_TRUSTED_ORIGINS = (
+    '127.0.0.1:8000',
+    '127.0.0.1',
+    'localhost:8000',
+    'localhost'
+)
+
 EXTENSIONS = {
-    'Image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
-    'Document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
-    'Video': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
-    'Audio': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
+    'image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
+    'assignment': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
+    'local_movies': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
+    'music_note': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
 }
 
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure_link_files')

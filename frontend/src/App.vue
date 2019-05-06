@@ -69,7 +69,8 @@
             FileList,
         },
         data: () => ({
-            drawer: null
+            drawer: null,
+            search: '',
         })
 
     }

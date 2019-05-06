@@ -13,7 +13,7 @@
 
     <!-- Apollo watched Graphql query -->
     <ApolloQuery
-      :query="require('../graphql/HelloWorld.gql')"
+      :query="require('../graphql/examples/HelloWorld.gql')"
       :variables="{ name }"
     >
       <template slot-scope="{ result: { loading, error, data } }">
@@ -33,10 +33,10 @@
 
     <!-- Tchat example -->
     <ApolloQuery
-      :query="require('../graphql/Messages.gql')"
+      :query="require('../graphql/examples/Messages.gql')"
     >
       <ApolloSubscribeToMore
-        :document="require('../graphql/MessageAdded.gql')"
+        :document="require('../graphql/examples/MessageAdded.gql')"
         :update-query="onMessageAdded"
       />
 
@@ -54,7 +54,7 @@
     </ApolloQuery>
 
     <ApolloMutation
-      :mutation="require('../graphql/AddMessage.gql')"
+      :mutation="require('../graphql/examples/AddMessage.gql')"
       :variables="{
         input: {
           text: newMessage,
@@ -100,8 +100,8 @@
 </template>
 
 <script>
-import FILES from '../graphql/Files.gql'
-import UPLOAD_FILE from '../graphql/UploadFile.gql'
+import FILES from '../graphql/examples/Files.gql'
+import UPLOAD_FILE from '../graphql/examples/UploadFile.gql'
 
 export default {
   data () {

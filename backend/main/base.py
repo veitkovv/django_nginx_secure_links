@@ -66,5 +66,7 @@ class FileObj:
         return file_model.secure_link if file_model else ''
 
     def get_file_type(self):
+        if self.is_folder():
+            return 'folder'
         result = next((item for item in settings.EXTENSIONS.items() if self.get_extension() in item[1]), None)
         return result[0] if result else ''

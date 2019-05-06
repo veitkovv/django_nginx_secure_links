@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import './plugins/vuetify'
 import App from './App.vue'
-import { createProvider } from './vue-apollo'
+import apolloProvider from './vue-apollo'
 
 Vue.config.productionTip = false
 
 new Vue({
-  apolloProvider: createProvider(),
+  apolloProvider: apolloProvider,
   render: h => h(App)
 }).$mount('#app')

@@ -1,7 +1,10 @@
-#import "./FileFragment.gql"
-
-query files {
-  files: uploads {
-    ...file
+query {
+  files {
+    size
+    filename
+    modified
+    extension
+    url
+    fileType
   }
 }
