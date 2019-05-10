@@ -7,31 +7,23 @@
     >
 
         <template v-slot:activator="{ on }">
-            <v-icon :color="stateColor" v-on="on" class="mr-2" @click="">more</v-icon>
+            <v-icon color="primary" v-on="on" class="mr-2" @click="">more_vert</v-icon>
         </template>
 
         <v-card>
             <v-list>
-                <v-list-tile>
-                    <v-list-tile-content>
-                        <v-list-tile-title>{{ item.filename }}</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-                <v-divider></v-divider>
-                <v-list-tile v-if="item.secure_link.available">
+                <v-list-tile v-if="item.url">
                     <v-list-tile-title>Ссылка действительна до:</v-list-tile-title>
                     <v-list-tile-action>
                         <v-btn flat color="green">Скопировать ссылку</v-btn>
                     </v-list-tile-action>
                 </v-list-tile>
-
                 <v-list-tile v-else>
                     <v-list-tile-action>
-                        <v-btn flat color="purple">Создать ссылку на файл</v-btn>
+                        <v-btn dark flat color="primary">Создать ссылку</v-btn>
                     </v-list-tile-action>
                 </v-list-tile>
             </v-list>
-
         </v-card>
     </v-menu>
 </template>
@@ -40,7 +32,7 @@
     export default {
         name: "FileListMenu",
         props: {
-            'item': Object
+            'item': Object,
         },
         data: () => ({
             fav: true,
@@ -48,13 +40,7 @@
             message: false,
             hints: true
         }),
-        computed: {
-            stateColor: function () {
-                if (this.item.secure_link.available) {
-                    return "green darken-2"
-                } else return "primary"
-            }
-        }
+        computed: {}
     }
 </script>
 

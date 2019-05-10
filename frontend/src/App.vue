@@ -39,7 +39,7 @@
                 </v-flex>
                 <v-spacer></v-spacer>
                 <v-toolbar-items class="hidden-sm-and-down">
-                    <v-btn icon>
+                    <v-btn icon @click="$store.dispatch('getFiles')">
                         <v-icon>refresh</v-icon>
                     </v-btn>
                     <v-btn icon>
@@ -49,7 +49,7 @@
             </v-toolbar>
             <main>
                 <v-content>
-                    <file-list></file-list>
+                    <file-list :search="search"></file-list>
                 </v-content>
             </main>
             <v-footer class="pa-3">

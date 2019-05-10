@@ -57,16 +57,22 @@ class FileObj:
         stat = os.stat(self.abs_path)
         return stat.st_mtime
 
-    def get_mimetype(self):
-        mtype, encoding = mimetypes.guess_type(self.abs_path)
-        return mtype
-
     def get_file_url(self):
         file_model = File.objects.filter(path=self.abs_path)
         return file_model.secure_link if file_model else ''
 
+    def url_expired(self):
+        """TODO заглушка"""
+        return False
+
     def get_file_type(self):
+        """:return material icons names for frontend"""
         if self.is_folder():
             return 'folder'
         result = next((item for item in settings.EXTENSIONS.items() if self.get_extension() in item[1]), None)
-        return result[0] if result else ''
+        return result[0] if result else 'note'
+
+    def has_url(self):
+        if self.get_file_url() and not self.url_expired():
+            return True
+        return False

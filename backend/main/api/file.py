@@ -12,6 +12,8 @@ class File(graphene.ObjectType):
     size = graphene.Int()
     modified = graphene.Float()
     file_type = graphene.String()
+    is_folder = graphene.Boolean()
+    has_url = graphene.Boolean()
 
 
 class Query:
@@ -27,6 +29,8 @@ class Query:
         result.size = file.get_size()
         result.modified = file.get_time()
         result.file_type = file.get_file_type()
+        result.is_folder = file.is_folder()
+        result.has_url = file.has_url()
 
         return result
 
@@ -46,6 +50,8 @@ class Query:
             f.size = file.get_size()
             f.modified = file.get_time()
             f.file_type = file.get_file_type()
+            f.is_folder = file.is_folder()
+            f.has_url = file.has_url()
 
             result.append(f)
         return result
