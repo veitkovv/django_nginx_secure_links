@@ -3,9 +3,9 @@
         <v-card>
             <v-list two-line subheader>
                 <v-subheader inset>Файлы</v-subheader>
-                <template v-for="(item, index) in $store.getters.FILES">
+                <template v-for="(item, index) in FILES">
                     <v-list-tile
-                            :key="item.filename"
+                            :key="item.id"
                             avatar
                             @click=""
                     >
@@ -37,7 +37,7 @@
                         </v-list-tile-action>
                     </v-list-tile>
                     <v-divider
-                            v-if="index + 1 < $store.getters.FILES.length"
+                            v-if="index + 1 < FILES.length"
                             :key="index"
                     ></v-divider>
                 </template>
@@ -48,6 +48,7 @@
 
 <script>
     import FileListMenu from "./FileListMenu";
+    import {mapGetters} from 'vuex';
 
 
     export default {
@@ -59,6 +60,9 @@
             return {
                 valueDeterminate: 40,
             }
+        },
+        computed: {
+            ...mapGetters(['FILES']),
         },
         methods: {
             getFiles() {

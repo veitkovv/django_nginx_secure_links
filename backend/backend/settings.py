@@ -135,17 +135,17 @@ GRAPHENE = {
     'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
 }
 
-CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1:8000',
-    '127.0.0.1',
-    'localhost:8000',
-    'localhost'
-)
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1',
+    'http://localhost:8000',
+    'http://localhost'
+]
 CSRF_TRUSTED_ORIGINS = (
-    '127.0.0.1:8000',
-    '127.0.0.1',
-    'localhost:8000',
-    'localhost'
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1',
+    'http://localhost:8000',
+    'http://localhost'
 )
 
 EXTENSIONS = {
@@ -162,3 +162,6 @@ PUBLIC_URL_TTL = 86400 * 5  # 5 дней
 
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'
+
+# secure files URL, location with secure link in nginx.conf
+SECURE_URL_ROOT = 'http://127.0.0.1/secure/'

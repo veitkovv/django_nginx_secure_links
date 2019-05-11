@@ -6,6 +6,10 @@ from ..base import FileList, FileObj
 
 
 class File(graphene.ObjectType):
+    """
+    graphql representation of file object from base.py
+    """
+    id = graphene.ID()
     url = graphene.String()
     filename = graphene.String()
     extension = graphene.String()
@@ -23,6 +27,7 @@ class Query:
         file = FileObj(filename)
 
         result = File()
+        result.id = file.get_graphql_id()
         result.url = file.get_file_url()
         result.filename = file.get_filename()
         result.extension = file.get_extension()
@@ -39,11 +44,15 @@ class Query:
     def resolve_files(self, info):
         result = []
 
+        # File list object for walk through filesystem and collect
+        # information about files with walk() method
         fl = FileList(path=settings.SECURE_LINK_PATH)
         fl.walk()
 
+        # correlate 'files info' object with graphql representation of it
         for file in fl.file_list:
-            f = File()
+            f = File()  # new Graphql object
+            f.id = file.get_graphql_id()
             f.url = file.get_file_url()
             f.filename = file.get_filename()
             f.extension = file.get_extension()

@@ -1,10 +1,12 @@
 query {
   files {
+    id
     size
     filename
     modified
-    extension
     url
     fileType
+    isFolder
+    hasUrl
   }
 }

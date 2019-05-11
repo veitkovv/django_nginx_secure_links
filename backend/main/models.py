@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 class File(models.Model):
@@ -11,4 +12,5 @@ class File(models.Model):
                                 unique=True,
                                 editable=False)
     secure_link = models.URLField(verbose_name='Публичная ссылка', blank=True, null=True, editable=False)
-
+    user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
+                             blank=True, null=True)

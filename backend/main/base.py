@@ -1,5 +1,6 @@
 import os
-import mimetypes
+import base64
+
 from .models import File
 
 from django.conf import settings
@@ -29,12 +30,16 @@ class FileObj:
     def __init__(self, file):
         self.file = file
 
+    def __repr__(self):
+        return f'File: {self.file}'
+
+    def get_graphql_id(self):
+        serialized_id = base64.b64encode(self.get_filename().encode()).decode()
+        return serialized_id
+
     @property
     def abs_path(self):
         return os.path.join(settings.SECURE_LINK_PATH, self.file)
-
-    def __repr__(self):
-        return f'File: {self.file}'
 
     def is_folder(self):
         return os.path.isdir(self.abs_path)

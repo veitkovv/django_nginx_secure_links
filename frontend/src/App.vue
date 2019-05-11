@@ -39,7 +39,7 @@
                 </v-flex>
                 <v-spacer></v-spacer>
                 <v-toolbar-items class="hidden-sm-and-down">
-                    <v-btn icon @click="$store.dispatch('getFiles')">
+                    <v-btn icon @click="refetchFiles">
                         <v-icon>refresh</v-icon>
                     </v-btn>
                     <v-btn icon>
@@ -71,7 +71,12 @@
         data: () => ({
             drawer: null,
             search: '',
-        })
+        }),
+        methods: {
+            refetchFiles() {
+                this.$store.dispatch('getFiles')
+            }
+        }
 
     }
 </script>
