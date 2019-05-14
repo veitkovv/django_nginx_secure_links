@@ -1,0 +1,10 @@
+query {
+  me{
+    id
+    username
+    isSuperuser
+    firstName
+    lastName
+    email
+  }
+}

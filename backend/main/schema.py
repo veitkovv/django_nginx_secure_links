@@ -1,16 +1,20 @@
 import graphene
 
-from .api import file
+from .api import file, auth
 
 
-class Query(file.Query,
+class Query(auth.Query,
+            file.Query,
             graphene.ObjectType
             ):
     pass
 
 
-class Mutation(graphene.ObjectType):
+class Mutation(auth.Mutation,
+               file.Mutation,
+               graphene.ObjectType
+               ):
     pass
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)

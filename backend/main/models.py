@@ -14,3 +14,4 @@ class File(models.Model):
     secure_link = models.URLField(verbose_name='Публичная ссылка', blank=True, null=True, editable=False)
     user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
                              blank=True, null=True)
+    created = models.DateTimeField(auto_now=True, editable=False, verbose_name='Время создания ссылки')

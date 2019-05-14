@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # JWT
     'corsheaders.middleware.CorsMiddleware',  # CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,6 +53,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',  # JWT
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -132,7 +139,14 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
 # Graphene
 GRAPHENE = {
-    'SCHEMA': 'main.schema.schema'  # Where your Graphene schema lives
+    'SCHEMA': 'main.schema.schema',  # Where your Graphene schema lives
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
 }
 
 CORS_ORIGIN_WHITELIST = [

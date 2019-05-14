@@ -1,81 +1,43 @@
 <template>
     <div id="app">
         <v-app id="inspire">
-            <v-navigation-drawer
-                    fixed
-                    v-model="drawer"
-                    app
-            >
-                <v-list dense>
-                    <v-list-tile @click="">
-                        <v-list-tile-action>
-                            <v-icon>home</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Home</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile @click="">
-                        <v-list-tile-action>
-                            <v-icon>contact_mail</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Contact</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-            </v-navigation-drawer>
-            <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
-                <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-                <v-spacer></v-spacer>
-                <v-flex xs12 md4 text-xs-center>
-                    <v-text-field v-model="search"
-                                  append-icon="search"
-                                  label="Поиск"
-                                  single-line
-                                  hide-details
-                                  color="secondary"
-                    ></v-text-field>
-                </v-flex>
-                <v-spacer></v-spacer>
-                <v-toolbar-items class="hidden-sm-and-down">
-                    <v-btn icon @click="refetchFiles">
-                        <v-icon>refresh</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                        <v-icon>exit_to_app</v-icon>
-                    </v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <main>
-                <v-content>
-                    <file-list :search="search"></file-list>
-                </v-content>
-            </main>
-            <v-footer class="pa-3">
-                <v-spacer></v-spacer>
-                <div>&copy; {{ new Date().getFullYear() }}</div>
-            </v-footer>
+            <v-content>
+                <side-nav v-if="IS_AUTHENTICATED"></side-nav>
+                <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
+                <main>
+                    <alerts></alerts>
+                    <router-view></router-view>
+                </main>
+
+                <v-footer class="pa-3">
+                    <v-spacer></v-spacer>
+                    <div>&copy; {{ new Date().getFullYear() }}</div>
+                </v-footer>
+            </v-content>
         </v-app>
     </div>
 </template>
 
 <script>
+    import {mapGetters} from 'vuex';
+
     import FileList from '../src/components/FileList'
+    import SideNav from './components/SideNav'
+    import AppToolbar from '../src/components/AppToolbar'
+    import Alerts from '../src/components/Alerts'
 
     export default {
         name: 'App',
         components: {
+            AppToolbar,
+            SideNav,
             FileList,
+            Alerts
         },
-        data: () => ({
-            drawer: null,
-            search: '',
-        }),
-        methods: {
-            refetchFiles() {
-                this.$store.dispatch('getFiles')
-            }
+        data: () => ({}),
+        methods: {},
+        computed: {
+            ...mapGetters(['IS_AUTHENTICATED'])
         }
 
     }

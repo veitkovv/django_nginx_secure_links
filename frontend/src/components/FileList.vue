@@ -1,49 +1,58 @@
 <template>
-    <v-flex xs12 sm8 offset-sm2>
-        <v-card>
-            <v-list two-line subheader>
-                <v-subheader inset>Файлы</v-subheader>
-                <template v-for="(item, index) in FILES">
-                    <v-list-tile
-                            :key="item.id"
-                            avatar
-                            @click=""
-                    >
-                        <v-list-tile-avatar>
-                            <v-icon class="grey white--text">{{ item.fileType }}</v-icon>
-                        </v-list-tile-avatar>
+    <v-container fluid fill-heigh>
+        <v-flex xs12 sm8 offset-sm2>
+            <v-text-field v-model="search"
+                          append-icon="search"
+                          label="Поиск"
+                          single-line
+                          hide-details
+            ></v-text-field>
+            <v-card>
+                <v-list two-line subheader>
+                    <v-subheader inset>Файлы</v-subheader>
+                    <template v-for="(item, index) in FILES">
+                        <v-list-tile
+                                :key="item.id"
+                                avatar
+                                @click=""
+                        >
+                            <v-list-tile-avatar>
+                                <v-icon class="grey white--text">{{ item.fileType }}</v-icon>
+                            </v-list-tile-avatar>
 
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{ item.filename }}</v-list-tile-title>
-                            <v-list-tile-sub-title
-                                    v-if="!item.isFolder"
-                                    class="text--primary"
-                            >
-                                Изменено: {{dateModified(item.modified) }}
-                            </v-list-tile-sub-title>
-                            <v-list-tile-sub-title v-if="!item.isFolder">
-                                Ссылка действительна до:
-                            </v-list-tile-sub-title>
-                        </v-list-tile-content>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{ item.filename }}</v-list-tile-title>
+                                <v-list-tile-sub-title
+                                        v-if="!item.isFolder"
+                                        class="text--primary"
+                                >
+                                    Файл изменен: {{dateModified(item.modified) }}
+                                </v-list-tile-sub-title>
+                                <v-list-tile-sub-title v-if="!item.isFolder && item.hasUrl">
+                                    Ссылка действительна до:
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
 
-                        <v-btn color="success" v-if="item.hasUrl">Скопировать ссылку</v-btn>
-                        <v-btn color="primary" v-else>Создать ссылку</v-btn>
-                        <file-list-menu :item="item"></file-list-menu>
+                            <v-btn color="success" v-if="item.hasUrl">Скопировать ссылку</v-btn>
+                            <v-btn color="primary" v-else>Создать ссылку</v-btn>
 
-                        <v-list-tile-action>
-                            <v-list-tile-action-text>
-                                {{humanFileSize(item.size, true)}}
-                            </v-list-tile-action-text>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                    <v-divider
-                            v-if="index + 1 < FILES.length"
-                            :key="index"
-                    ></v-divider>
-                </template>
-            </v-list>
-        </v-card>
-    </v-flex>
+                            <file-list-menu :item="item"></file-list-menu>
+
+                            <v-list-tile-action>
+                                <v-list-tile-action-text>
+                                    {{humanFileSize(item.size, true)}}
+                                </v-list-tile-action-text>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                        <v-divider
+                                v-if="index + 1 < FILES.length"
+                                :key="index"
+                        ></v-divider>
+                    </template>
+                </v-list>
+            </v-card>
+        </v-flex>
+    </v-container>
 </template>
 
 <script>
@@ -54,11 +63,11 @@
     export default {
         name: "FileList",
         components: {FileListMenu},
-        props: ['search'],
 
         data() {
             return {
                 valueDeterminate: 40,
+                search: '',
             }
         },
         computed: {
@@ -94,7 +103,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

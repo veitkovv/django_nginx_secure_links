@@ -1,8 +1,11 @@
 import graphene
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
-from ..base import FileList, FileObj
+from ..base import FileList, FileObj, get_file_obj_by_id
+from ..models import File as FileModel
+from ..utils.nginx_secure_link import secure_link
 
 
 class File(graphene.ObjectType):
@@ -64,3 +67,42 @@ class Query:
 
             result.append(f)
         return result
+
+
+class CreateSecureLink(graphene.Mutation):
+    class Arguments:
+        file_id = graphene.String()
+        user_id = graphene.Int()
+
+    ok = graphene.Boolean()
+    file = graphene.Field(lambda: File)
+
+    def mutate(self, info, file_id, user_id):
+        # find FileObj by id
+        file = get_file_obj_by_id(file_id)
+
+        # creating model for secure link
+        file_model = FileModel()
+        file_model.path = file.file
+        file_model.secure_link = secure_link(settings.SECURE_URL_ROOT + file.file)
+        file_model.user = get_user_model().objects.get(id=user_id)
+        file_model.save()
+
+        # we should return a graphene object type
+        result = File()
+        result.id = file.get_graphql_id()
+        result.url = file.get_file_url()
+        result.filename = file.get_filename()
+        result.extension = file.get_extension()
+        result.size = file.get_size()
+        result.modified = file.get_time()
+        result.file_type = file.get_file_type()
+        result.is_folder = file.is_folder()
+        result.has_url = file.has_url()
+
+        ok = True
+        return CreateSecureLink(file=file, ok=ok)
+
+
+class Mutation(graphene.ObjectType):
+    create_secure_link = CreateSecureLink.Field()

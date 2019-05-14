@@ -54,8 +54,7 @@ class FileObj:
 
     def get_size(self):
         """File size in bytes"""
-        statinfo = os.stat(self.abs_path)
-        return statinfo.st_size
+        return os.stat(self.abs_path).st_size
 
     def get_time(self):
         """linux modified time"""
@@ -81,3 +80,8 @@ class FileObj:
         if self.get_file_url() and not self.url_expired():
             return True
         return False
+
+
+def get_file_obj_by_id(graphql_id):
+    """base64 to string"""
+    return FileObj(base64.b64decode(graphql_id).decode())
