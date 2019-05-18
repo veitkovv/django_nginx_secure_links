@@ -25,7 +25,7 @@ const actions = {
         const response = await apolloClient.query({
             query: FILES_QUERY
         });
-        commit('SET_FILES', response.data.files)
+        commit('SET_FILES', response.data.allFiles)
     },
 };
 

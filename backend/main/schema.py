@@ -1,17 +1,18 @@
 import graphene
 
-from .api import file, auth
+from .api import file, auth, secure_link
 
 
 class Query(auth.Query,
             file.Query,
+            secure_link.Query,
             graphene.ObjectType
             ):
     pass
 
 
 class Mutation(auth.Mutation,
-               file.Mutation,
+               # file.Mutation,
                graphene.ObjectType
                ):
     pass

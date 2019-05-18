@@ -1,12 +1,15 @@
 query {
-  files {
+  allFiles {
     id
+    file
+    fileDiscovered
+    exists
     size
-    filename
     modified
-    url
     fileType
-    isFolder
-    hasUrl
+    secureLink {
+      id
+      url
+    }
   }
 }

@@ -15,25 +15,23 @@
                                 :key="item.id"
                                 avatar
                                 @click=""
+                                v-if="item.exists"
                         >
                             <v-list-tile-avatar>
                                 <v-icon class="grey white--text">{{ item.fileType }}</v-icon>
                             </v-list-tile-avatar>
 
                             <v-list-tile-content>
-                                <v-list-tile-title>{{ item.filename }}</v-list-tile-title>
-                                <v-list-tile-sub-title
-                                        v-if="!item.isFolder"
-                                        class="text--primary"
-                                >
+                                <v-list-tile-title>{{ item.file }}</v-list-tile-title>
+                                <v-list-tile-sub-title class="text--primary">
                                     Файл изменен: {{dateModified(item.modified) }}
                                 </v-list-tile-sub-title>
-                                <v-list-tile-sub-title v-if="!item.isFolder && item.hasUrl">
+                                <v-list-tile-sub-title v-if="item.secureLink">
                                     Ссылка действительна до:
                                 </v-list-tile-sub-title>
                             </v-list-tile-content>
 
-                            <v-btn color="success" v-if="item.hasUrl">Скопировать ссылку</v-btn>
+                            <v-btn color="success" v-if="item.secureLink">Скопировать ссылку</v-btn>
                             <v-btn color="primary" v-else>Создать ссылку</v-btn>
 
                             <file-list-menu :item="item"></file-list-menu>
@@ -48,6 +46,7 @@
                                 v-if="index + 1 < FILES.length"
                                 :key="index"
                         ></v-divider>
+
                     </template>
                 </v-list>
             </v-card>
