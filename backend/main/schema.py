@@ -12,7 +12,6 @@ class Query(auth.Query,
 
 
 class Mutation(auth.Mutation,
-               # file.Mutation,
                graphene.ObjectType
                ):
     pass

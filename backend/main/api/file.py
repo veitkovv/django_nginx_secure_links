@@ -21,5 +21,5 @@ class Query(object):
 
     def resolve_all_files(self, info, **kwargs):
         fs = FileSystem()
-        fs.walk()
+        fs.walk()  # rescan file system
         return File.objects.all()

@@ -29,9 +29,12 @@ class FileSystem(models.Model):
         for file in files:
             obj, created = File.objects.filter(Q(file=file)).get_or_create(file=file)
             if created:
-                logging.info(f'Файл {obj} синхронизирован')
-            else:
-                logging.info(f'Файл {obj} уже есть в базе')
+                logging.info(f'Файл "{obj}" синхронизирован')
+
+        for folder in dirs:
+            obj, created = File.objects.filter(Q(file=folder)).get_or_create(file=folder, defaults={'is_folder': True})
+            if created:
+                logging.info(f'Папка "{obj}" синхронизирована')
 
 
 class File(models.Model):
@@ -42,6 +45,7 @@ class File(models.Model):
     file = models.FileField(storage=fs)
     file_discovered = models.DateTimeField(auto_now=True, null=True, blank=True, editable=False)
     secure_link = models.ForeignKey('SecureLink', blank=True, null=True, on_delete=models.CASCADE)
+    is_folder = models.BooleanField(default=False)
 
     def create_secure_link(self, user_who_created):
         pass
@@ -60,6 +64,8 @@ class File(models.Model):
 
     def get_file_type(self):
         """:return material icons names for frontend"""
+        if self.is_folder:
+            return 'folder'
         filename, ext = os.path.splitext(self.file.name)
         result = next((item for item in settings.EXTENSIONS.items() if ext in item[1]), None)
         return result[0] if result else 'note'

@@ -8,15 +8,19 @@ const router = new Router({
     routes: [
         {
             path: '/',
-            component: () => import('../components/FileList')
+            component: () => import('../components/pages/Root/Root')
         },
         {
             path: '/login',
-            component: () => import('../components/AppLogin')
+            component: () => import('../components/pages/Login')
+        },
+        {
+            path: '/about',
+            component: () => import('../components/pages/About')
         },
         {
             path: '*',
-            component: () => import('../components/NotFound')
+            component: () => import('../components/pages/NotFound')
         }
     ],
     mode: 'history'

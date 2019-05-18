@@ -8,6 +8,10 @@ const state = {
 const getters = {
     FILES: state => {
         return state.files;
+    },
+    // backend contains deleted files too. for history. so filter it
+    EXISTING_FILES: state => {
+        return state.files.filter(item => item.exists & !item.isFolder)
     }
 };
 

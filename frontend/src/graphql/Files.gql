@@ -6,6 +6,7 @@ query {
     exists
     size
     modified
+    isFolder
     fileType
     secureLink {
       id

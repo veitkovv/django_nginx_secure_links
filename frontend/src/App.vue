@@ -21,9 +21,8 @@
 <script>
     import {mapGetters} from 'vuex';
 
-    import FileList from '../src/components/FileList'
-    import SideNav from './components/SideNav'
-    import AppToolbar from '../src/components/AppToolbar'
+    import SideNav from './components/layout/SideNav'
+    import AppToolbar from './components/layout/AppToolbar'
     import Alerts from '../src/components/Alerts'
 
     export default {
@@ -31,7 +30,6 @@
         components: {
             AppToolbar,
             SideNav,
-            FileList,
             Alerts
         },
         data: () => ({}),
