@@ -1,17 +1,18 @@
-FROM node:latest
+# The instructions for the first stage
+FROM node:10-alpine as builder
 
-ADD package.json /tmp/package.json
-ADD package-lock.json /tmp/package-lock.json
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
 
-RUN cd /tmp && npm install
+COPY package*.json ./
+RUN npm install
 
-WORKDIR /opt/services/django_nginx_secure_link/frontend
+# The instructions for second stage
+FROM node:10-alpine
 
-RUN cp -a /tmp/node_modules /opt/services/django_nginx_secure_link/frontend
-# From here we load our application's code in, therefore the previous docker
-# "layer" thats been cached will be used if possible
-ADD . /opt/services/django_nginx_secure_link/frontend
-RUN npm run build
-ENV PORT=8082
-EXPOSE 8082
+WORKDIR /usr/src/app
+COPY --from=builder node_modules node_modules
+
+COPY . .
+
 CMD [ "npm", "run", "serve" ]

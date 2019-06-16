@@ -19,7 +19,7 @@ services:
       - ./backend:/opt/services/django_nginx_secure_link
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - share_volume:/opt/sevices/django_nginx_secure_link/secure_link_files
+      - secure_volume:/opt/services/django_nginx_secure_link/secure
     networks:
       - nginx_network
       - db_network
@@ -36,13 +36,9 @@ services:
     volumes:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - share_volume:/opt/sevices/django_nginx_secure_link/secure_link_files
+      - secure_volume:/opt/services/django_nginx_secure_link/secure
     networks:
       - nginx_network
-
-  certbot:
-    container_name: certbot
-    image: certbot/certbot
 
   django_nginx_secure_frontend:
     container_name: frontend
@@ -64,4 +60,4 @@ volumes:
   db_volume:
   static_volume:  # <-- declare the static volume
   media_volume:  # <-- declare the media volume
-  share_volume:
+  secure_volume:

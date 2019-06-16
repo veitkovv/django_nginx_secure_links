@@ -137,6 +137,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
+SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
+
 # Graphene
 GRAPHENE = {
     'SCHEMA': 'main.schema.schema',  # Where your Graphene schema lives
@@ -169,13 +171,9 @@ EXTENSIONS = {
     'music_note': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
 }
 
-SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure_link_files')
-
 # время существования линка в секундах
 PUBLIC_URL_TTL = 86400 * 5  # 5 дней
 
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'
 
-# secure files URL, location with secure link in nginx.conf
-SECURE_URL_ROOT = 'http://127.0.0.1/secure/'
