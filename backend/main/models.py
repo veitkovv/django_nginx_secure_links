@@ -26,6 +26,7 @@ class FileSystem(models.Model):
         :return: boolean
         """
         dirs, files = self.secure_files_list
+        print(settings.SECURE_LINK_PATH)
         for file in files:
             obj, created = File.objects.filter(Q(file=file)).get_or_create(file=file)
             if created:

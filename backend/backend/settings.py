@@ -137,8 +137,6 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
-SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
-
 # Graphene
 GRAPHENE = {
     'SCHEMA': 'main.schema.schema',  # Where your Graphene schema lives
@@ -177,3 +175,5 @@ PUBLIC_URL_TTL = 86400 * 5  # 5 дней
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'
 
+# Путь до папки которую будет раздавать nginx
+SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
