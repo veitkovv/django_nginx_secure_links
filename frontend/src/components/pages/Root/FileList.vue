@@ -22,8 +22,16 @@
                         </v-list-tile-sub-title>
                     </v-list-tile-content>
 
-                    <v-btn color="success" v-if="item.secureLink">Скопировать ссылку</v-btn>
-                    <v-btn color="primary" v-else>Создать ссылку</v-btn>
+                    <v-btn v-if="item.secureLink"
+                           color="success"
+                    >Скопировать ссылку
+                    </v-btn>
+
+                    <v-btn v-else
+                           color="primary"
+                           @click="createLink(item)"
+                    >Создать ссылку
+                    </v-btn>
 
                     <file-list-menu :item="item"></file-list-menu>
 
@@ -74,6 +82,9 @@
                 } while (Math.abs(bytes) >= thresh && u < units.length - 1);
                 return bytes.toFixed(1) + ' ' + units[u];
             },
+            createLink(file) {
+                console.log(file)
+            }
         }
     }
 </script>

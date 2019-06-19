@@ -44,7 +44,7 @@ services:
     container_name: frontend
     build: ./frontend
     volumes:
-      - ./frontend:/opt/services/django_nginx_secure_link/frontend
+      - ./frontend/src:/opt/services/django_nginx_secure_link/frontend/src
     networks:
       - nginx_network
     environment:

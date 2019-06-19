@@ -4,7 +4,7 @@ import {ApolloLink, concat, split} from 'apollo-link';
 import {HttpLink} from 'apollo-link-http'
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
-import {store} from '../store/index'
+import {store} from './store/index'
 
 //https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
 const defaultOptions = {

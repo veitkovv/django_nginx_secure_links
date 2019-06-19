@@ -1,7 +1,7 @@
-import {apolloClient} from '../../src/vue-apollo'
-import LOGIN_MUTATION from '../../src/graphql/TokenAuth.gql'
-import VERIFY_TOKEN_MUTATION from '../../src/graphql/VerifyToken.gql'
-import CURRENT_USER from '../../src/graphql/Me.gql'
+import {apolloClient} from '../../vue-apollo'
+import LOGIN_MUTATION from '../../graphql/TokenAuth.gql'
+import VERIFY_TOKEN_MUTATION from '../../graphql/VerifyToken.gql'
+import CURRENT_USER from '../../graphql/Me.gql'
 
 const state = {
     token: null,

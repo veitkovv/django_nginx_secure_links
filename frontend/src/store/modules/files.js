@@ -1,5 +1,5 @@
-import {apolloClient} from '../../src/vue-apollo'
-import FILES_QUERY from '../../src/graphql/Files.gql'
+import {apolloClient} from '../../vue-apollo'
+import FILES_QUERY from '../../graphql/Files.gql'
 
 const state = {
     files: []
