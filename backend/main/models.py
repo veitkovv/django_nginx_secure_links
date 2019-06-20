@@ -2,6 +2,8 @@
 import logging
 import os
 
+from datetime import timedelta
+
 from django.db import models
 from django.db.models import Q
 
@@ -89,3 +91,8 @@ class SecureLink(models.Model):
     def generate_secure_link(filename):
         secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/secure/' + filename
         return make_link_secure(secure_link)
+
+    @property
+    def link_deadline(self):
+        """время когда ссылка перестанет быть действительной"""
+        return self.secure_link_created.date() + timedelta(seconds=settings.PUBLIC_URL_TTL)

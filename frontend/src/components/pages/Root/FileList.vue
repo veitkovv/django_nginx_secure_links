@@ -18,7 +18,7 @@
                             Файл изменен: {{dateModified(item.modified) }}
                         </v-list-tile-sub-title>
                         <v-list-tile-sub-title v-if="item.secureLink">
-                            Ссылка действительна до:
+                            Ссылка действительна до: {{item.secureLink.linkDeadline}}
                         </v-list-tile-sub-title>
                     </v-list-tile-content>
 

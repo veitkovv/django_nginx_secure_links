@@ -12,6 +12,8 @@ class SecureLinkType(DjangoObjectType):
     class Meta:
         model = SecureLink
 
+    link_deadline = graphene.DateTime(source='link_deadline')
+
 
 class Query(object):
     secure_link = graphene.Field(SecureLinkType)

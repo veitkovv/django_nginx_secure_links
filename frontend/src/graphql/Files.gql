@@ -11,6 +11,7 @@ query {
     secureLink {
       id
       url
+      linkDeadline
     }
   }
 }
