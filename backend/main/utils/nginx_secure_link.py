@@ -22,6 +22,6 @@ def secure_link(baselink):
     m = hashlib.md5()
     m.update(bytes(hashstring, encoding='utf-8'))
     protection_string = b64encode(m.digest(), altchars=b'-_').replace(b'=', b'').decode("ascii")
-    protected_link = f'{baselink}?md5={protection_string}&expires={expires}'.replace(" ", "%20")
+    protected_link = f'{baselink}?md5={protection_string}&expires={expires}'.replace(" ", "%20")  # пробелы в url
 
     return protected_link

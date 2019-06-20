@@ -12,6 +12,7 @@ class Query(auth.Query,
 
 
 class Mutation(auth.Mutation,
+               secure_link.Mutation,
                graphene.ObjectType
                ):
     pass

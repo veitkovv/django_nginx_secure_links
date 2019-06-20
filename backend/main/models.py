@@ -9,6 +9,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
 
+from .utils.nginx_secure_link import secure_link as make_link_secure
+
 fs = FileSystemStorage(location=settings.SECURE_LINK_PATH)
 
 
@@ -26,7 +28,6 @@ class FileSystem(models.Model):
         :return: boolean
         """
         dirs, files = self.secure_files_list
-        print(settings.SECURE_LINK_PATH)
         for file in files:
             obj, created = File.objects.filter(Q(file=file)).get_or_create(file=file)
             if created:
@@ -48,8 +49,9 @@ class File(models.Model):
     secure_link = models.ForeignKey('SecureLink', blank=True, null=True, on_delete=models.CASCADE)
     is_folder = models.BooleanField(default=False)
 
-    def create_secure_link(self, user_who_created):
-        pass
+    @property
+    def filename(self):
+        return os.path.basename(self.file.name)
 
     @property
     def exists(self):
@@ -82,3 +84,8 @@ class SecureLink(models.Model):
                                                blank=True)
     user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
                              blank=True, null=True)
+
+    @staticmethod
+    def generate_secure_link(filename):
+        secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/' + filename
+        return make_link_secure(secure_link)
