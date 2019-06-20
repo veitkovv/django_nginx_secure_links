@@ -87,5 +87,5 @@ class SecureLink(models.Model):
 
     @staticmethod
     def generate_secure_link(filename):
-        secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/' + filename
+        secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/secure/' + filename
         return make_link_secure(secure_link)

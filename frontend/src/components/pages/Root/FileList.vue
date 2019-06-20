@@ -22,11 +22,13 @@
                         </v-list-tile-sub-title>
                     </v-list-tile-content>
 
-                    <v-btn v-if="item.secureLink"
-                           color="success"
-                           @click="copyLink(item)"
-                    >Скопировать ссылку
-                    </v-btn>
+                    <div v-if="item.secureLink">
+                        <v-btn
+                                color="success"
+                                v-clipboard:copy="item.secureLink.url"
+                        >Скопировать ссылку
+                        </v-btn>
+                    </div>
 
                     <v-btn v-else
                            color="primary"
@@ -86,9 +88,6 @@
             createLink(file) {
                 console.log(file)
             },
-            copyLink(file) {
-                console.log(file)
-            }
         }
     }
 </script>
