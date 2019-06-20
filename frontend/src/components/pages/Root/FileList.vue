@@ -24,6 +24,7 @@
 
                     <v-btn v-if="item.secureLink"
                            color="success"
+                           @click="copyLink(item)"
                     >Скопировать ссылку
                     </v-btn>
 
@@ -83,6 +84,9 @@
                 return bytes.toFixed(1) + ' ' + units[u];
             },
             createLink(file) {
+                console.log(file)
+            },
+            copyLink(file) {
                 console.log(file)
             }
         }

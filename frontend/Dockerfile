@@ -1,5 +1,5 @@
 # The instructions for the first stage
-FROM node:10-alpine as builder
+FROM node:latest as builder
 
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}

@@ -44,7 +44,8 @@ services:
     container_name: frontend
     build: ./frontend
     volumes:
-      - ./frontend/src:/opt/services/django_nginx_secure_link/frontend/src
+      - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
+      - ./frontend:/opt/services/django_nginx_secure_link/frontend
     networks:
       - nginx_network
     environment:
@@ -58,5 +59,6 @@ networks:
 
 volumes:
   db_volume:
+  node_modules:
   static_volume:  # <-- declare the static volume
   media_volume:  # <-- declare the media volume
