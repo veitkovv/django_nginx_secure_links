@@ -17,6 +17,7 @@
     "graphql-client": "^2.0.1",
     "graphql-tag": "^2.10.1",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.1",
     "vue-cli-plugin-apollo": "^0.20.0",

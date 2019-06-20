@@ -18,7 +18,7 @@
                             Файл изменен: {{dateModified(item.modified) }}
                         </v-list-tile-sub-title>
                         <v-list-tile-sub-title v-if="item.secureLink">
-                            Ссылка действительна до: {{item.secureLink.linkDeadline}}
+                            Ссылка действительна до {{linkDeadlineTime(item.secureLink.linkDeadline)}}
                         </v-list-tile-sub-title>
                     </v-list-tile-content>
 
@@ -66,9 +66,10 @@
         },
         methods: {
             dateModified(timestamp) {
-                const moment = require('moment');
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
                 let date = moment(timestamp * 1000);
-                return date.locale("ru").format("DD MMM YYYY hh:mm")
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
             },
             humanFileSize(bytes, si) {
                 let thresh = si ? 1000 : 1024;
@@ -84,6 +85,12 @@
                     ++u;
                 } while (Math.abs(bytes) >= thresh && u < units.length - 1);
                 return bytes.toFixed(1) + ' ' + units[u];
+            },
+            linkDeadlineTime(datetime) {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(datetime);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
             },
             createLink(file) {
                 console.log(file)

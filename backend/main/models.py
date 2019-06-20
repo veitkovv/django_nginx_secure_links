@@ -95,4 +95,4 @@ class SecureLink(models.Model):
     @property
     def link_deadline(self):
         """время когда ссылка перестанет быть действительной"""
-        return self.secure_link_created.date() + timedelta(seconds=settings.PUBLIC_URL_TTL)
+        return self.secure_link_created + timedelta(seconds=settings.PUBLIC_URL_TTL)
