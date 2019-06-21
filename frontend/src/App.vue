@@ -36,6 +36,9 @@
         methods: {},
         computed: {
             ...mapGetters(['IS_AUTHENTICATED'])
+        },
+        mounted() {
+            this.$store.dispatch('fetchDefaultSettings')
         }
 
     }

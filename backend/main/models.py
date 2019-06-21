@@ -10,10 +10,31 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from .utils.nginx_secure_link import secure_link as make_link_secure
 
 fs = FileSystemStorage(location=settings.SECURE_LINK_PATH)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
+    url_ttl = models.PositiveIntegerField(verbose_name='Время жизни ссылки', default=settings.DEFAULT_PUBLIC_URL_TTL,
+                                          validators=[MinValueValidator(settings.MIN_PUBLIC_URL_TTL),
+                                                      MaxValueValidator(settings.MAX_PUBLIC_URL_TTL)])
+
+
+@receiver(post_save, sender=get_user_model())
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=get_user_model())
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 
 class FileSystem(models.Model):
@@ -87,12 +108,11 @@ class SecureLink(models.Model):
     user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
                              blank=True, null=True)
 
-    @staticmethod
-    def generate_secure_link(filename):
+    def generate_secure_link(self, filename):
         secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/secure/' + filename
-        return make_link_secure(secure_link)
+        return make_link_secure(secure_link, self.user.profile.url_ttl)
 
     @property
     def link_deadline(self):
-        """время когда ссылка перестанет быть действительной"""
-        return self.secure_link_created + timedelta(seconds=settings.PUBLIC_URL_TTL)
+        """время когда ссылка перестанет быть действительной для WEB API"""
+        return self.secure_link_created + timedelta(seconds=self.user.profile.url_ttl)

@@ -56,6 +56,8 @@
 
 <script>
     import FileListMenu from "./FileListMenu";
+    import CREATE_SECURE_LINK from '../../../graphql/CreateSecureLink.gql'
+    import {mapActions} from 'vuex'
 
     export default {
         name: "FileList",
@@ -65,6 +67,7 @@
             return {}
         },
         methods: {
+            ...mapActions(['getFiles']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
@@ -93,7 +96,15 @@
                 return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
             },
             createLink(file) {
-                console.log(file)
+                this.$apollo.mutate({
+                    mutation: CREATE_SECURE_LINK,
+                    variables: {
+                        fileId: file.id
+                    },
+                }).then(data => {
+                    this.getFiles();
+                    console.log(data);
+                });
             },
         }
     }

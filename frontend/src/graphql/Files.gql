@@ -1,4 +1,4 @@
-query {
+{
   allFiles {
     id
     file
@@ -12,6 +12,11 @@ query {
       id
       url
       linkDeadline
+      user {
+        profile {
+          urlTtl
+        }
+      }
     }
   }
 }

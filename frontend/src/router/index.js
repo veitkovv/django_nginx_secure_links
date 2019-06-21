@@ -18,6 +18,10 @@ const router = new Router({
             path: '/about',
             component: () => import('../components/pages/About')
         },
+                {
+            path: '/settings',
+            component: () => import('../components/pages/AppSettings')
+        },
         {
             path: '*',
             component: () => import('../components/pages/NotFound')

@@ -6,5 +6,8 @@ query {
     firstName
     lastName
     email
+    profile{
+      urlTtl
+    }
   }
 }

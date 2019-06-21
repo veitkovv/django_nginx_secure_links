@@ -1,0 +1,9 @@
+mutation createSecureLink($fileId: ID!) {
+  createSecureLink(fileId: $fileId) {
+    secureLink {
+      id
+      url
+      secureLinkCreated
+    }
+  }
+}

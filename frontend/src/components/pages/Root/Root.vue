@@ -1,5 +1,8 @@
 <template>
     <v-container fluid fill-heigh>
+        <v-progress-linear v-if="$apollo.loading" :indeterminate="true"></v-progress-linear>
+        {{$apollo.loading}}
+        {{loading}}
         <v-flex xs12 sm8 offset-sm2>
             <v-text-field v-model="search"
                           append-icon="search"
@@ -13,7 +16,7 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapActions} from 'vuex';
     import FileList from './FileList';
 
     export default {
@@ -24,16 +27,16 @@
             return {
                 valueDeterminate: 40,
                 search: '',
+                loading: 0,
+                // TODO https://github.com/apollographql/react-apollo/issues/1314
+                // TODO loading always false bug
             }
         },
         computed: {
             ...mapGetters(['EXISTING_FILES']),
         },
         methods: {
-            getFiles() {
-                this.$store.dispatch('getFiles')
-            },
-
+            ...mapActions(['getFiles'])
         },
         mounted() {
             this.getFiles()

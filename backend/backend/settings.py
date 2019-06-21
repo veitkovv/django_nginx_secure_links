@@ -147,6 +147,7 @@ GRAPHENE = {
 GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
+    'JWT_ALLOW_ARGUMENT': True,
 }
 
 CORS_ORIGIN_WHITELIST = [
@@ -169,8 +170,13 @@ EXTENSIONS = {
     'music_note': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
 }
 
-# время существования линка в секундах
-PUBLIC_URL_TTL = 86400 * 5  # 5 дней
+# Время существования линка в секундах по умолчанию
+# Может быть изменено через веб-интерфейс в модели User
+DEFAULT_PUBLIC_URL_TTL = 86400 * 5  # 5 дней
+
+MIN_PUBLIC_URL_TTL = 86400 * 1  # 1 день
+
+MAX_PUBLIC_URL_TTL = 86400 * 30  # 30 дней
 
 # Пароль для хеша - такой же в nginx.conf
 NGINX_SECRET = 'mLErOVGhYuM7'

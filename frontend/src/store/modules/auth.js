@@ -22,7 +22,7 @@ const getters = {
     },
     CURRENT_USER_DATA: state => {
         return state.currentUserData
-    }
+    },
 };
 
 const mutations = {
@@ -34,7 +34,7 @@ const mutations = {
     },
     SET_CURRENT_USER_DATA: (state, payload) => {
         state.currentUserData = payload
-    }
+    },
 };
 
 const actions = {
