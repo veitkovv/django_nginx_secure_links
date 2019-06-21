@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # The instructions for second stage
-FROM node:10-alpine
+FROM node:latest
 
 WORKDIR /opt/services/django_nginx_secure_link/frontend
 

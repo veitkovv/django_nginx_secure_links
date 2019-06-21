@@ -6,11 +6,11 @@ import {InMemoryCache} from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import {store} from './store/index'
 
-//https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
+// https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
 const defaultOptions = {
     watchQuery: {
         fetchPolicy: 'network-only',
-        errorPolicy: 'ignore',
+        errorPolicy: 'all',
     },
     query: {
         fetchPolicy: 'network-only',
