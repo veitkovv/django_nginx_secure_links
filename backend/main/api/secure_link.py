@@ -50,7 +50,8 @@ class SecureLinkMutation(graphene.Mutation):
         secure_link.user = info.context.user
 
         # 2. сгенерировать ссылку, связать с моделью
-        secure_link.url = secure_link.generate_secure_link(file.filename)
+        domain_name = info.context.environ['HTTP_HOST']  # получить имя домена, с которого пользователь зашел
+        secure_link.url = secure_link.generate_secure_link(file.filename, domain_name)
         secure_link.save()
 
         # 3. связать файл с моделью

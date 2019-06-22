@@ -14,7 +14,7 @@
             <v-list two-line subheader>
                 <v-subheader inset>Файлы</v-subheader>
                 <template v-for="(item, index) in EXISTING_FILES">
-                    <file :file="item" :key="item.id"></file>
+                    <file-component :file="item" :key="item.id"></file-component>
                     <v-divider
                             v-if="index + 1 < EXISTING_FILES.length"
                             :key="index"
@@ -28,11 +28,11 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex';
-    import File from './File';
+    import FileComponent from './FileComponent';
 
     export default {
         name: "FileListRoot",
-        components: {File},
+        components: {FileComponent},
 
         data() {
             return {

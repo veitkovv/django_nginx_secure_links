@@ -108,8 +108,8 @@ class SecureLink(models.Model):
     user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
                              blank=True, null=True)
 
-    def generate_secure_link(self, filename):
-        secure_link = 'http://' + settings.NGINX_SECURE_HOSTNAME + '/secure/' + filename
+    def generate_secure_link(self, filename, domain_name):
+        secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, self.user.profile.url_ttl)
 
     @property

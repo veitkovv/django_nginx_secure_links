@@ -183,6 +183,3 @@ NGINX_SECRET = 'mLErOVGhYuM7'
 
 # Путь до папки которую будет раздавать nginx
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
-
-# Хостнейм nginx сервера, который обслуживает путь /secure
-NGINX_SECURE_HOSTNAME = '127.0.0.1'

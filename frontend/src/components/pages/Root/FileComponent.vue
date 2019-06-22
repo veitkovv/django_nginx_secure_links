@@ -43,7 +43,7 @@
     import {mapActions} from 'vuex'
 
     export default {
-        name: "File",
+        name: "FileComponent",
         props: {
             file: Object
         },
