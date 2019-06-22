@@ -1,21 +1,20 @@
 <template>
-    <div id="app">
-        <v-app id="inspire">
-            <v-content>
-                <side-nav v-if="IS_AUTHENTICATED"></side-nav>
-                <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
+    <v-app>
+        <side-nav v-if="IS_AUTHENTICATED"></side-nav>
+        <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
+        <v-content>
+            <v-container fluid>
                 <main>
                     <alerts></alerts>
                     <router-view></router-view>
                 </main>
-
-                <v-footer class="pa-3">
-                    <v-spacer></v-spacer>
-                    <div>&copy; {{ new Date().getFullYear() }}</div>
-                </v-footer>
-            </v-content>
-        </v-app>
-    </div>
+            </v-container>
+        </v-content>
+        <v-footer class="pa-3">
+            <v-spacer></v-spacer>
+            <div>&copy; {{ new Date().getFullYear() }}</div>
+        </v-footer>
+    </v-app>
 </template>
 
 <script>
