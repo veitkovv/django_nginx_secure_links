@@ -1,29 +1,24 @@
 <template>
-    <v-container fluid fill-heigh>
-        <v-progress-linear v-if="$apollo.loading" :indeterminate="true"></v-progress-linear>
-        {{$apollo.loading}}
-        {{loading}}
-        <v-flex xs12 sm8 offset-sm2>
-            <v-text-field v-model="search"
-                          append-icon="search"
-                          label="Поиск"
-                          single-line
-                          hide-details
-            ></v-text-field>
+    <v-flex xs12 sm8 offset-sm2>
+        <v-text-field v-model="search"
+                      append-icon="search"
+                      label="Поиск"
+                      single-line
+                      hide-details
+        ></v-text-field>
 
-            <v-list two-line subheader>
-                <v-subheader inset>Файлы</v-subheader>
-                <template v-for="(item, index) in EXISTING_FILES">
-                    <file-component :file="item" :key="item.id"></file-component>
-                    <v-divider
-                            v-if="index + 1 < EXISTING_FILES.length"
-                            :key="index"
-                    ></v-divider>
-                </template>
-            </v-list>
+        <v-list two-line subheader>
+            <v-subheader inset>Файлы</v-subheader>
+            <template v-for="(item, index) in EXISTING_FILES">
+                <file-component :file="item" :key="item.id"></file-component>
+                <v-divider
+                        v-if="index + 1 < EXISTING_FILES.length"
+                        :key="index"
+                ></v-divider>
+            </template>
+        </v-list>
 
-        </v-flex>
-    </v-container>
+    </v-flex>
 </template>
 
 <script>
@@ -38,7 +33,6 @@
             return {
                 valueDeterminate: 40,
                 search: '',
-                loading: 0,
                 // TODO https://github.com/apollographql/react-apollo/issues/1314
                 // TODO loading always false bug
             }

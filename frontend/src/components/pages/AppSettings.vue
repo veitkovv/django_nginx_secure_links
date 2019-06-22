@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-flex>
         <div class="pb-3" v-if="isSuperUser">
             <h1>Настройки администратора</h1>
         </div>
@@ -20,7 +20,7 @@
             </v-flex>
             <hr>
         </div>
-    </v-container>
+    </v-flex>
 </template>
 
 <script>

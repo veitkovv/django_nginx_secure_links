@@ -3,6 +3,8 @@
         <side-nav v-if="IS_AUTHENTICATED"></side-nav>
         <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
         <v-content>
+            <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
+
             <v-container fluid>
                 <main>
                     <alerts></alerts>
@@ -31,7 +33,9 @@
             SideNav,
             Alerts
         },
-        data: () => ({}),
+        data: () => ({
+            loading: 0
+        }),
         methods: {},
         computed: {
             ...mapGetters(['IS_AUTHENTICATED'])
