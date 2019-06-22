@@ -2,6 +2,7 @@
   allFiles {
     id
     file
+    filename
     fileDiscovered
     exists
     size

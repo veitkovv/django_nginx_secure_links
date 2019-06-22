@@ -40,6 +40,7 @@ class Query(graphene.ObjectType):
     me = graphene.Field(User)
     profile = graphene.Field(ProfileType)
 
+    @login_required
     @graphene.resolve_only_args
     def resolve_all_users(self):
         return get_user_model().objects.all()
@@ -55,4 +56,4 @@ class Mutation(graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
-   # update_profile = ProfileMutation.Field()
+# update_profile = ProfileMutation.Field()

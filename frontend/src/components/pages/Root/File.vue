@@ -1,0 +1,96 @@
+<template>
+    <v-list-tile
+            avatar
+            @click=""
+    >
+        <v-list-tile-avatar>
+            <v-icon class="grey white--text">{{ file.fileType }}</v-icon>
+        </v-list-tile-avatar>
+
+        <v-list-tile-content>
+            <v-list-tile-title>{{ file.filename }}</v-list-tile-title>
+            <v-list-tile-sub-title class="text--primary">
+                Файл изменен: {{dateModified(file.modified) }}
+            </v-list-tile-sub-title>
+            <v-list-tile-sub-title v-if="file.secureLink">
+                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
+            </v-list-tile-sub-title>
+        </v-list-tile-content>
+
+        <div v-if="file.secureLink">
+            <v-btn
+                    color="success"
+                    v-clipboard:copy="file.secureLink.url"
+            >Скопировать ссылку
+            </v-btn>
+        </div>
+
+        <v-btn v-else
+               color="primary"
+               @click="createLink(file)"
+        >Создать ссылку
+        </v-btn>
+        <v-list-tile-action>
+            <v-list-tile-action-text>
+                {{humanFileSize(file.size, true)}}
+            </v-list-tile-action-text>
+        </v-list-tile-action>
+    </v-list-tile>
+</template>
+
+<script>
+    import CREATE_SECURE_LINK from '../../../graphql/CreateSecureLink.gql'
+    import {mapActions} from 'vuex'
+
+    export default {
+        name: "File",
+        props: {
+            file: Object
+        },
+        methods: {
+            ...mapActions(['getFiles']),
+            dateModified(timestamp) {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(timestamp * 1000);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+            },
+            humanFileSize(bytes, si) {
+                let thresh = si ? 1000 : 1024;
+                if (Math.abs(bytes) < thresh) {
+                    return bytes + ' B';
+                }
+                let units = si
+                    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+                    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+                let u = -1;
+                do {
+                    bytes /= thresh;
+                    ++u;
+                } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+                return bytes.toFixed(1) + ' ' + units[u];
+            },
+            linkDeadlineTime(datetime) {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(datetime);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+            },
+            createLink(file) {
+                this.$apollo.mutate({
+                    mutation: CREATE_SECURE_LINK,
+                    variables: {
+                        fileId: file.id
+                    },
+                }).then(data => {
+                    this.getFiles();
+                    console.log(data);
+                });
+            },
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

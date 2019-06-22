@@ -17,6 +17,7 @@ class FileType(DjangoObjectType):
     file_type = graphene.String(source='get_file_type')
     min_ttl = graphene.Int(source='min_ttl')
     max_ttl = graphene.Int(source='max_ttl')
+    filename = graphene.String(source='filename')
 
 
 class Query(object):
@@ -26,4 +27,4 @@ class Query(object):
     def resolve_all_files(self, info, **kwargs):
         fs = FileSystem()
         fs.walk()  # rescan file system
-        return File.objects.all()
+        return File.objects.all().order_by('file')

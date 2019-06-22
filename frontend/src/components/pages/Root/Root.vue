@@ -10,18 +10,29 @@
                           single-line
                           hide-details
             ></v-text-field>
-            <file-list :files="EXISTING_FILES"></file-list>
+
+            <v-list two-line subheader>
+                <v-subheader inset>Файлы</v-subheader>
+                <template v-for="(item, index) in EXISTING_FILES">
+                    <file :file="item" :key="item.id"></file>
+                    <v-divider
+                            v-if="index + 1 < EXISTING_FILES.length"
+                            :key="index"
+                    ></v-divider>
+                </template>
+            </v-list>
+
         </v-flex>
     </v-container>
 </template>
 
 <script>
     import {mapGetters, mapActions} from 'vuex';
-    import FileList from './FileList';
+    import File from './File';
 
     export default {
         name: "FileListRoot",
-        components: {FileList},
+        components: {File},
 
         data() {
             return {

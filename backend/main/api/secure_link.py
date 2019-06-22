@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import graphene
 
-from django.contrib.auth import get_user_model
-
 from graphene_django.types import DjangoObjectType
-from ..models import SecureLink, File
 from graphql_relay.node.node import from_global_id
 from graphql_jwt.decorators import login_required
+
+from ..models import SecureLink, File
 
 
 class SecureLinkType(DjangoObjectType):
@@ -59,8 +58,6 @@ class SecureLinkMutation(graphene.Mutation):
         file.save()
 
         # Notice we return an instance of this mutation
-        import time
-        time.sleep(4)
         return SecureLinkMutation(secure_link=secure_link)
 
 
