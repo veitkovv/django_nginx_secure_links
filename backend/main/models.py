@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import re
 
-from datetime import timedelta
+from datetime import datetime
 
 from django.db import models
 from django.db.models import Q
@@ -114,5 +115,8 @@ class SecureLink(models.Model):
 
     @property
     def link_deadline(self):
-        """время когда ссылка перестанет быть действительной для WEB API"""
-        return self.secure_link_created + timedelta(seconds=self.user.profile.url_ttl)
+        """
+        время когда ссылка перестанет быть действительной для WEB API
+        Берем последние числа из сохраненной URL посредством простой регулярки
+        """
+        return datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(self.url)).group(0)))
