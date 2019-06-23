@@ -1,8 +1,5 @@
 <template>
-    <v-list-tile
-            avatar
-            @click=""
-    >
+    <v-list-tile avatar>
         <v-list-tile-avatar>
             <v-icon class="grey white--text">{{ file.fileType }}</v-icon>
         </v-list-tile-avatar>
@@ -73,14 +70,7 @@
         props: {
             file: Object
         },
-        data: () => ({
-            items: [
-                {title: 'Click Me'},
-                {title: 'Click Me'},
-                {title: 'Click Me'},
-                {title: 'Click Me 2'}
-            ]
-        }),
+        data: () => ({}),
         methods: {
             ...mapActions(['getFiles']),
             dateModified(timestamp) {
@@ -123,7 +113,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

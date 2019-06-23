@@ -8,6 +8,7 @@
                     {{CURRENT_USER_DATA}}
                 </v-card-text>
             </v-card>
+
             <v-card class="elevation-12" v-else>
                 <v-toolbar dark color="primary">
                     <v-toolbar-title>Пожалуйста, авторизуйтесь</v-toolbar-title>
@@ -23,10 +24,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn
-                            color="primary"
-                            @click="login"
-                    >
+                    <v-btn color="primary" @click="login">
                         Войти
                     </v-btn>
                 </v-card-actions>
