@@ -82,9 +82,8 @@
                     variables: {
                         fileId: file.id
                     },
-                }).then(data => {
+                }).then(() => {
                     this.getFiles();
-                    console.log(data);
                 });
             },
         }

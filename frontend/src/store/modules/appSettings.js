@@ -1,34 +1,42 @@
 import {apolloClient} from '../../vue-apollo'
 import DEFAULT_SETTINGS_QUERY from '../../graphql/DefaultSettings.gql'
+import SET_URL_EXPIRES_MUTATION from '../../graphql/SetUrlExpires.gql'
+
+function daysToSeconds(days) {
+    return Math.floor(days * (3600 * 24));
+}
+
+function secondsToDays(seconds) {
+    return Math.floor(seconds / (3600 * 24));
+}
 
 const state = {
-    appDefaultSettings: '',
-    linkTTL: 0,
+    minUrlExpires: 0,
+    maxUrlExpires: 0,
+    UrlExpires: 0,
 };
 
 const getters = {
-    DEFAULT_SETTINGS: state => {
-        return state.appDefaultSettings
+    MIN_URL_EXPIRES: state => {
+        return secondsToDays(state.minUrlExpires)
     },
-    MIN_TTL: state => {
-        // seconds -> days
-        return Math.floor(state.appDefaultSettings.minTtl / (3600 * 24));
+    MAX_URL_EXPIRES: state => {
+        return secondsToDays(state.maxUrlExpires)
     },
-    MAX_TTL: state => {
-        // seconds -> days
-        return Math.floor(state.appDefaultSettings.maxTtl / (3600 * 24));
-    },
-    LINK_TTL: state => {
-        return state.linkTTL
+    URL_EXPIRES: state => {
+        return state.UrlExpires
     },
 };
 
 const mutations = {
-    CHANGE_DEFAULT_SETTINGS: (state, payload) => {
-        state.appDefaultSettings = payload
+    SET_MIN_URL_EXPIRES: (state, payload) => {
+        state.minUrlExpires = payload
     },
-    SET_LINK_TTL: (state, payload) => {
-        state.linkTTL = payload
+    SET_MAX_URL_EXPIRES: (state, payload) => {
+        state.maxUrlExpires = payload
+    },
+    SET_URL_EXPIRES: (state, payload) => {
+        state.UrlExpires = payload
     }
 };
 
@@ -37,7 +45,18 @@ const actions = {
         const response = await apolloClient.query({
             query: DEFAULT_SETTINGS_QUERY,
         });
-        commit('CHANGE_DEFAULT_SETTINGS', JSON.parse(JSON.parse(response.data.defaultSettings)))
+        commit('SET_MIN_URL_EXPIRES', response.data.minUrlExpires);
+        commit('SET_MAX_URL_EXPIRES', response.data.maxUrlExpires)
+    },
+
+    async updateUrlExpires({commit}, newUrlExpires) {
+        const response = await apolloClient.mutate({
+            mutation: SET_URL_EXPIRES_MUTATION,
+            variables: {
+                newUrlExpires: daysToSeconds(newUrlExpires)
+            }
+        });
+        commit('SET_URL_EXPIRES', secondsToDays(response.data.setUrlExpires.newUrlExpires))
     }
 };
 

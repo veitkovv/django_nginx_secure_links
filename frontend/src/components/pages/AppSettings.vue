@@ -12,10 +12,13 @@
                 <v-slider
                         v-model="current"
                         :label="sliderLabel(current)"
-                        :min="MIN_TTL"
-                        :max="MAX_TTL"
-                        @end="sliderEnd()"
+                        :min="MIN_URL_EXPIRES"
+                        :max="MAX_URL_EXPIRES"
+                        @end="sliderEnd(current)"
                         thumb-label
+                        :loading="loading"
+                        hint="Не забудьте пересоздать ссылку"
+                        prepend-icon="access_time"
                 ></v-slider>
             </v-flex>
             <hr>
@@ -24,38 +27,43 @@
 </template>
 
 <script>
-    import {mapGetters, mapMutations} from 'vuex';
+    import {mapGetters, mapMutations, mapActions} from 'vuex';
 
     export default {
         name: "AppSettings",
-        data: () => ({}),
+        data: () => ({
+            loading: false,
+        }),
         methods: {
-            ...mapMutations(['SET_LINK_TTL']),
+            ...mapMutations(['SET_URL_EXPIRES']),
+            ...mapActions(['updateUrlExpires', 'fetchUserData']),
             sliderLabel(days) {
                 return days + ' дней'
             },
-            sliderEnd() {
-                console.log('end')
+            sliderEnd(val) {
+                // update settings && refetch user data
+                this.updateUrlExpires(val);
+                this.fetchUserData();
             }
         },
         computed: {
-            ...mapGetters(['CURRENT_USER_DATA', 'DEFAULT_SETTINGS', 'MIN_TTL', 'MAX_TTL', 'LINK_TTL']),
+            ...mapGetters(['CURRENT_USER_DATA', 'MIN_URL_EXPIRES', 'MAX_URL_EXPIRES', 'URL_EXPIRES']),
             isSuperUser: function () {
                 return this.CURRENT_USER_DATA.isSuperuser
             },
             current: {
                 get: function () {
-                    return this.LINK_TTL
+                    return this.URL_EXPIRES
                 },
                 set: function (val) {
-                    this.SET_LINK_TTL(val)
+                    this.SET_URL_EXPIRES(val)
                 }
             }
         },
         mounted() {
             // commit default value
             const ttl = Math.floor(this.CURRENT_USER_DATA.profile.urlTtl / (3600 * 24));
-            this.SET_LINK_TTL(ttl)
+            this.SET_URL_EXPIRES(ttl)
         }
     }
 </script>

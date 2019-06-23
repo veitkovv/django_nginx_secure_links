@@ -116,7 +116,7 @@ class SecureLink(models.Model):
     @property
     def link_deadline(self):
         """
-        время когда ссылка перестанет быть действительной для WEB API
+        Время когда ссылка перестанет быть действительной для WEB API
         Берем последние числа из сохраненной URL посредством простой регулярки
         """
         return datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(self.url)).group(0)))

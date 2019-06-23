@@ -14,6 +14,7 @@ class Query(user.Query,
 
 class Mutation(user.Mutation,
                secure_link.Mutation,
+               default_settings.Mutation,
                graphene.ObjectType
                ):
     pass
