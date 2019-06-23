@@ -113,6 +113,9 @@ class SecureLink(models.Model):
         secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, self.user.profile.url_ttl)
 
+    def is_expired(self):
+        return datetime.now() > self.link_deadline
+
     @property
     def link_deadline(self):
         """

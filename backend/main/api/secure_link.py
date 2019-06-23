@@ -13,6 +13,7 @@ class SecureLinkType(DjangoObjectType):
         model = SecureLink
 
     link_deadline = graphene.DateTime(source='link_deadline')
+    is_expired = graphene.Boolean(source='is_expired')
 
 
 class Query(object):

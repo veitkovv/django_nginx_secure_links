@@ -17,19 +17,45 @@
             </v-list-tile-sub-title>
         </v-list-tile-content>
 
-        <div v-if="file.secureLink">
+        <div v-if="file.secureLink && !file.secureLink.isExpired">
             <v-btn
+                    outline
                     color="success"
                     v-clipboard:copy="file.secureLink.url"
-            >Скопировать ссылку
+            >
+                Скопировать ссылку
             </v-btn>
         </div>
 
         <v-btn v-else
+               outline
                color="primary"
                @click="createLink(file)"
         >Создать ссылку
         </v-btn>
+
+        <v-menu bottom right>
+            <template v-slot:activator="{ on }">
+                <v-btn
+                        flat
+                        icon
+                        color="primary"
+                        v-on="on"
+                >
+                    <v-icon>more_vert</v-icon>
+                </v-btn>
+            </template>
+
+            <v-list v-if="file.secureLink && !file.secureLink.isExpired">
+                <v-list-tile @click="createLink(file)">
+                    <v-icon>refresh</v-icon>
+                    <v-list-tile-content>
+                        Пересоздать ссылку
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+        </v-menu>
+
         <v-list-tile-action>
             <v-list-tile-action-text>
                 {{humanFileSize(file.size, true)}}
@@ -47,6 +73,14 @@
         props: {
             file: Object
         },
+        data: () => ({
+            items: [
+                {title: 'Click Me'},
+                {title: 'Click Me'},
+                {title: 'Click Me'},
+                {title: 'Click Me 2'}
+            ]
+        }),
         methods: {
             ...mapActions(['getFiles']),
             dateModified(timestamp) {
