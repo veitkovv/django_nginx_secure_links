@@ -4,14 +4,14 @@
         <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
         <v-content>
             <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
-
+            <notifications group="alerts" position="bottom right"/>
             <v-container fluid>
                 <main>
-                    <alerts></alerts>
                     <router-view></router-view>
                 </main>
             </v-container>
         </v-content>
+
         <v-footer class="pa-3">
             <v-spacer></v-spacer>
             <div>&copy; {{ new Date().getFullYear() }}</div>
@@ -24,14 +24,12 @@
 
     import SideNav from './components/layout/SideNav'
     import AppToolbar from './components/layout/AppToolbar'
-    import Alerts from '../src/components/Alerts'
 
     export default {
         name: 'App',
         components: {
             AppToolbar,
             SideNav,
-            Alerts
         },
         data: () => ({
             loading: 0

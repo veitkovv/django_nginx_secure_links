@@ -45,18 +45,21 @@
         methods: {
             login() {
                 this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => {
-                    console.log('success auth!');
-                    this.$store.dispatch('verifyToken').then(() =>
-                        this.$store.dispatch('showAlert', {
-                            severity: 'success',
-                            text: 'Успешная авторизация'
-                        }).then(() => this.$store.dispatch('fetchUserData').then(() => this.$router.push('/')))
+                    this.$notify({
+                        group: 'alerts',
+                        type: 'success',
+                        title: 'Успешная авторизация',
+                        text: 'Успешная авторизация'
+                    });
+                    this.$store.dispatch('verifyToken').then(() => this.$store.dispatch('fetchUserData').then(() => this.$router.push('/'))
                     )
                 }, error => {
-                    this.$store.dispatch('showAlert', {
-                        severity: 'error',
-                        text: error.graphQLErrors,
-                    }).then(() => console.log(error));
+                    this.$notify({
+                        group: 'alerts',
+                        type: 'error',
+                        title: 'Ошибка авторизации',
+                        text: error.graphQLErrors
+                    });
                 })
             }
         },

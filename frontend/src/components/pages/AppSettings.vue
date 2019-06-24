@@ -44,6 +44,12 @@
                 // update settings && refetch user data
                 this.updateUrlExpires(val);
                 this.fetchUserData();
+                this.$notify({
+                    group: 'alerts',
+                    type: 'success',
+                    title: 'Успех',
+                    text: 'Время жизни ссылки изменено. Не забудьте пересоздать ссылку на файл'
+                });
             }
         },
         computed: {

@@ -44,7 +44,14 @@
             ...mapActions(['getFiles'])
         },
         mounted() {
-            this.getFiles()
+            this.getFiles().then(() =>
+                this.$notify({
+                    group: 'alerts',
+                    type: 'success',
+                    title: 'ОК',
+                    text: 'Успешная загрузка списка файлов'
+                })
+        )
         }
     }
 </script>

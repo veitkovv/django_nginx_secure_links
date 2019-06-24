@@ -23,12 +23,23 @@
                 })
             },
             refetchFiles() {
-                this.$store.dispatch('getFiles').then(() => console.log('Список файлов получен с сервера'))
+                this.$store.dispatch('getFiles').then(() =>
+                    this.$notify({
+                        group: 'alerts',
+                        type: 'success',
+                        title: 'Список файлов обновлён',
+                        text: 'Список файлов получен с сервера'
+                    })
+                )
             },
             doLogout() {
-                this.$store.dispatch('logout').then(() => this.$store.dispatch('showAlert', {
-                    text: 'Вы успешно вышли из системы',
-                })).then(() => this.$router.push('/login'))
+                this.$store.dispatch('logout').then(() => this.$router.push('/login'));
+                this.$notify({
+                    group: 'alerts',
+                    type: 'success',
+                    title: 'Выход',
+                    text: 'Вы успешно вышли из системы'
+                })
             }
         }
     }

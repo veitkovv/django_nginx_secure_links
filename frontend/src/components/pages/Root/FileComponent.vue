@@ -107,7 +107,15 @@
                         fileId: file.id
                     },
                 }).then(() => {
-                    this.getFiles();
+                    this.getFiles().then(() =>
+                        this.$notify({
+                            group: 'alerts',
+                            type: 'success',
+                            title: 'Успех',
+                            text: 'Ссылка успешно создана'
+                        })
+                    )
+                    ;
                 });
             },
         }
