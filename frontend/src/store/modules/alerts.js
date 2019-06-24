@@ -11,12 +11,16 @@ function createMessage(id, text, severity, dismissAfter) {
 
 
 const state = {
-    alerts: []
+    alerts: [],
+    snackbar: false
 };
 
 const getters = {
     ALERTS: state => {
         return state.alerts;
+    },
+    SNACKBAR: state => {
+        return state.snackbar;
     }
 };
 
@@ -26,6 +30,9 @@ const mutations = {
     },
     REMOVE_ALERT: (state, payload) => {
         state.alerts = state.alerts.filter(m => m.id !== payload)
+    },
+    CHANGE_SNACKBAR: (state) => {
+        state.snackbar = !state.snackbar
     }
 };
 

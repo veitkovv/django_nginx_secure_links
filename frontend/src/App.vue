@@ -4,7 +4,7 @@
         <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
         <v-content>
             <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
-            <notifications group="alerts" position="bottom right"/>
+            <notifications group="alerts" position="top right"/>
             <v-container fluid>
                 <main>
                     <router-view></router-view>

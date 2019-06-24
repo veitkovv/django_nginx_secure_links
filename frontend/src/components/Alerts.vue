@@ -3,6 +3,7 @@
         <v-alert v-for="item in ALERTS"
                  :value="true"
                  :type="item.severity"
+                 :key="item.id"
                  dismissible
                  transition="fade-transition"
         >

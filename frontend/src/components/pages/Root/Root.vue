@@ -1,5 +1,5 @@
 <template>
-    <v-flex xs12 sm8 offset-sm2>
+    <v-flex xs12 sm7 offset-sm2>
         <v-text-field v-model="search"
                       append-icon="search"
                       label="Поиск"
