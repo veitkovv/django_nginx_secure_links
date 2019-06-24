@@ -10,8 +10,12 @@
                 Файл изменен: {{dateModified(file.modified) }}
             </v-list-tile-sub-title>
             <v-list-tile-sub-title v-if="file.secureLink">
-                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
+                <p v-if="file.secureLink.isExpired" style="color: red">
+                    Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}</p>
+                <p v-else>
+                    Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}</p>
             </v-list-tile-sub-title>
+
         </v-list-tile-content>
 
         <div v-if="file.secureLink && !file.secureLink.isExpired">
