@@ -8,6 +8,7 @@
                 v-model="SNACKBAR.visible"
                 :timeout="SNACKBAR.timeout"
                 :color="SNACKBAR.color"
+                :multi-line="SNACKBAR.multiline"
         >
             {{ SNACKBAR.text }}
 

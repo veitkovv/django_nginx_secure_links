@@ -24,7 +24,9 @@
                     outline
                     color="success"
                     v-clipboard:copy="file.secureLink.url"
-            >
+                    v-clipboard:success="clipboardSuccessHandler"
+                    v-clipboard:error="clipboardErrorHandler">
+                >
                 Скопировать ссылку
             </v-btn>
         </div>
@@ -113,12 +115,25 @@
                         fileId: file.id
                     },
                 }).then(() => {
-                    this.getFiles().then(() =>
+                    this.getFiles().then(() => {
                         this.showSnackbar({
-                            text: 'Ссылка успешно создана'
-                        }));
+                            text: 'Ссылка на файл "' + file.filename + '" успешно создана'
+                        })
+                    })
                 });
             },
+            clipboardSuccessHandler({value, event}) {
+                this.showSnackbar({
+                    text: 'Ссылка успешно скопирована'
+                })
+            },
+
+            clipboardErrorHandler({value, event}) {
+                this.showSnackbar({
+                    text: 'Ссылка не скопирована',
+                    color: 'error'
+                })
+            }
         }
     }
 </script>
