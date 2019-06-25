@@ -5,10 +5,8 @@ import apolloProvider from './vue-apollo'
 import {store} from './store';
 import router from './router'
 import VueClipboard from 'vue-clipboard2'
-import Notifications from 'vue-notification'
 
 Vue.use(VueClipboard);
-Vue.use(Notifications);
 
 
 Vue.config.productionTip = false;

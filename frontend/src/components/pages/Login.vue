@@ -1,6 +1,6 @@
 <template>
-    <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4>
+    <v-layout align-center justify-center row fill-height>
+        <v-flex xs12 sm7 md4>
             <v-card class="elevation-12" v-if="IS_AUTHENTICATED">
                 <v-card-text>
                     Вы авторизованы
@@ -9,7 +9,7 @@
                 </v-card-text>
             </v-card>
 
-            <v-card class="elevation-12" v-else>
+            <v-card class="elevation-12 mt-4" v-else>
                 <v-toolbar dark color="primary">
                     <v-toolbar-title>Пожалуйста, авторизуйтесь</v-toolbar-title>
                     <v-spacer></v-spacer>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapMutations} from 'vuex';
 
     export default {
         name: "AppLogin",
@@ -45,23 +45,14 @@
         methods: {
             login() {
                 this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => {
-                    this.$notify({
-                        group: 'alerts',
-                        type: 'success',
-                        title: 'Успешная авторизация',
-                        text: 'Успешная авторизация'
-                    });
+                    this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
                     this.$store.dispatch('verifyToken').then(() => this.$store.dispatch('fetchUserData').then(() => this.$router.push('/'))
                     )
                 }, error => {
-                    this.$notify({
-                        group: 'alerts',
-                        type: 'error',
-                        title: 'Ошибка авторизации',
-                        text: error.graphQLErrors
-                    });
+                    this.showSnackbar({text: 'Ошибка авторизации', color: 'error'});
                 })
-            }
+            },
+            ...mapMutations(['showSnackbar']),
         },
         computed: {
             ...mapGetters(['IS_AUTHENTICATED', 'TOKEN_DATA', 'CURRENT_USER_DATA'])

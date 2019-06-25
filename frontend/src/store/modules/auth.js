@@ -18,7 +18,10 @@ const getters = {
     },
     IS_AUTHENTICATED: state => {
         const now = Math.round(new Date().getTime() / 1000);
-        return (state.token !== null && state.tokenData.exp > now)
+        if (state.tokenData) {
+            return (state.token !== null && state.tokenData.exp > now)
+        }
+        return false
     },
     CURRENT_USER_DATA: state => {
         return state.currentUserData

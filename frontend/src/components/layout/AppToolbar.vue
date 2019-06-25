@@ -1,6 +1,7 @@
 <template>
     <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
         <v-toolbar-side-icon @click.stop="changeNavDrawerState"></v-toolbar-side-icon>
+        <v-toolbar-title class="white--text">Secure Links</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
             <v-btn icon @click="refetchFiles">

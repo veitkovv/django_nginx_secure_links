@@ -4,11 +4,11 @@
         <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
         <v-content>
             <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
-            <notifications group="alerts" position="top right"/>
+            <snackbar></snackbar>
             <v-container fluid>
-                <main>
+                <v-slide-y-transition mode="out-in">
                     <router-view></router-view>
-                </main>
+                </v-slide-y-transition>
             </v-container>
         </v-content>
 
@@ -20,26 +20,30 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapActions} from 'vuex';
 
     import SideNav from './components/layout/SideNav'
     import AppToolbar from './components/layout/AppToolbar'
+    import Snackbar from './components/Snackbar'
 
     export default {
         name: 'App',
         components: {
             AppToolbar,
             SideNav,
+            Snackbar,
         },
         data: () => ({
             loading: 0
         }),
-        methods: {},
+        methods: {
+            ...mapActions(['fetchDefaultSettings'])
+        },
         computed: {
             ...mapGetters(['IS_AUTHENTICATED'])
         },
         mounted() {
-            this.$store.dispatch('fetchDefaultSettings')
+            this.fetchDefaultSettings()
         }
 
     }
