@@ -11,7 +11,12 @@ const getters = {
     },
     // backend contains deleted files too. for history. so filter it
     EXISTING_FILES: state => {
-        return state.files.filter(item => item.exists & !item.isFolder)
+        return state.files.filter(item => item.exists)
+        // return state.files.filter(item => item.exists & !item.isFolder)
+    },
+
+    EXISTING_FS: state => {
+        return state.files.filter(item => item.exists)
     }
 };
 

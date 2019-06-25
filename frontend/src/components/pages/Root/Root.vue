@@ -15,12 +15,14 @@
             <div v-if="EXISTING_FILES.length === 0">
                 <h3>Поиск не дал результата</h3>
             </div>
+
             <template v-for="(item, index) in EXISTING_FILES">
                 <file-component :file="item" :key="item.id"></file-component>
                 <v-divider
                         v-if="index + 1 < EXISTING_FILES.length"
                         :key="index"
                 ></v-divider>
+
             </template>
         </v-list>
 
@@ -44,7 +46,7 @@
             }
         },
         computed: {
-            ...mapGetters(['EXISTING_FILES']),
+            ...mapGetters(['EXISTING_FILES', 'EXISTING_FS', 'EXISTING_FOLDERS']),
         },
         methods: {
             ...mapActions(['getFiles'])
