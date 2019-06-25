@@ -1,70 +1,105 @@
 <template>
-    <v-list-tile avatar>
-        <v-list-tile-avatar>
-            <v-icon class="grey white--text">{{ file.fileType }}</v-icon>
-        </v-list-tile-avatar>
+    <v-card>
+        <v-card-title primary-title>
+            <v-list-tile-avatar color="grey darken-3">
+                <v-icon class="grey white--text">{{ file.fileType }}</v-icon>
+            </v-list-tile-avatar>
+            <div>
+                <div class="title">{{ file.filename }}</div>
+                <span class="subheading">Изменено: {{dateModified(file.modified) }}</span><br>
+                <div class="grey--text" v-if="file.secureLink">
+                            <span v-if="file.secureLink.isExpired" style="color: red">
+                                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
+                            </span>
+                    <span v-else>
+                                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
+                    </span>
+                </div>
+            </div>
+            <v-spacer></v-spacer>
+            <v-card-actions>
+                <!--Если файл-->
+                <div v-if="!file.isFolder">
+                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
+                           flat
+                           color="primary"
+                           v-clipboard:copy="file.secureLink.url"
+                           v-clipboard:success="clipboardSuccessHandler"
+                           v-clipboard:error="clipboardErrorHandler">
+                        Скопировать ссылку
+                    </v-btn>
 
-        <v-list-tile-content>
-            <v-list-tile-title>{{ file.filename }}</v-list-tile-title>
-            <v-list-tile-sub-title class="text--primary">
-                Файл изменен: {{dateModified(file.modified) }}
-            </v-list-tile-sub-title>
+                    <v-btn v-else
+                           flat
+                           @click="createLink(file)"
+                    >Создать ссылку
+                    </v-btn>
+                </div>
 
-            <v-list-tile-sub-title v-if="file.secureLink">
-                <p v-if="file.secureLink.isExpired" style="color: red">
-                    Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}</p>
-                <p v-else>
-                    Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}</p>
-            </v-list-tile-sub-title>
+                <!--Если папка-->
+                <div v-else>
+                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
+                           flat
+                           color="success"
+                           v-clipboard:copy="file.secureLink.url"
+                           v-clipboard:success="clipboardSuccessHandler"
+                           v-clipboard:error="clipboardErrorHandler">
+                        Скопировать ссылку
+                    </v-btn>
 
-        </v-list-tile-content>
+                    <v-tooltip v-else bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                    flat
+                                    v-on="on"
+                                    color="primary"
+                                    @click="createFolderLink(file)"
+                            >Создать ссылку на папку
+                            </v-btn>
+                        </template>
+                        <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
+                    </v-tooltip>
+                </div>
 
-        <div v-if="file.secureLink && !file.secureLink.isExpired">
-            <v-btn
-                    outline
-                    color="success"
-                    v-clipboard:copy="file.secureLink.url"
-                    v-clipboard:success="clipboardSuccessHandler"
-                    v-clipboard:error="clipboardErrorHandler">
-                Скопировать ссылку
-            </v-btn>
-        </div>
 
-        <v-btn v-else
-               outline
-               color="primary"
-               @click="createLink(file)"
-        >Создать ссылку
-        </v-btn>
-
-        <v-menu bottom right>
-            <template v-slot:activator="{ on }">
-                <v-btn
-                        flat
-                        icon
-                        color="primary"
-                        v-on="on"
-                >
-                    <v-icon>more_vert</v-icon>
+                <v-btn icon @click.native="show = !show">
+                    <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
-            </template>
 
-            <v-list v-if="file.secureLink && !file.secureLink.isExpired">
-                <v-list-tile @click="createLink(file)">
-                    <v-icon>refresh</v-icon>
-                    <v-list-tile-content>
+                <v-list-tile-action>
+                    <v-list-tile-action-text>
+                        {{humanFileSize(file.size, true)}}
+                    </v-list-tile-action-text>
+                </v-list-tile-action>
+
+            </v-card-actions>
+        </v-card-title>
+
+        <v-slide-y-transition>
+            <!--То что в дропдауне-->
+            <v-card-text v-show="show">
+                <div v-if="file.isFolder">
+                    <p>Папка содержит файлы: </p>
+                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
+                           @click.native="createFolderLink(file)"
+                           flat
+                    >
+                        Пересоздать ссылку на папку
+                    </v-btn>
+                </div>
+
+                <div v-else>
+                    <v-btn
+                            @click="createLink(file)"
+                            flat
+                    >
                         Пересоздать ссылку
-                    </v-list-tile-content>
-                </v-list-tile>
-            </v-list>
-        </v-menu>
-
-        <v-list-tile-action>
-            <v-list-tile-action-text>
-                {{humanFileSize(file.size, true)}}
-            </v-list-tile-action-text>
-        </v-list-tile-action>
-    </v-list-tile>
+                    </v-btn>
+                </div>
+            </v-card-text>
+        </v-slide-y-transition>
+        <v-divider></v-divider>
+    </v-card>
 </template>
 
 <script>
@@ -76,7 +111,9 @@
         props: {
             file: Object
         },
-        data: () => ({}),
+        data: () => ({
+            show: false,
+        }),
         methods: {
             ...mapMutations(['showSnackbar']),
             ...mapActions(['getFiles']),
@@ -120,6 +157,9 @@
                         })
                     })
                 });
+            },
+            createFolderLink(folder) {
+                console.log(folder)
             },
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({

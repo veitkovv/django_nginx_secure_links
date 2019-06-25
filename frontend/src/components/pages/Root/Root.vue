@@ -7,24 +7,18 @@
                       hide-details
         ></v-text-field>
 
-        <v-list two-line subheader>
-            <v-subheader inset>Файлы</v-subheader>
-            <div v-if="EXISTING_FILES.length === 0 && search.length === 0">
-                <h3>Папка secure пуста</h3>
-            </div>
-            <div v-if="EXISTING_FILES.length === 0">
-                <h3>Поиск не дал результата</h3>
-            </div>
+        <span class="subheader grey--text">Всего элементов: {{EXISTING_FILES.length}}</span>
+        <div v-if="EXISTING_FILES.length === 0 && search.length === 0">
+            <h3>Папка secure пуста</h3>
+        </div>
+        <div v-if="EXISTING_FILES.length === 0">
+            <h3>Поиск не дал результата</h3>
+        </div>
 
-            <template v-for="(item, index) in EXISTING_FILES">
-                <file-component :file="item" :key="item.id"></file-component>
-                <v-divider
-                        v-if="index + 1 < EXISTING_FILES.length"
-                        :key="index"
-                ></v-divider>
+        <template v-for="(item, index) in EXISTING_FILES">
+            <file-component :file="item" :key="item.id"></file-component>
+        </template>
 
-            </template>
-        </v-list>
 
     </v-flex>
 </template>

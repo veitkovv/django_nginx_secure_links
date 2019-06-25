@@ -83,17 +83,12 @@ class File(models.Model):
 
     @property
     def size(self):
-        if self.is_folder:
+        """
+        :return: Возвращает размер файла, или размер папки в байтах.
+        """
+        if self.exists and self.is_folder:
             folder_path = os.path.join(settings.SECURE_LINK_PATH, self.file.name)
-            # return sum(fs.size(f) for f in os.listdir(folder_path) if os.path.isfile(f))
-            total_size = 0
-            for dirpath, dirnames, filenames in os.walk(folder_path):
-                for f in filenames:
-                    fp = os.path.join(dirpath, f)
-                    # skip if it is symbolic link
-                    if not os.path.islink(fp):
-                        total_size += os.path.getsize(fp)
-            return total_size
+            return sum(os.path.getsize(f) for f in os.scandir(folder_path) if os.path.isfile(f))
         return fs.size(self.file.name) if self.exists else 0
 
     @property
