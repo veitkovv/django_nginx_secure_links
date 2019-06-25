@@ -15,6 +15,7 @@ query allFiles($search: String){
       id
       url
       linkDeadline
+      isExpired
       user {
         profile {
           urlTtl

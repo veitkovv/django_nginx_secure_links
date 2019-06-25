@@ -7,11 +7,11 @@
             <div>
                 <div class="title">{{ file.filename }}</div>
                 <span class="subheading">Изменено: {{dateModified(file.modified) }}</span><br>
-                <div class="grey--text" v-if="file.secureLink">
-                            <span v-if="file.secureLink.isExpired" style="color: red">
-                                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
-                            </span>
-                    <span v-else>
+                <div v-if="file.secureLink">
+                    <span v-if="file.secureLink.isExpired" class="red--text">
+                        Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
+                    </span>
+                    <span v-else class="grey--text">
                                 Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
                     </span>
                 </div>
@@ -89,7 +89,7 @@
                 </div>
 
                 <div v-else>
-                    <v-btn
+                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
                             @click="createLink(file)"
                             flat
                     >
