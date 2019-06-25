@@ -15,9 +15,13 @@
 </template>
 
 <script>
+    import {mapMutations} from 'vuex'
+
     export default {
         name: "AppToolbar",
         methods: {
+            ...mapMutations(['showSnackbar']),
+
             changeNavDrawerState() {
                 this.$store.dispatch('changeSidenavDrawerState').then(() => {
                     console.log('nav state changed')
@@ -25,21 +29,16 @@
             },
             refetchFiles() {
                 this.$store.dispatch('getFiles').then(() =>
-                    this.$notify({
-                        group: 'alerts',
-                        type: 'success',
-                        title: 'Список файлов обновлён',
+                    this.showSnackbar({
                         text: 'Список файлов получен с сервера'
                     })
                 )
             },
             doLogout() {
                 this.$store.dispatch('logout').then(() => this.$router.push('/login'));
-                this.$notify({
-                    group: 'alerts',
-                    type: 'success',
-                    title: 'Выход',
+                this.showSnackbar({
                     text: 'Вы успешно вышли из системы'
+
                 })
             }
         }

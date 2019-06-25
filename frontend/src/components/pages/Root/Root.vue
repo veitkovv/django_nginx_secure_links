@@ -45,13 +45,8 @@
         },
         mounted() {
             this.getFiles().then(() =>
-                this.$notify({
-                    group: 'alerts',
-                    type: 'success',
-                    title: 'ОК',
-                    text: 'Успешная загрузка списка файлов'
-                })
-        )
+                console.log('Список файлов успешно загружен с сервера')
+            )
         }
     }
 </script>

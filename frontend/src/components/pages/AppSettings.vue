@@ -14,10 +14,9 @@
                         :label="sliderLabel(current)"
                         :min="MIN_URL_EXPIRES"
                         :max="MAX_URL_EXPIRES"
-                        @end="sliderEnd(current)"
+                        @change="sliderEnd(current)"
                         thumb-label
                         :loading="loading"
-                        hint="Не забудьте пересоздать ссылку"
                         prepend-icon="access_time"
                 ></v-slider>
             </v-flex>
@@ -35,21 +34,20 @@
             loading: false,
         }),
         methods: {
-            ...mapMutations(['SET_URL_EXPIRES']),
+            ...mapMutations(['SET_URL_EXPIRES', 'showSnackbar']),
             ...mapActions(['updateUrlExpires', 'fetchUserData']),
             sliderLabel(days) {
                 return days + ' дней'
             },
             sliderEnd(val) {
                 // update settings && refetch user data
-                this.updateUrlExpires(val);
-                this.fetchUserData();
-                this.$notify({
-                    group: 'alerts',
-                    type: 'success',
-                    title: 'Успех',
-                    text: 'Время жизни ссылки изменено. Не забудьте пересоздать ссылку на файл'
+                this.updateUrlExpires(val).then(() => {
+                    this.showSnackbar({
+                        text: 'Время жизни ссылки изменено. Не забудьте пересоздать ссылку на файл',
+                        color: ''
+                    })
                 });
+                this.fetchUserData();
             }
         },
         computed: {

@@ -68,7 +68,7 @@
 
 <script>
     import CREATE_SECURE_LINK from '../../../graphql/CreateSecureLink.gql'
-    import {mapActions} from 'vuex'
+    import {mapActions, mapMutations} from 'vuex'
 
     export default {
         name: "FileComponent",
@@ -77,6 +77,7 @@
         },
         data: () => ({}),
         methods: {
+            ...mapMutations(['showSnackbar']),
             ...mapActions(['getFiles']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
@@ -113,14 +114,9 @@
                     },
                 }).then(() => {
                     this.getFiles().then(() =>
-                        this.$notify({
-                            group: 'alerts',
-                            type: 'success',
-                            title: 'Успех',
+                        this.showSnackbar({
                             text: 'Ссылка успешно создана'
-                        })
-                    )
-                    ;
+                        }));
                 });
             },
         }
