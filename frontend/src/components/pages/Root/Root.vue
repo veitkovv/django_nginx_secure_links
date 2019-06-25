@@ -9,6 +9,12 @@
 
         <v-list two-line subheader>
             <v-subheader inset>Файлы</v-subheader>
+            <div v-if="EXISTING_FILES.length === 0 && search.length === 0">
+                <h3>Папка secure пуста</h3>
+            </div>
+            <div v-if="EXISTING_FILES.length === 0">
+                <h3>Поиск не дал результата</h3>
+            </div>
             <template v-for="(item, index) in EXISTING_FILES">
                 <file-component :file="item" :key="item.id"></file-component>
                 <v-divider
@@ -42,6 +48,11 @@
         },
         methods: {
             ...mapActions(['getFiles'])
+        },
+        watch: {
+            search: function (val) {
+                this.getFiles(val)
+            }
         },
         mounted() {
             this.getFiles().then(() =>

@@ -2,7 +2,7 @@ import {apolloClient} from '../../vue-apollo'
 import FILES_QUERY from '../../graphql/Files.gql'
 
 const state = {
-    files: []
+    files: [],
 };
 
 const getters = {
@@ -25,9 +25,12 @@ const mutations = {
 };
 
 const actions = {
-    async getFiles({commit}) {
+    async getFiles({commit}, search = '') {
         const response = await apolloClient.query({
-            query: FILES_QUERY
+            query: FILES_QUERY,
+            variables: {
+                search: search
+            }
         });
         commit('SET_FILES', response.data.allFiles)
     },

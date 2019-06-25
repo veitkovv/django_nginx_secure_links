@@ -26,7 +26,6 @@
                     v-clipboard:copy="file.secureLink.url"
                     v-clipboard:success="clipboardSuccessHandler"
                     v-clipboard:error="clipboardErrorHandler">
-                >
                 Скопировать ссылку
             </v-btn>
         </div>

@@ -21,10 +21,14 @@ class FileType(DjangoObjectType):
 
 
 class Query(object):
-    all_files = graphene.List(FileType)
+    file = graphene.relay.Node.Field(FileType)
+    all_files = graphene.List(FileType, search=graphene.String())
 
     @login_required
     def resolve_all_files(self, info, **kwargs):
         fs = FileSystem()
         fs.walk()  # rescan file system
-        return File.objects.all().order_by('file')
+
+        search = kwargs.get('search')
+        queryset = File.objects.filter(file__icontains=search)
+        return queryset.order_by('file')
