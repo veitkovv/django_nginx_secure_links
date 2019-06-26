@@ -3,12 +3,13 @@ import graphene
 from graphene_django.types import DjangoObjectType
 from graphql_jwt.decorators import login_required
 
-from ..models import File, FileSystem
+from ..models import File as FileModel
+from ..utils import filesystem_helper as filesystem_utils
 
 
 class FileType(DjangoObjectType):
     class Meta:
-        model = File
+        model = FileModel
         interfaces = (graphene.relay.Node,)
 
     exists = graphene.Boolean(source='exists')
@@ -26,9 +27,7 @@ class Query(object):
 
     @login_required
     def resolve_all_files(self, info, **kwargs):
-        fs = FileSystem()
-        fs.walk()  # rescan file system
-
+        filesystem_utils.walk()  # rescan file system
         search = kwargs.get('search')
-        queryset = File.objects.filter(file__icontains=search)
+        queryset = FileModel.objects.filter(file__icontains=search)
         return queryset.order_by('file')
