@@ -18,9 +18,13 @@ const router = new Router({
             path: '/about',
             component: () => import('../components/pages/About')
         },
-                {
+        {
             path: '/settings',
             component: () => import('../components/pages/AppSettings')
+        },
+        {
+            path: '/calendar',
+            component: () => import('../components/pages/AppCalendar')
         },
         {
             path: '*',

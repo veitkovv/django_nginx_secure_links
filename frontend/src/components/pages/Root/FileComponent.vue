@@ -63,7 +63,7 @@
                 </div>
 
 
-                <v-btn icon @click.native="show = !show" :disabled="!file.secureLink">
+                <v-btn icon @click.native="show = !show" :disabled="!file.secureLink && !file.isFolder">
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 

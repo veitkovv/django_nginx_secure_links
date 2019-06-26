@@ -5,6 +5,7 @@
             app
     >
         <v-list dense>
+            <!--            TODO refactor this with v-for-->
             <v-list-tile :to="{path: '/'}">
                 <v-list-tile-action>
                     <v-icon>home</v-icon>
@@ -29,6 +30,15 @@
                 </v-list-tile-action>
                 <v-list-tile-content>
                     <v-list-tile-title>Настройки</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile :to="{path: '/calendar'}">
+                <v-list-tile-action>
+                    <v-icon>calendar_today</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>Календарь</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
 
