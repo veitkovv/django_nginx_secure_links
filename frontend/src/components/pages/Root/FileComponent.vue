@@ -6,7 +6,7 @@
             </v-list-tile-avatar>
             <div>
                 <div class="title">{{ file.filename }}</div>
-                <span class="subheading">Изменено: {{dateModified(file.modified) }}</span><br>
+                <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span><br>
                 <div v-if="file.secureLink">
                     <span v-if="file.secureLink.isExpired" class="red--text">
                         Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
@@ -22,7 +22,7 @@
                 <div v-if="!file.isFolder">
                     <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
                            flat
-                           color="primary"
+                           color="success"
                            v-clipboard:copy="file.secureLink.url"
                            v-clipboard:success="clipboardSuccessHandler"
                            v-clipboard:error="clipboardErrorHandler">
@@ -31,6 +31,7 @@
 
                     <v-btn v-else
                            flat
+                           color="primary"
                            @click="createLink(file)"
                     >Создать ссылку
                     </v-btn>
@@ -62,7 +63,7 @@
                 </div>
 
 
-                <v-btn icon @click.native="show = !show">
+                <v-btn icon @click.native="show = !show" :disabled="!file.secureLink">
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 
@@ -78,24 +79,34 @@
         <v-slide-y-transition>
             <!--То что в дропдауне-->
             <v-card-text v-show="show">
-                <div v-if="file.isFolder">
-                    <p>Папка содержит файлы: </p>
-                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                           @click.native="createFolderLink(file)"
-                           flat
-                    >
-                        Пересоздать ссылку на папку
-                    </v-btn>
-                </div>
+                <v-layout row wrap>
+                    <v-flex xs8>
+                        <div v-if="file.isFolder">
+                            <span>Папка содержит файлы: </span>
+                        </div>
+                    </v-flex>
+                    <v-flex xs4>
+                        <div v-if="file.isFolder">
+                            <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
+                                   @click.native="createFolderLink(file)"
+                                   outline
+                            >
+                                Пересоздать ссылку на папку
+                            </v-btn>
+                        </div>
 
-                <div v-else>
-                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                            @click="createLink(file)"
-                            flat
-                    >
-                        Пересоздать ссылку
-                    </v-btn>
-                </div>
+                        <div v-else>
+                            <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
+                                   @click="createLink(file)"
+                                   outline
+                            >
+                                Пересоздать ссылку
+                            </v-btn>
+                        </div>
+                    </v-flex>
+                </v-layout>
+
+
             </v-card-text>
         </v-slide-y-transition>
         <v-divider></v-divider>
