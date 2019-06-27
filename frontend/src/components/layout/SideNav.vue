@@ -33,15 +33,6 @@
                 </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{path: '/calendar'}">
-                <v-list-tile-action>
-                    <v-icon>calendar_today</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>Календарь</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
-
             <v-list-tile :to="{path: '/login'}">
                 <v-list-tile-action>
                     <v-icon>exit_to_app</v-icon>

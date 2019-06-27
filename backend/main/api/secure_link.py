@@ -1,66 +1,36 @@
 # -*- coding: utf-8 -*-
+import re
 import graphene
+import logging
 
-from graphene_django.types import DjangoObjectType
-from graphql_relay.node.node import from_global_id
+from datetime import datetime
+
 from graphql_jwt.decorators import login_required
 
-from ..models import SecureLink, File
+from ..filesystem import filesystem
 
-
-class SecureLinkType(DjangoObjectType):
-    class Meta:
-        model = SecureLink
-
-    link_deadline = graphene.DateTime(source='link_deadline')
-    is_expired = graphene.Boolean(source='is_expired')
-
-
-class Query(object):
-    secure_link = graphene.Field(SecureLinkType)
-    all_secure_links = graphene.List(SecureLinkType)
-
-    @login_required
-    def resolve_all_secure_links(self, info, **kwargs):
-        return SecureLink.objects.all()
-
-    @login_required
-    def resolve_secure_link(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            return SecureLink.objects.get(pk=id)
+logger = logging.getLogger(__name__)
 
 
 class SecureLinkMutation(graphene.Mutation):
     class Arguments:
         # The input arguments for this mutation
-        file_id = graphene.ID()
+        filename = graphene.String()
 
     # The class attributes define the response of the mutation
-    secure_link = graphene.Field(SecureLinkType)
+    secure_link = graphene.String()  # Ссылка в формате nginx secure link
+    link_deadline = graphene.DateTime()  # Время когда ссылка перестанет быть действительной для WEB API
 
     @login_required
-    def mutate(self, info, file_id):
-        # 0. Найти модели по входным ID
-        _, id_ = from_global_id(file_id)
-        file = File.objects.get(pk=id_)
-
-        secure_link = SecureLink()
-
-        # 1. связать юзера с моделью
-        secure_link.user = info.context.user
-
-        # 2. сгенерировать ссылку, связать с моделью
+    def mutate(self, info, filename):
+        logger.info(f'User "{info.context.user}" gonna be create secure link to file {filename}')
         domain_name = info.context.environ['HTTP_HOST']  # получить имя домена, с которого пользователь зашел
-        secure_link.url = secure_link.generate_secure_link(file.filename, domain_name)
-        secure_link.save()
+        secure_link = filesystem.generate_secure_link(domain_name, filename, info.context.user.profile.url_ttl)
 
-        # 3. связать файл с моделью
-        file.secure_link = secure_link
-        file.save()
-
-        # Notice we return an instance of this mutation
-        return SecureLinkMutation(secure_link=secure_link)
+        # Берет timestamp из URL посредством простой регулярки и сравнивает с текущим временем
+        link_deadline = datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(secure_link)).group(0)))
+        logger.info(f'User "{info.context.user}" successfully created secure link to file {filename}')
+        return SecureLinkMutation(secure_link=secure_link, link_deadline=link_deadline)
 
 
 class Mutation:

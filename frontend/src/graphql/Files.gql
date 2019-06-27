@@ -1,26 +1,10 @@
 query allFiles($search: String){
   allFiles(search: $search) {
-    id
-    file
-    filename
-    fileDiscovered
-    exists
-    size
-    modified
-    isFolder
-    fileType
-    minTtl
-    maxTtl
-    secureLink {
-      id
-      url
-      linkDeadline
-      isExpired
-      user {
-        profile {
-          urlTtl
-        }
-      }
-    }
+        filename
+        exists
+		size
+		modified
+		isFolder
+		fileType
   }
 }

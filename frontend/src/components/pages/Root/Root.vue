@@ -11,12 +11,12 @@
         <div v-if="EXISTING_FILES.length === 0 && search.length === 0">
             <h3>Папка secure пуста</h3>
         </div>
-        <div v-if="EXISTING_FILES.length === 0">
+        <div v-if="EXISTING_FILES.length === 0 && search.length !== 0">
             <h3>Поиск не дал результата</h3>
         </div>
 
         <template v-for="(item, index) in EXISTING_FILES">
-            <file-component :file="item" :key="item.id"></file-component>
+            <file-component :file="item" :key="index"></file-component>
         </template>
 
 

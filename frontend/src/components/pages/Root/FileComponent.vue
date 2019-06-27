@@ -6,64 +6,80 @@
             </v-list-tile-avatar>
             <div>
                 <div class="title">{{ file.filename }}</div>
-                <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span><br>
-                <div v-if="file.secureLink">
-                    <span v-if="file.secureLink.isExpired" class="red--text">
-                        Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
-                    </span>
-                    <span v-else class="grey--text">
-                                Ссылка действительна до {{linkDeadlineTime(file.secureLink.linkDeadline)}}
-                    </span>
-                </div>
+                <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
             <v-spacer></v-spacer>
             <v-card-actions>
                 <!--Если файл-->
                 <div v-if="!file.isFolder">
-                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                           flat
-                           color="success"
-                           v-clipboard:copy="file.secureLink.url"
-                           v-clipboard:success="clipboardSuccessHandler"
-                           v-clipboard:error="clipboardErrorHandler">
-                        Скопировать ссылку
-                    </v-btn>
+                    <v-dialog
+                            v-model="dialog"
+                            width="500"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                    color="primary"
+                                    outline
+                                    :loading="loading"
+                                    @click.native="createLink(file)"
+                            >
+                                Создать ссылку
+                            </v-btn>
+                        </template>
 
-                    <v-btn v-else
-                           flat
-                           color="primary"
-                           @click="createLink(file)"
-                    >Создать ссылку
-                    </v-btn>
+                        <v-card>
+                            <v-card-title
+                                    class="headline grey lighten-2"
+                                    primary-title
+                            >
+                                Ссылка успешно создана
+                            </v-card-title>
+                            <v-card-text>
+                                <ul>
+                                    <li> Файл: {{file.filename}}</li>
+                                    <li> Размер: {{humanFileSize(file.size, true)}}</li>
+                                    <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
+                                </ul>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+
+                                <v-btn
+                                        color="primary"
+                                        flat
+                                        @click="dialog = false"
+                                >
+                                    Отмена
+                                </v-btn>
+
+                                <v-btn
+                                        color="success"
+                                        flat
+                                        v-clipboard:copy="secureLink.url"
+                                        v-clipboard:success="clipboardSuccessHandler"
+                                        v-clipboard:error="clipboardErrorHandler"
+                                        @click="dialog = false"
+                                >
+                                    Скопировать
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </div>
 
                 <!--Если папка-->
                 <div v-else>
-                    <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                           flat
-                           color="success"
-                           v-clipboard:copy="file.secureLink.url"
-                           v-clipboard:success="clipboardSuccessHandler"
-                           v-clipboard:error="clipboardErrorHandler">
-                        Скопировать ссылку
-                    </v-btn>
-
-                    <v-tooltip v-else bottom>
+                    <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-btn
-                                    flat
-                                    v-on="on"
-                                    color="primary"
-                                    @click="createFolderLink(file)"
-                            >Создать ссылку на папку
-                            </v-btn>
+
                         </template>
                         <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
                     </v-tooltip>
                 </div>
 
 
-                <v-btn icon @click.native="show = !show" :disabled="!file.secureLink && !file.isFolder">
+                <v-btn icon @click.native="show = !show">
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 
@@ -86,31 +102,15 @@
                         </div>
                     </v-flex>
                     <v-flex xs4>
-                        <div v-if="file.isFolder">
-                            <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                                   @click.native="createFolderLink(file)"
-                                   outline
-                            >
-                                Пересоздать ссылку на папку
-                            </v-btn>
-                        </div>
 
-                        <div v-else>
-                            <v-btn v-if="file.secureLink && !file.secureLink.isExpired"
-                                   @click="createLink(file)"
-                                   outline
-                            >
-                                Пересоздать ссылку
-                            </v-btn>
-                        </div>
                     </v-flex>
                 </v-layout>
-
 
             </v-card-text>
         </v-slide-y-transition>
         <v-divider></v-divider>
     </v-card>
+
 </template>
 
 <script>
@@ -124,7 +124,21 @@
         },
         data: () => ({
             show: false,
+            dialog: false,
+            secureLink: {
+                url: '',
+                expires: ''
+            },
+            loading: false,
         }),
+        computed: {
+            linkDeadlineTime: function () {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(this.secureLink.expires);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+            }
+        },
         methods: {
             ...mapMutations(['showSnackbar']),
             ...mapActions(['getFiles']),
@@ -149,24 +163,21 @@
                 } while (Math.abs(bytes) >= thresh && u < units.length - 1);
                 return bytes.toFixed(1) + ' ' + units[u];
             },
-            linkDeadlineTime(datetime) {
-                const moment = require('moment-timezone');
-                const timezone = moment.tz.guess();
-                let date = moment(datetime);
-                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-            },
             createLink(file) {
+                this.secureLink.url = '';
+                this.secureLink.expires = 0;
+                this.loading = true;
+
                 this.$apollo.mutate({
                     mutation: CREATE_SECURE_LINK,
                     variables: {
-                        fileId: file.id
+                        filename: file.filename
                     },
-                }).then(() => {
-                    this.getFiles().then(() => {
-                        this.showSnackbar({
-                            text: 'Ссылка на файл "' + file.filename + '" успешно создана'
-                        })
-                    })
+                }).then((data) => {
+                    this.secureLink.url = data.data.createSecureLink.secureLink;
+                    this.secureLink.expires = data.data.createSecureLink.linkDeadline;
+                    this.dialog = true;
+                    this.loading = false;
                 });
             },
             createFolderLink(folder) {

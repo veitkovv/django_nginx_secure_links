@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for backend project.
 
@@ -162,6 +163,30 @@ CSRF_TRUSTED_ORIGINS = (
     'http://localhost:8000',
     'http://localhost'
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'main_formatter',
+        },
+    },
+    'loggers': {
+        '': {  # 'catch all' loggers by referencing it with the empty string
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+    'formatters': {
+        'main_formatter': {
+            'format': '%(levelname)s:%(name)s: %(message)s '
+                      '(%(asctime)s; %(filename)s:%(lineno)d)',
+            'datefmt': "%Y-%m-%d %H:%M:%S",
+        },
+    },
+}
 
 EXTENSIONS = {
     'image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],

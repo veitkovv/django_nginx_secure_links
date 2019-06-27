@@ -1,6 +1,6 @@
 <template>
     <v-toolbar scroll-off-screen color="primary" dark fixed prominent app>
-        <v-toolbar-side-icon @click.stop="changeNavDrawerState"></v-toolbar-side-icon>
+        <v-toolbar-side-icon @click.stop="changeSidenavDrawerState"></v-toolbar-side-icon>
         <v-toolbar-title class="white--text">Secure Links</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
@@ -15,27 +15,22 @@
 </template>
 
 <script>
-    import {mapMutations} from 'vuex'
+    import {mapMutations, mapActions} from 'vuex'
 
     export default {
         name: "AppToolbar",
         methods: {
             ...mapMutations(['showSnackbar']),
-
-            changeNavDrawerState() {
-                this.$store.dispatch('changeSidenavDrawerState').then(() => {
-                    console.log('nav state changed')
-                })
-            },
+            ...mapActions(['changeSidenavDrawerState', 'getFiles', 'logout']),
             refetchFiles() {
-                this.$store.dispatch('getFiles').then(() =>
+                this.getFiles().then(() =>
                     this.showSnackbar({
                         text: 'Список файлов получен с сервера'
                     })
                 )
             },
             doLogout() {
-                this.$store.dispatch('logout').then(() => this.$router.push('/login'));
+                this.logout().then(() => this.$router.push('/login'));
                 this.showSnackbar({
                     text: 'Вы успешно вышли из системы'
 

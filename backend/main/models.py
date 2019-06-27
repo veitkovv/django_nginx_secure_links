@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
-import os
-import re
-
-from datetime import datetime
-
 from django.db import models
+from django.db.models.signals import post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.files.storage import FileSystemStorage
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .utils.nginx_secure_link import secure_link as make_link_secure
 
 
 class Profile(models.Model):
@@ -35,81 +28,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
-
-fs = FileSystemStorage(location=settings.SECURE_LINK_PATH)
-
-
-class File(models.Model):
-    class Meta:
-        verbose_name = 'Файл'
-        verbose_name_plural = 'Файлы'
-
-    file = models.FileField(storage=fs)
-    file_discovered = models.DateTimeField(auto_now=True, null=True, blank=True, editable=False)
-    secure_link = models.ForeignKey('SecureLink', blank=True, null=True, on_delete=models.CASCADE)
-    is_folder = models.BooleanField(default=False)
-
-    @property
-    def filename(self):
-        return os.path.basename(self.file.name)
-
-    @property
-    def exists(self):
-        return fs.exists(self.file.name)
-
-    def _get_folder_size(self):
-        """Sum files sizes contains current folder"""
-        return sum(os.path.getsize(f) for f in os.scandir(self.file.path) if os.path.isfile(f))
-
-    @property
-    def size(self):
-        """
-        :return: Возвращает размер файла, или размер папки в байтах.
-        """
-        if self.exists:
-            if self.is_folder:
-                return self._get_folder_size()
-            return fs.size(self.file.name)
-        return 0
-
-    @property
-    def modified(self):
-        return fs.get_modified_time(self.file.name).timestamp() if self.exists else None
-
-    def get_file_type(self):
-        """
-        TODO move it to frontend
-        :return material icons names for frontend
-        """
-        if self.is_folder:
-            return 'folder'
-        filename, ext = os.path.splitext(self.file.name)
-        result = next((item for item in settings.EXTENSIONS.items() if ext in item[1]), None)
-        return result[0] if result else 'note'
-
-
-class SecureLink(models.Model):
-    class Meta:
-        verbose_name = 'Ссылка на файл'
-
-    url = models.URLField(verbose_name='Публичная ссылка', editable=False)
-    secure_link_created = models.DateTimeField(auto_now=True, verbose_name='Время создания ссылки', editable=False,
-                                               null=True,
-                                               blank=True)
-    user = models.ForeignKey(get_user_model(), verbose_name='Кто создал ссылку', on_delete=models.DO_NOTHING,
-                             blank=True, null=True)
-
-    def generate_secure_link(self, filename, domain_name):
-        secure_link = 'http://' + domain_name + '/secure/' + filename
-        return make_link_secure(secure_link, self.user.profile.url_ttl)
-
-    def is_expired(self):
-        return datetime.now() > self.link_deadline
-
-    @property
-    def link_deadline(self):
-        """
-        Время когда ссылка перестанет быть действительной для WEB API
-        Берем последние числа из сохраненной URL посредством простой регулярки
-        """
-        return datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(self.url)).group(0)))

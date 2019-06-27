@@ -1,9 +1,6 @@
-mutation createSecureLink($fileId: ID!) {
-  createSecureLink(fileId: $fileId) {
-    secureLink {
-      id
-      url
-      secureLinkCreated
-    }
+mutation secureLinkMutation($filename: String!) {
+  createSecureLink(filename: $filename){
+    secureLink
+    linkDeadline
   }
 }

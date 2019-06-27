@@ -23,10 +23,6 @@ const router = new Router({
             component: () => import('../components/pages/AppSettings')
         },
         {
-            path: '/calendar',
-            component: () => import('../components/pages/AppCalendar')
-        },
-        {
             path: '*',
             component: () => import('../components/pages/NotFound')
         }
