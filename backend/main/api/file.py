@@ -51,8 +51,6 @@ class CreateArchiveMutation(graphene.Mutation):
     def mutate(self, info, folder_name):
         logger.info(f'User {info.context.user} starting create tarball off {folder_name}')
         created_archive_name = filesystem.make_tarfile(folder_name, folder_name)
-        import time
-        time.sleep(3)
         ok = True
 
         return CreateArchiveMutation(ok=ok, created_archive_name=created_archive_name)

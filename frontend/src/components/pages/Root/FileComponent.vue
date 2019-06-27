@@ -131,32 +131,39 @@
         props: {
             file: Object
         },
-        data: () => ({
-            show: false,
-            dialog: false,
-            secureLink: {
-                url: '',
-                expires: ''
-            },
-            loading: false,
-        }),
-        computed: {
-            linkDeadlineTime: function () {
-                const moment = require('moment-timezone');
-                const timezone = moment.tz.guess();
-                let date = moment(this.secureLink.expires);
-                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+        data:
+            () => ({
+                show: false,
+                dialog: false,
+                tarCreatedDialog: false,
+                secureLink: {
+                    url: '',
+                    expires: ''
+                },
+                loading: false,
+            }),
+        computed:
+            {
+                linkDeadlineTime: function () {
+                    const moment = require('moment-timezone');
+                    const timezone = moment.tz.guess();
+                    let date = moment(this.secureLink.expires);
+                    return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+                }
             }
-        },
+        ,
         methods: {
-            ...mapMutations(['showSnackbar']),
-            ...mapActions(['getFiles']),
+            ...
+                mapMutations(['showSnackbar']),
+            ...
+                mapActions(['getFiles']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
                 let date = moment(timestamp * 1000);
                 return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-            },
+            }
+            ,
             humanFileSize(bytes, si) {
                 let thresh = si ? 1000 : 1024;
                 if (Math.abs(bytes) < thresh) {
@@ -171,7 +178,8 @@
                     ++u;
                 } while (Math.abs(bytes) >= thresh && u < units.length - 1);
                 return bytes.toFixed(1) + ' ' + units[u];
-            },
+            }
+            ,
             createLink(filename) {
                 this.secureLink.url = '';
                 this.secureLink.expires = 0;
@@ -188,11 +196,16 @@
                     this.dialog = true;
                     this.loading = false;
                 });
-            },
+            }
+            ,
             createFolderLink(file) {
                 this.loading = true;
                 if (file.tarballCreated) {
-                    console.log('tarball created')
+                    this.showSnackbar({
+                        text: 'Архив данной папки уже создан, создайте ссылку на него.',
+                        color: 'info'
+                    })
+                    this.loading = false;
                 } else {
                     this.$apollo.mutate({
                         mutation: CREATE_ARCHIVE,
@@ -203,12 +216,14 @@
                         this.createLink(data.data.createArchive.createdArchiveName)
                     });
                 }
-            },
+            }
+            ,
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({
                     text: 'Ссылка успешно скопирована'
                 })
-            },
+            }
+            ,
 
             clipboardErrorHandler({value, event}) {
                 this.showSnackbar({

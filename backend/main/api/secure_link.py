@@ -30,8 +30,6 @@ class SecureLinkMutation(graphene.Mutation):
 
         # Берет timestamp из URL посредством простой регулярки и сравнивает с текущим временем
         link_deadline = datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(secure_link)).group(0)))
-        import time  # TODO debug
-        time.sleep(2)
 
         ok = True
         logger.info(f'User "{info.context.user}" successfully created secure link to file {filename}')
