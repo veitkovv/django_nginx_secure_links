@@ -5,6 +5,7 @@ query allFiles($search: String){
 		size
 		modified
 		isFolder
+		tarballCreated
 		fileType
   }
 }

@@ -14,6 +14,7 @@ class FileType(graphene.ObjectType):
     size = graphene.Int()
     modified = graphene.Float()
     is_folder = graphene.Boolean()
+    tarball_created = graphene.Boolean()
     file_type = graphene.String()
 
     def resolve_filename(self, info):
@@ -31,8 +32,30 @@ class FileType(graphene.ObjectType):
     def resolve_is_folder(self, info):
         return self.is_folder
 
+    def resolve_tarball_created(self, info):
+        """Создан ли архив для папки"""
+        return filesystem.is_file_exists(self.filename + '.tar') if self.is_folder else False
+
     def resolve_file_type(self, info):
         return self.get_file_type()
+
+
+class CreateArchiveMutation(graphene.Mutation):
+    class Arguments:
+        folder_name = graphene.String()
+
+    ok = graphene.Boolean()
+    created_archive_name = graphene.String()
+
+    @login_required
+    def mutate(self, info, folder_name):
+        logger.info(f'User {info.context.user} starting create tarball off {folder_name}')
+        created_archive_name = filesystem.make_tarfile(folder_name, folder_name)
+        import time
+        time.sleep(3)
+        ok = True
+
+        return CreateArchiveMutation(ok=ok, created_archive_name=created_archive_name)
 
 
 class Query(object):
@@ -46,3 +69,7 @@ class Query(object):
         if search:
             return [i for i in all_files if search in i.filename]
         return all_files
+
+
+class Mutation:
+    create_archive = CreateArchiveMutation.Field()

@@ -12,6 +12,7 @@ class Query(user.Query,
 
 
 class Mutation(user.Mutation,
+               file.Mutation,
                secure_link.Mutation,
                default_settings.Mutation,
                graphene.ObjectType

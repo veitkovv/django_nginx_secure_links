@@ -10,76 +10,84 @@
             </div>
             <v-spacer></v-spacer>
             <v-card-actions>
-                <!--Если файл-->
-                <div v-if="!file.isFolder">
-                    <v-dialog
-                            v-model="dialog"
-                            width="500"
-                    >
-                        <template v-slot:activator="{ on }">
+                <v-dialog
+                        v-model="dialog"
+                        width="500"
+                >
+                    <template v-slot:activator="{ on }">
+                        <!--Если папка-->
+                        <div v-if="file.isFolder">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                            color="primary"
+                                            outline
+                                            :loading="loading"
+                                            v-on="on"
+                                            @click.native="createFolderLink(file)"
+                                    >
+                                        Создать ссылку
+                                    </v-btn>
+                                </template>
+                                <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
+                            </v-tooltip>
+                        </div>
+
+                        <!--Если файл-->
+                        <v-btn v-else
+                               color="primary"
+                               outline
+                               :loading="loading"
+                               @click.native="createLink(file.filename)"
+                        >
+                            Создать ссылку
+                        </v-btn>
+
+                    </template>
+
+                    <!--Содержимое диалога-->
+                    <v-card>
+                        <v-card-title
+                                class="headline grey lighten-2"
+                                primary-title
+                        >
+                            Ссылка успешно создана
+                        </v-card-title>
+                        <v-card-text>
+                            <ul>
+                                <li> Файл: {{file.filename}}</li>
+                                <li> Размер: {{humanFileSize(file.size, true)}}</li>
+                                <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
+                            </ul>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+
                             <v-btn
                                     color="primary"
-                                    outline
-                                    :loading="loading"
-                                    @click.native="createLink(file)"
+                                    flat
+                                    @click="dialog = false"
                             >
-                                Создать ссылку
+                                Отмена
                             </v-btn>
-                        </template>
 
-                        <v-card>
-                            <v-card-title
-                                    class="headline grey lighten-2"
-                                    primary-title
+                            <v-btn
+                                    color="success"
+                                    flat
+                                    v-clipboard:copy="secureLink.url"
+                                    v-clipboard:success="clipboardSuccessHandler"
+                                    v-clipboard:error="clipboardErrorHandler"
+                                    @click="dialog = false"
                             >
-                                Ссылка успешно создана
-                            </v-card-title>
-                            <v-card-text>
-                                <ul>
-                                    <li> Файл: {{file.filename}}</li>
-                                    <li> Размер: {{humanFileSize(file.size, true)}}</li>
-                                    <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
-                                </ul>
-                            </v-card-text>
+                                Скопировать
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
 
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
+                </v-dialog>
 
-                                <v-btn
-                                        color="primary"
-                                        flat
-                                        @click="dialog = false"
-                                >
-                                    Отмена
-                                </v-btn>
-
-                                <v-btn
-                                        color="success"
-                                        flat
-                                        v-clipboard:copy="secureLink.url"
-                                        v-clipboard:success="clipboardSuccessHandler"
-                                        v-clipboard:error="clipboardErrorHandler"
-                                        @click="dialog = false"
-                                >
-                                    Скопировать
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-                </div>
-
-                <!--Если папка-->
-                <div v-else>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-
-                        </template>
-                        <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
-                    </v-tooltip>
-                </div>
-
-
-                <v-btn icon @click.native="show = !show">
+                <v-btn icon @click.native="show = !show" disabled>
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 
@@ -115,6 +123,7 @@
 
 <script>
     import CREATE_SECURE_LINK from '../../../graphql/CreateSecureLink.gql'
+    import CREATE_ARCHIVE from '../../../graphql/CreateArchive.gql'
     import {mapActions, mapMutations} from 'vuex'
 
     export default {
@@ -163,7 +172,7 @@
                 } while (Math.abs(bytes) >= thresh && u < units.length - 1);
                 return bytes.toFixed(1) + ' ' + units[u];
             },
-            createLink(file) {
+            createLink(filename) {
                 this.secureLink.url = '';
                 this.secureLink.expires = 0;
                 this.loading = true;
@@ -171,7 +180,7 @@
                 this.$apollo.mutate({
                     mutation: CREATE_SECURE_LINK,
                     variables: {
-                        filename: file.filename
+                        filename: filename
                     },
                 }).then((data) => {
                     this.secureLink.url = data.data.createSecureLink.secureLink;
@@ -180,8 +189,20 @@
                     this.loading = false;
                 });
             },
-            createFolderLink(folder) {
-                console.log(folder)
+            createFolderLink(file) {
+                this.loading = true;
+                if (file.tarballCreated) {
+                    console.log('tarball created')
+                } else {
+                    this.$apollo.mutate({
+                        mutation: CREATE_ARCHIVE,
+                        variables: {
+                            folderName: file.filename
+                        },
+                    }).then((data) => {
+                        this.createLink(data.data.createArchive.createdArchiveName)
+                    });
+                }
             },
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({

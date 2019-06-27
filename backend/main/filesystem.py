@@ -11,29 +11,48 @@ logger = logging.getLogger(__name__)
 
 
 class FileSystem:
+    """Класс для работы с файловой системой"""
+
     def __init__(self, path):
         self._path = path
 
     def walk(self):
         """
-        discover new files and folders on filesystem
+        Сканирование файловой системы по пути из settings.SECURE_LINK_PATH,
+        возвращает генератор списка для дальнейшей работы в API
         """
         logger.info(f'filesystem will be rescanned, path: {self._path}')
-        result = [File(f) for f in os.scandir(self._path)]
+        result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
         logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
         return result
 
     def make_tarfile(self, output_filename, source_dir):
-        with tarfile.open(output_filename, "w") as tar:
-            tar.add(source_dir, arcname=os.path.basename(source_dir))
+        archive_name = os.path.join(self._path, output_filename + '.tar')
+        with tarfile.open(archive_name, "w:tar") as tar:
+            tar.add(os.path.join(self._path, source_dir), arcname=os.path.basename(source_dir))
+        return os.path.basename(archive_name)
 
-    @staticmethod
-    def generate_secure_link(domain_name, filename, ttl):
+    def generate_secure_link(self, domain_name, filename, ttl):
+        if self.is_folder(filename):
+            # Проверить есть ли архив
+            # Если да - пересоздать или использовать существующий
+            # Если нет - создать архив
+            # Сгенерировать ссылку на архив
+            pass
+
         secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, ttl)
 
+    def is_folder(self, filename):
+        return os.path.isdir(os.path.join(self._path, filename))
+
+    def is_file_exists(self, filename):
+        return os.path.exists(os.path.join(self._path, filename))
+
 
 class File:
+    """Класс реализует методы для API"""
+
     def __init__(self, file):
         self.file = file
 
