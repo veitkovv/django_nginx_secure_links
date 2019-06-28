@@ -215,6 +215,7 @@
                     this.showSnackbar({
                         text: 'Архив данной папки уже создан, создайте ссылку на него.',
                         color: 'info'
+
                     })
                     this.loading = false;
                 } else {

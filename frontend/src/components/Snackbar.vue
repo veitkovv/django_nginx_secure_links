@@ -4,7 +4,6 @@
                 auto-height
                 right
                 top
-                absolute
                 v-model="SNACKBAR.visible"
                 :timeout="SNACKBAR.timeout"
                 :color="SNACKBAR.color"
