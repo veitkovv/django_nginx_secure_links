@@ -69,7 +69,10 @@ RUN cd /tmp/nginx-${NGINX_VERSION} \
   && adduser -D nginx \
   && mkdir -p /var/cache/nginx \
   && apk del .build-deps \
-  && rm -rf /tmp/*
+  && rm -rf /tmp/* \
+  # forward request and error logs to docker log collector
+  && ln -sf /dev/stdout /var/log/nginx/access.log \
+  && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
