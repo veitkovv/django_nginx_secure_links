@@ -24,7 +24,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="login">
+                    <v-btn color="primary" @click.native="appLogin">
                         Войти
                     </v-btn>
                 </v-card-actions>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-    import {mapGetters, mapMutations} from 'vuex';
+    import {mapGetters, mapMutations, mapActions} from 'vuex';
 
     export default {
         name: "AppLogin",
@@ -43,20 +43,27 @@
             password: ''
         }),
         methods: {
-            login() {
-                this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => {
-                    this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
-                    this.$store.dispatch('verifyToken').then(() => this.$store.dispatch('fetchUserData').then(() => this.$router.push('/'))
-                    )
+            ...mapActions(['doLogin', 'verifyToken', 'fetchUserData']),
+            ...mapMutations(['showSnackbar']),
+            appLogin() {
+                this.doLogin({
+                    username: this.username,
+                    password: this.password
+                }).then(() => {
+                    this.verifyToken()
+                        .then(() => this.fetchUserData()
+                            .then(() => {
+                                this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
+                                this.$router.push('/')
+                            }))
                 }, error => {
-                    this.showSnackbar({text: 'Ошибка авторизации', color: 'error'});
+                    this.showSnackbar({text: error, color: 'error'});
                 })
             },
-            ...mapMutations(['showSnackbar']),
         },
         computed: {
             ...mapGetters(['IS_AUTHENTICATED', 'TOKEN_DATA', 'CURRENT_USER_DATA'])
-        }
+        },
     }
 </script>
 

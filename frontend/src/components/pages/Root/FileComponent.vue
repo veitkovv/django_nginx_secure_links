@@ -153,10 +153,8 @@
             }
         ,
         methods: {
-            ...
-                mapMutations(['showSnackbar']),
-            ...
-                mapActions(['getFiles']),
+            ...mapMutations(['showSnackbar']),
+            ...mapActions(['getFiles']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
@@ -195,7 +193,11 @@
                     this.secureLink.expires = data.data.createSecureLink.linkDeadline;
                     this.dialog = true;
                     this.loading = false;
-                });
+                }).catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }
+                ));
             }
             ,
             createFolderLink(file) {
@@ -214,7 +216,11 @@
                         },
                     }).then((data) => {
                         this.createLink(data.data.createArchive.createdArchiveName)
-                    });
+                    }).catch(err => this.showSnackbar({
+                            text: err,
+                            color: 'error'
+                        }
+                    ));
                 }
             }
             ,

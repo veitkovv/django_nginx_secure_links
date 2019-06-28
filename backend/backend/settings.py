@@ -189,10 +189,11 @@ LOGGING = {
 }
 
 EXTENSIONS = {
-    'image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
-    'assignment': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
-    'local_movies': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
-    'music_note': ['.mp3', '.wav', '.aiff', '.midi', '.m4p']
+    'image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff', '.gif'],
+    'document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv', '.docx'],
+    'video': ['.mov', '.mp4', '.m4v', '.webm', '.wmv', '.mpeg', '.mpg', '.avi', '.rm', '.mkv'],
+    'audio': ['.mp3', '.wav', '.aiff', '.midi', '.m4p'],
+    'archive': ['.tar', '.rar', '.zip', '.tgz', '']
 }
 
 # Время существования линка в секундах по умолчанию

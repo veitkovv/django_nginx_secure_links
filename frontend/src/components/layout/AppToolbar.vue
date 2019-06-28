@@ -23,18 +23,25 @@
             ...mapMutations(['showSnackbar']),
             ...mapActions(['changeSidenavDrawerState', 'getFiles', 'logout']),
             refetchFiles() {
-                this.getFiles().then(() =>
-                    this.showSnackbar({
+                this.getFiles()
+                    .then(() => this.showSnackbar({
                         text: 'Список файлов получен с сервера'
-                    })
-                )
+                    }))
+                    .catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }))
             },
             doLogout() {
-                this.logout().then(() => this.$router.push('/login'));
-                this.showSnackbar({
-                    text: 'Вы успешно вышли из системы'
+                this.logout()
+                    .then(() => this.showSnackbar({
+                            text: 'Вы успешно вышли из системы'
+                        }), this.$router.push('/login')
+                    ).catch(err => this.showSnackbar({
+                    text: err,
+                    color: 'error'
+                }));
 
-                })
             }
         }
     }

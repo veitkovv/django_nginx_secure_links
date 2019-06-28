@@ -48,6 +48,11 @@
         watch: {
             search: function (val) {
                 this.getFiles(val)
+                    .then(() => console.log('Список файлов успешно загружен с сервера'))
+                    .catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }))
             }
         },
         mounted() {

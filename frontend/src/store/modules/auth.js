@@ -41,7 +41,7 @@ const mutations = {
 };
 
 const actions = {
-    async login({commit}, {username, password}) {
+    async doLogin({commit}, {username, password}) {
         const response = await apolloClient.mutate({
             mutation: LOGIN_MUTATION,
             variables: {
