@@ -1,13 +1,14 @@
 <template>
     <v-card>
         <v-card-title primary-title>
-            <v-list-tile-avatar color="grey darken-3">
-                <v-icon class="grey white--text">{{ file.fileType }}</v-icon>
-            </v-list-tile-avatar>
+            <v-avatar class="mr-3">
+                <v-icon class="grey white--text">{{ fileIcon[file.fileType] }}</v-icon>
+            </v-avatar>
             <div>
                 <div class="title">{{ file.filename }}</div>
                 <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
+
             <v-spacer></v-spacer>
             <v-card-actions>
                 <v-dialog
@@ -131,17 +132,25 @@
         props: {
             file: Object
         },
-        data:
-            () => ({
-                show: false,
-                dialog: false,
-                tarCreatedDialog: false,
-                secureLink: {
-                    url: '',
-                    expires: ''
-                },
-                loading: false,
-            }),
+        data: () => ({
+            show: false,
+            dialog: false,
+            loading: false,
+            tarCreatedDialog: false,
+            secureLink: {
+                url: '',
+                expires: ''
+            },
+            fileIcon: {
+                'image': 'image',
+                'document': 'file_copy',
+                'video': 'local_movies',
+                'audio': 'audiotrack',
+                'archive': 'archive',
+                'folder': 'folder',
+                'undefined': 'block'
+            }
+        }),
         computed:
             {
                 linkDeadlineTime: function () {
@@ -149,7 +158,7 @@
                     const timezone = moment.tz.guess();
                     let date = moment(this.secureLink.expires);
                     return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-                }
+                },
             }
         ,
         methods: {
@@ -236,7 +245,7 @@
                     text: 'Ссылка не скопирована',
                     color: 'error'
                 })
-            }
+            },
         }
     }
 </script>

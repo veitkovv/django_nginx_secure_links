@@ -96,14 +96,13 @@ class File:
 
     def get_file_type(self):
         """
-        TODO move it to frontend
-        :return material icons names for frontend
+        :return guessing file type
         """
         if self.is_folder:
             return 'folder'
         filename, ext = os.path.splitext(self.file.path)
         result = next((item for item in settings.EXTENSIONS.items() if ext in item[1]), None)
-        return result[0] if result else 'note'
+        return result[0] if result else 'undefined'
 
 
 filesystem = FileSystem(path=settings.SECURE_LINK_PATH)
