@@ -10,14 +10,15 @@
 - docker / docker compose
 
 ### Backend
-- python3, django
+- python3.7, django
 - postgreSQL
-- API GraphQL (graphene_django)
+- API GraphQL (graphene, graphene_django)
 
 ### Frontend
 - vue.js, vuetify
 - apollo for GraphQL
 
 ## Планы на реализацию
+- [ ] SSO MS AD NGINX
 - [ ] Автоматическое получение сертификата SSL Letsencrypt
 - [ ] Инструкция по запуску
