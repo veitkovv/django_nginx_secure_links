@@ -45,12 +45,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS
+    'corsheaders.middleware.CorsPostCsrfMiddleware',  # CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',  # JWT
-    'corsheaders.middleware.CorsMiddleware',  # CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsPostCsrfMiddleware',  # CORS
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -151,18 +151,15 @@ GRAPHQL_JWT = {
     'JWT_ALLOW_ARGUMENT': True,
 }
 
-CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1:8000',
+CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1',
-    'http://localhost:8000',
-    'http://localhost'
-]
-CSRF_TRUSTED_ORIGINS = (
-    'http://127.0.0.1:8000',
-    'http://127.0.0.1',
-    'http://localhost:8000',
-    'http://localhost'
 )
+
+CSRF_TRUSTED_ORIGINS = {
+    'http://127.0.0.1',
+}
+
+CSRF_COOKIE_SECURE = False
 
 LOGGING = {
     'version': 1,
