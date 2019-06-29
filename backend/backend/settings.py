@@ -40,13 +40,10 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'graphene_django',
     'django_filters',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS
-    'corsheaders.middleware.CorsPostCsrfMiddleware',  # CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',  # JWT
     'django.middleware.common.CommonMiddleware',
@@ -150,16 +147,6 @@ GRAPHQL_JWT = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
     'JWT_ALLOW_ARGUMENT': True,
 }
-
-CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1',
-)
-
-CSRF_TRUSTED_ORIGINS = {
-    'http://127.0.0.1',
-}
-
-CSRF_COOKIE_SECURE = False
 
 LOGGING = {
     'version': 1,

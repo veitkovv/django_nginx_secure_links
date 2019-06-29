@@ -73,7 +73,7 @@ const actions = {
             query: CURRENT_USER,
         });
         commit('SET_CURRENT_USER_DATA', response.data.me)
-    }
+    },
 };
 
 export default {
