@@ -76,7 +76,6 @@ RUN cd /tmp/nginx-${NGINX_VERSION} \
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
-COPY web.keytab /opt/services/django_nginx_secure_link/web.keytab
 
 EXPOSE 80 443 8000
 
