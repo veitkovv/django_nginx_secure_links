@@ -37,7 +37,6 @@
 
 <script>
     import {mapGetters, mapMutations, mapActions} from 'vuex';
-    import Cookies from 'js-cookie';
 
     export default {
         name: "AppLogin",
@@ -56,8 +55,6 @@
                     this.verifyToken()
                         .then(() => this.fetchUserData()
                             .then(() => {
-                                // Store JWT in Cookies
-                                Cookies.set('JWT-Token', this.TOKEN);
                                 this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
                                 this.$router.push('/')
                             }))

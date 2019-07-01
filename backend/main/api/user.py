@@ -53,7 +53,8 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
+    # https://django-graphql-jwt.domake.io/en/stable/refresh_token.html
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
-# update_profile = ProfileMutation.Field()
+    revoke_token = graphql_jwt.Revoke.Field()

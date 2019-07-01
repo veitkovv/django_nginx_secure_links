@@ -1,7 +1,9 @@
-import {apolloClient} from '../../vue-apollo'
 import LOGIN_MUTATION from '../../graphql/TokenAuth.gql'
 import VERIFY_TOKEN_MUTATION from '../../graphql/VerifyToken.gql'
 import CURRENT_USER from '../../graphql/Me.gql'
+import REFRESH_TOKEN from '../../graphql/RefreshToken.gql'
+
+import {apolloClient} from '../../vue-apollo'
 import Cookies from 'js-cookie'
 
 const state = {
@@ -72,7 +74,7 @@ const actions = {
     async verifyToken({commit}) {
         const cookieStoredToken = Cookies.get('JWT-Token');
         if (cookieStoredToken !== undefined) {
-            commit('SET_TOKEN', Cookies.get('JWT-Token'));
+            commit('SET_TOKEN', cookieStoredToken);
             const response = await apolloClient.mutate({
                 mutation: VERIFY_TOKEN_MUTATION,
                 variables: {
@@ -83,12 +85,16 @@ const actions = {
         }
     },
 
-    logout({commit}) {
-        commit('SET_TOKEN', null);
-        Cookies.remove('JWT-Token');
-        Cookies.remove('JWT-Token-data');
-        commit('SET_CURRENT_USER_DATA', null)
-        // todo revoke token
+    async refreshToken({commit}) {
+        const response = await apolloClient.mutate({
+            mutation: REFRESH_TOKEN,
+            variables: {
+                token: this.getters.TOKEN
+            }
+        });
+        commit('SET_TOKEN', response.data.refreshToken.token);
+        Cookies.set('JWT-Token', response.data.refreshToken.token);
+        commit('SET_VERIFIED_TOKEN', response.data.refreshToken.payload);
     },
 
     async fetchUserData({commit}) {
@@ -96,6 +102,14 @@ const actions = {
             query: CURRENT_USER,
         });
         commit('SET_CURRENT_USER_DATA', response.data.me)
+    },
+
+    logout({commit}) {
+        Cookies.remove('JWT-Token');
+        Cookies.remove('JWT-Token-data');
+        commit('SET_TOKEN', null);
+        commit('SET_CURRENT_USER_DATA', null)
+        // todo revoke token
     },
 };
 
