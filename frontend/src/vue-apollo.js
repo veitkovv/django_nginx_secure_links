@@ -5,23 +5,7 @@ import {HttpLink} from 'apollo-link-http'
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import {store} from './store/index'
-import Cookies from 'js-cookie';
-
-// todo refactor this
-
-const apiURL = 'http://127.0.0.1/';
-
-let csrftoken = '';
-
-async function fetchCSRF(url) {
-    await fetch(url + 'csrf/').then(function (data) {
-        data.json().then(function (result) {
-            csrftoken = result.csrfToken
-        });
-    });
-}
-
-// end refactor this
+import Cookies from 'js-cookie'
 
 // https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
 const defaultOptions = {
@@ -40,11 +24,9 @@ const httpLink = new HttpLink({
     uri: 'http://127.0.0.1/graphql/',
 });
 
-
 // https://github.com/Akryum/vue-apollo/issues/144
 const authMiddleware = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
-    fetchCSRF(apiURL);
     operation.setContext({
         headers: {
             // https://www.howtographql.com/graphql-python/4-authentication/
@@ -59,7 +41,7 @@ const otherMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext(({headers = {}}) => ({
         headers: {
             ...headers,
-            'X-CSRFToken': csrftoken,
+            'X-CSRFToken': Cookies.get('csrftoken'),
         }
     }));
     return forward(operation);

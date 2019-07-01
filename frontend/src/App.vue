@@ -34,18 +34,30 @@
             Snackbar,
         },
         data: () => ({
-            loading: 0
+            loading: 0,
         }),
         methods: {
-            ...mapActions(['fetchDefaultSettings'])
-        },
-        computed: {
-            ...mapGetters(['IS_AUTHENTICATED'])
-        },
-        mounted() {
-            this.fetchDefaultSettings()
-        }
+            ...mapActions([
+                'fetchDefaultSettings',
+                'verifyToken',
+                'fetchUserData',
+                'takeCSRF'
+            ]),
 
+        }
+        ,
+        computed: {
+            ...mapGetters(['IS_AUTHENTICATED', 'CSRF_TOKEN'])
+        }
+        ,
+        mounted() {
+            this.takeCSRF().then(() => {
+                this.verifyToken().then(() => {
+                    this.fetchUserData();
+                    this.fetchDefaultSettings();
+                });
+            });
+        }
     }
 </script>
 
