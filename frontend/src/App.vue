@@ -47,7 +47,10 @@
         }
         ,
         computed: {
-            ...mapGetters(['IS_AUTHENTICATED', 'CSRF_TOKEN'])
+            ...mapGetters([
+                'IS_AUTHENTICATED',
+                'CSRF_TOKEN',
+            ])
         }
         ,
         mounted() {

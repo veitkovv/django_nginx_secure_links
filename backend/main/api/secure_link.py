@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import re
 import graphene
 import logging
-
-from datetime import datetime
 
 from graphql_jwt.decorators import login_required
 
 from ..filesystem import filesystem
+from ..utils.common import get_link_deadline
 
 logger = logging.getLogger(__name__)
 
@@ -29,11 +27,22 @@ class SecureLinkMutation(graphene.Mutation):
         secure_link = filesystem.generate_secure_link(domain_name, filename, info.context.user.profile.url_ttl)
 
         # Берет timestamp из URL посредством простой регулярки и сравнивает с текущим временем
-        link_deadline = datetime.fromtimestamp(int(re.search(r'[0-9]+$', str(secure_link)).group(0)))
+        link_deadline = get_link_deadline(secure_link)
 
         ok = True
         logger.info(f'User "{info.context.user}" successfully created secure link to file {filename}')
         return SecureLinkMutation(secure_link=secure_link, link_deadline=link_deadline, ok=ok)
+
+
+class Query(object):
+    link_deadline = graphene.DateTime(url=graphene.String())
+
+    @login_required
+    def resolve_link_deadline(self, info, url):
+        try:
+            return get_link_deadline(url)
+        except Exception as e:
+            logger.error(e)
 
 
 class Mutation:

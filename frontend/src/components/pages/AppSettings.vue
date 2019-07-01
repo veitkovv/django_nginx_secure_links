@@ -51,7 +51,11 @@
             }
         },
         computed: {
-            ...mapGetters(['CURRENT_USER_DATA', 'MIN_URL_EXPIRES', 'MAX_URL_EXPIRES', 'URL_EXPIRES']),
+            ...mapGetters([
+                'CURRENT_USER_DATA',
+                'MIN_URL_EXPIRES',
+                'MAX_URL_EXPIRES',
+                'URL_EXPIRES']),
             isSuperUser: function () {
                 return this.CURRENT_USER_DATA.isSuperuser
             },

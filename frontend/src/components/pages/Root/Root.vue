@@ -35,12 +35,14 @@
             return {
                 valueDeterminate: 40,
                 search: '',
-                // TODO https://github.com/apollographql/react-apollo/issues/1314
-                // TODO loading always false bug
+                // TODO https://github.com/apollographql/react-apollo/issues/1314 loading always false bug
             }
         },
         computed: {
-            ...mapGetters(['EXISTING_FILES', 'EXISTING_FS', 'EXISTING_FOLDERS']),
+            ...mapGetters([
+                'EXISTING_FILES',
+                'EXISTING_FS',
+            ]),
         },
         methods: {
             ...mapActions(['getFiles'])

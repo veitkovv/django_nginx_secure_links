@@ -1,0 +1,3 @@
+query linkDeadline($url: String!) {
+  linkDeadline(url: $url)
+}

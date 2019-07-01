@@ -3,9 +3,11 @@
         <v-flex xs12 sm7 md4>
             <v-card class="elevation-12" v-if="IS_AUTHENTICATED">
                 <v-card-text>
-                    Вы авторизованы
-                    {{TOKEN_DATA}}
-                    {{CURRENT_USER_DATA}}
+                    Вы авторизованы!
+                    <ul>
+                        <li> {{TOKEN_DATA}}</li>
+                        <li> {{CURRENT_USER_DATA}}</li>
+                    </ul>
                 </v-card-text>
             </v-card>
 

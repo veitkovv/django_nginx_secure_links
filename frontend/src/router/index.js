@@ -24,6 +24,12 @@ const router = new Router({
             name: 'Настройки',
             component: () => import('../components/pages/AppSettings')
         },
+                {
+            path: '/check-url',
+            icon: 'done_outline',
+            name: 'Проверить URL',
+            component: () => import('../components/pages/CheckURL')
+        },
         {
             path: '/login',
             icon: 'exit_to_app',
