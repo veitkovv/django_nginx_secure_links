@@ -8,19 +8,27 @@ const router = new Router({
     routes: [
         {
             path: '/',
+            icon: 'home',
+            name: 'Главная',
             component: () => import('../components/pages/Root/Root')
         },
         {
-            path: '/login',
-            component: () => import('../components/pages/Login')
-        },
-        {
             path: '/about',
+            icon: 'info',
+            name: 'О приложении',
             component: () => import('../components/pages/About')
         },
         {
             path: '/settings',
+            icon: 'settings',
+            name: 'Настройки',
             component: () => import('../components/pages/AppSettings')
+        },
+        {
+            path: '/login',
+            icon: 'exit_to_app',
+            name: 'Авторизация',
+            component: () => import('../components/pages/Login')
         },
         {
             path: '*',
