@@ -110,13 +110,12 @@ const actions = {
     },
 
     async revokeToken({commit}) {
-        const response = await apolloClient.mutate({
+        await apolloClient.mutate({
             mutation: REVOKE_TOKEN,
             variables: {
                 refreshToken: state.tokenAuth.refreshToken
             }
         });
-        console.log(response.data);
         commit('SET_TOKEN_AUTH', {token: null, refreshToken: null});
         commit('SET_CURRENT_USER_DATA', null);
         commit('SET_VERIFIED_TOKEN', null);
