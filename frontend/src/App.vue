@@ -56,8 +56,8 @@
         mounted() {
             this.takeCSRF().then(() => {
                 this.verifyToken().then(() => {
-                    this.fetchUserData();
                     this.fetchDefaultSettings();
+                    this.fetchUserData();
                 });
             });
         }

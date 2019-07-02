@@ -45,7 +45,12 @@
             password: ''
         }),
         methods: {
-            ...mapActions(['doLogin', 'verifyToken', 'fetchUserData']),
+            ...mapActions([
+                'doLogin',
+                'verifyToken',
+                'fetchUserData',
+                'fetchDefaultSettings'
+            ]),
             ...mapMutations(['showSnackbar']),
             appLogin() {
                 this.doLogin({
@@ -55,6 +60,7 @@
                     this.verifyToken()
                         .then(() => this.fetchUserData()
                             .then(() => {
+                                this.fetchDefaultSettings();
                                 this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
                                 this.$router.push('/')
                             }))
@@ -66,7 +72,7 @@
         computed: {
             ...mapGetters([
                 'IS_AUTHENTICATED',
-                'TOKEN',
+                'TOKEN_AUTH',
                 'TOKEN_DATA',
                 'CURRENT_USER_DATA',
                 'CSRF_TOKEN',

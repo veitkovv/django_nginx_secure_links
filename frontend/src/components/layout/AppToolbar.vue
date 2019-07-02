@@ -21,7 +21,7 @@
         name: "AppToolbar",
         methods: {
             ...mapMutations(['showSnackbar']),
-            ...mapActions(['changeSidenavDrawerState', 'getFiles', 'logout']),
+            ...mapActions(['changeSidenavDrawerState', 'getFiles', 'revokeToken']),
             refetchFiles() {
                 this.getFiles()
                     .then(() => this.showSnackbar({
@@ -33,7 +33,7 @@
                     }))
             },
             doLogout() {
-                this.logout()
+                this.revokeToken()
                     .then(() => this.showSnackbar({
                             text: 'Вы успешно вышли из системы'
                         }), this.$router.push('/login')

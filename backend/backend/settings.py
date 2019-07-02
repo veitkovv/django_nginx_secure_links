@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'graphene_django',
     'django_filters',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +136,6 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
-# Graphene
 GRAPHENE = {
     'SCHEMA': 'main.schema.schema',  # Where your Graphene schema lives
     'MIDDLEWARE': [
@@ -144,7 +144,9 @@ GRAPHENE = {
 }
 GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_ALLOW_ARGUMENT': True,
 }
 

@@ -30,7 +30,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext({
         headers: {
             // https://www.howtographql.com/graphql-python/4-authentication/
-            authorization: 'JWT ' + store.getters.TOKEN,
+            authorization: 'JWT ' + store.getters.TOKEN_AUTH.token,
         }
     });
     return forward(operation);
