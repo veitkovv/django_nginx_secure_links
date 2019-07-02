@@ -40,8 +40,9 @@ const getters = {
 };
 
 const mutations = {
-    SET_TOKEN_AUTH: (state, payload) => {
-        state.tokenAuth = payload;
+    SET_TOKEN_AUTH: (state, {token, refreshToken}) => {
+        state.tokenAuth.token = token;
+        state.tokenAuth.refreshToken = refreshToken
     },
     SET_VERIFIED_TOKEN: (state, payload) => {
         state.tokenData = payload
@@ -79,13 +80,14 @@ const actions = {
     },
 
     async verifyToken({commit}) {
-        const cookieStoredToken = Cookies.get('JWT-Token');
+        let cookieStoredToken = Cookies.get('JWT-Token');
         if (cookieStoredToken !== undefined) {
-            commit('SET_TOKEN_AUTH', JSON.parse(cookieStoredToken));
+            cookieStoredToken = JSON.parse(cookieStoredToken)
+            commit('SET_TOKEN_AUTH', {token: cookieStoredToken.token, refreshToken: cookieStoredToken.refreshToken});
             const response = await apolloClient.mutate({
                 mutation: VERIFY_TOKEN_MUTATION,
                 variables: {
-                    token: this.getters.TOKEN_AUTH.token
+                    token: state.tokenAuth.token
                 }
             });
             commit('SET_VERIFIED_TOKEN', response.data.verifyToken.payload);
@@ -99,9 +101,12 @@ const actions = {
                 token: this.getters.TOKEN_AUTH.refreshToken
             }
         });
-        commit('SET_TOKEN_AUTH', response.data.refreshToken);
-        Cookies.set('JWT-Token', response.data.refreshToken);
+        commit('SET_TOKEN_AUTH', {
+            token: response.data.refreshToken.token,
+            refreshToken: response.data.refreshToken.refreshToken
+        });
         commit('SET_VERIFIED_TOKEN', response.data.refreshToken.payload);
+        Cookies.set('JWT-Token', response.data.refreshToken);
     },
 
     async revokeToken({commit}) {
@@ -112,7 +117,7 @@ const actions = {
             }
         });
         console.log(response.data);
-        commit('SET_TOKEN_AUTH', null);
+        commit('SET_TOKEN_AUTH', {token: null, refreshToken: null});
         commit('SET_CURRENT_USER_DATA', null);
         commit('SET_VERIFIED_TOKEN', null);
         Cookies.remove('JWT-Token');
