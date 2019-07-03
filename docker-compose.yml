@@ -37,6 +37,7 @@ services:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
       - ./backend/secure:/opt/services/django_nginx_secure_link/secure
+      - frontend_dist:/opt/services/django_nginx_secure_link/dist
 #      - ./data/certbot/conf:/etc/letsencrypt
 #      - ./data/certbot/www:/var/www/certbot
     networks:
@@ -56,6 +57,7 @@ services:
     volumes:
       - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
+      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
     networks:
       - nginx_network
     environment:
@@ -70,5 +72,6 @@ networks:
 volumes:
   db_volume:
   node_modules:
+  frontend_dist:
   static_volume:  # <-- declare the static volume
   media_volume:  # <-- declare the media volume

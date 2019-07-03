@@ -17,4 +17,6 @@ COPY --from=builder node_modules node_modules
 
 ADD . .
 
+RUN npm run build
+
 CMD [ "npm", "run", "serve" ]
