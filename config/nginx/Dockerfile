@@ -77,7 +77,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80 443 8000
+EXPOSE 80 443
 
 STOPSIGNAL SIGTERM
 
