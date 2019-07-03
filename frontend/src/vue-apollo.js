@@ -21,7 +21,7 @@ const defaultOptions = {
 
 const httpLink = new HttpLink({
     // You should use an absolute URL here
-    uri: 'http://127.0.0.1/graphql/',
+    uri: 'http://files.ogtrk.yamalinfo.ru/graphql/',
 });
 
 // https://github.com/Akryum/vue-apollo/issues/144
