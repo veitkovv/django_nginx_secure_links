@@ -14,6 +14,22 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import datetime
 
+
+def app_state(env_mode):
+    """
+    Using OS environment 'mode' arg to detect application state (dev/prod)
+    """
+    result = {
+        'debug': True,
+        'allowed_hosts': ['127.0.0.1', '*']
+    }
+    if env_mode is 'prod':
+        result['debug'] = False
+        result['allowed_hosts'] = ['*']
+
+    return result
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,12 +37,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=xf1@u4h_j5ze^@s!act52sn7cllw=uu7jpo9oo7-#2uwwc82j'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = app_state(os.environ.get('MODE'))['debug']
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = app_state(os.environ.get('MODE'))['allowed_hosts']
 
 # Application definition
 
@@ -46,7 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # JWT
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -55,7 +71,7 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'graphql_jwt.backends.JSONWebTokenBackend',  # JWT
+    'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -86,9 +102,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dnsl_sys',
-        'USER': 'dnsl_sys_user',
-        'PASSWORD': 'g7?d!Fw?qn!C',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'django_nginx_secure_link_db',  # <-- IMPORTANT: same name as docker-compose service!
         'PORT': '5432',
     }
@@ -191,7 +207,7 @@ MIN_PUBLIC_URL_TTL = 86400 * 1  # 1 день
 MAX_PUBLIC_URL_TTL = 86400 * 30  # 30 дней
 
 # Пароль для хеша - такой же в nginx.conf
-NGINX_SECRET = 'mLErOVGhYuM7'
+NGINX_SECRET = os.environ.get('NGINX_SECRET')
 
 # Путь до папки которую будет раздавать nginx
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')

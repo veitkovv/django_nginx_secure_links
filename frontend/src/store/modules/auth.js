@@ -57,8 +57,8 @@ const mutations = {
 
 const actions = {
     async takeCSRF({commit}) {
-        const url = 'http://files.ogtrk.yamalinfo.ru';
-        await fetch(url + 'csrf/')
+        const url = 'http://' + process.env.VUE_APP_BACKEND_SERVER;
+        await fetch(url + '/csrf/')
             .then(response => response.json())
             .then(data => {
                 commit('SET_CSRF', data.csrfToken);

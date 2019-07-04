@@ -1,12 +1,9 @@
-version: '3'
+version: '3.4'
 
 services:
-
   django_nginx_secure_link_db:
     container_name: pg10
     image: postgres:10
-    env_file:
-      - config/db/db_env
     networks:
       - db_network
     volumes:
@@ -14,17 +11,39 @@ services:
 
   django_nginx_secure_link:
     container_name: backend
-    build: ./backend
+    build:
+      args:
+        MODE: $MODE # dev/prod
+        DJANGO_SECRET_KEY: $DJANGO_SECRET_KEY
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        POSTGRES_DB: $POSTGRES_DB
+        NGINX_SECRET: $NGINX_SECRET
+      context: ./backend
+      dockerfile: Dockerfile
     volumes:
       - ./backend:/opt/services/django_nginx_secure_link
+      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
     networks:
       - nginx_network
       - db_network
     depends_on:
       - django_nginx_secure_link_db
+
+  django_nginx_secure_frontend:
+    container_name: frontend
+    build: ./frontend
+    volumes:
+      - ./frontend:/opt/services/django_nginx_secure_link/frontend
+      - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
+      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
+    networks:
+      - nginx_network
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
 
   nginx:
     container_name: nginx
@@ -32,36 +51,13 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8000:8000
     volumes:
+      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - frontend_dist:/opt/services/django_nginx_secure_link/dist
-#      - ./data/certbot/conf:/etc/letsencrypt
-#      - ./data/certbot/www:/var/www/certbot
     networks:
       - nginx_network
-
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - ./config/nginx/data/certbot/conf:/etc/letsencrypt
-#      - ./config/nginx/data/certbot/www:/var/www/certbot
-#    depends_on:
-#      - nginx
-
-  django_nginx_secure_frontend:
-    container_name: frontend
-    build: ./frontend
-    volumes:
-      - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
-      - ./frontend:/opt/services/django_nginx_secure_link/frontend
-      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
-    networks:
-      - nginx_network
-    environment:
-      - CHOKIDAR_USEPOLLING=true
 
 networks:
   nginx_network:
