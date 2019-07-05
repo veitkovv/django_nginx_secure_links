@@ -29,22 +29,21 @@ def app_state(env_mode):
 
     return result
 
+def get_secret_key():
+    """Docker Build fails without secret key"""
+    env_key = os.environ.get('DJANGO_SECRET_KEY')
+    return env_key if env_key else '$%e*q@$aav2r92bwuhj867v_9juy1)90c+cdxux6g_68k45rm+'
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = get_secret_key()
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = app_state(os.environ.get('MODE'))['debug']
 
 ALLOWED_HOSTS = app_state(os.environ.get('MODE'))['allowed_hosts']
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -96,9 +95,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -109,9 +105,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -128,9 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/2.1/topics/i18n/
-
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Asia/Yekaterinburg'
@@ -140,9 +130,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
 

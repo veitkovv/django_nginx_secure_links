@@ -1,26 +1,25 @@
-version: '3.4'
+version: '3'
 
 services:
   django_nginx_secure_link_db:
-    container_name: pg10
-    image: postgres:10
+    container_name: pg_db
+    image: postgres:alpine
+    restart: always
     networks:
       - db_network
     volumes:
       - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 
   django_nginx_secure_link:
     container_name: backend
     build:
-      args:
-        MODE: $MODE # dev/prod
-        DJANGO_SECRET_KEY: $DJANGO_SECRET_KEY
-        POSTGRES_USER: $POSTGRES_USER
-        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-        POSTGRES_DB: $POSTGRES_DB
-        NGINX_SECRET: $NGINX_SECRET
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - ./backend:/opt/services/django_nginx_secure_link
       - ./backend/secure:/opt/services/django_nginx_secure_link/secure
@@ -29,12 +28,21 @@ services:
     networks:
       - nginx_network
       - db_network
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODE=${MODE} # dev/prod
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - NGINX_SECRET=${NGINX_SECRET}
     depends_on:
       - django_nginx_secure_link_db
 
   django_nginx_secure_frontend:
     container_name: frontend
     build: ./frontend
+    restart: always
     volumes:
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
       - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
@@ -44,10 +52,13 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
+    depends_on:
+      - django_nginx_secure_link
 
   nginx:
     container_name: nginx
     build: ./config/nginx
+    restart: always
     ports:
       - 80:80
       - 443:443
@@ -58,6 +69,9 @@ services:
       - frontend_dist:/opt/services/django_nginx_secure_link/dist
     networks:
       - nginx_network
+    depends_on:
+      - django_nginx_secure_frontend
+      - django_nginx_secure_link
 
 networks:
   nginx_network:
