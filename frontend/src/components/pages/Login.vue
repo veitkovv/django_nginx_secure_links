@@ -42,7 +42,7 @@
         name: "AppLogin",
         data: () => ({
             username: '',
-            password: ''
+            password: '',
         }),
         methods: {
             ...mapActions([

@@ -6,8 +6,8 @@ import {InMemoryCache} from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import {store} from './store/index'
 import Cookies from 'js-cookie'
+import API_SERVER from '../apiServer'
 
-const API_URL = 'http://' + process.env.VUE_APP_BACKEND_SERVER + '/graphql/';
 
 // https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
 const defaultOptions = {
@@ -23,7 +23,7 @@ const defaultOptions = {
 
 const httpLink = new HttpLink({
     // You should use an absolute URL here
-    uri: API_URL,
+    uri: API_SERVER + '/graphql/',
 });
 
 // https://github.com/Akryum/vue-apollo/issues/144

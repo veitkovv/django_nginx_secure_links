@@ -72,6 +72,8 @@ services:
     depends_on:
       - django_nginx_secure_frontend
       - django_nginx_secure_link
+    environment:
+      - NGINX_SECRET=${NGINX_SECRET}
 
 networks:
   nginx_network:

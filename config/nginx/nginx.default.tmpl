@@ -17,6 +17,8 @@ server {
     server_name frontend;
 
     location /csrf {
+    # take csrf token from django backend
+    # https://stackoverflow.com/questions/43567052/csrf-token-of-django-into-vuejs-when-seperate-them
         proxy_pass http://graphene_api_server;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -28,7 +30,8 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
-    location /admin { # restrict access to admin section
+    location /admin {
+    # restrict access to admin section
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -36,9 +39,7 @@ server {
         proxy_pass http://graphene_api_server;
 
         allow 127.0.0.1;
-        allow 10.0.0.0/8;
-        allow 192.168.0.0/16;
-        allow 172.16.0.0/12;
+        allow 192.168.88.0/24;
         deny all;
     }
 
@@ -53,10 +54,11 @@ server {
     }
 
     location /secure {
+    # nginx secure link module
         autoindex off;
         alias /opt/services/django_nginx_secure_link/secure/;
         secure_link $arg_md5,$arg_expires;
-        secure_link_md5 "mLErOVGhYuM7$uri$secure_link_expires";
+        secure_link_md5 "${NGINX_SECRET}$uri$secure_link_expires";
         if ($secure_link = "") { return 403; }
         if ($secure_link = "0") { return 410; }
     }
@@ -74,7 +76,6 @@ server {
     }
 
     location / {
-        #root /opt/services/django_nginx_secure_link/dist;
         proxy_pass http://frontend_server;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;

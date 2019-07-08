@@ -3,6 +3,7 @@ import VERIFY_TOKEN_MUTATION from '../../graphql/VerifyToken.gql'
 import CURRENT_USER from '../../graphql/Me.gql'
 import REFRESH_TOKEN from '../../graphql/RefreshToken.gql'
 import REVOKE_TOKEN from '../../graphql/RevokeToken.gql'
+import API_SERVER from '../../../apiServer'
 
 import {apolloClient} from '../../vue-apollo'
 import Cookies from 'js-cookie'
@@ -57,8 +58,7 @@ const mutations = {
 
 const actions = {
     async takeCSRF({commit}) {
-        const url = 'http://' + process.env.VUE_APP_BACKEND_SERVER;
-        await fetch(url + '/csrf/')
+        await fetch(API_SERVER + '/csrf/')
             .then(response => response.json())
             .then(data => {
                 commit('SET_CSRF', data.csrfToken);
@@ -82,7 +82,7 @@ const actions = {
     async verifyToken({commit}) {
         let cookieStoredToken = Cookies.get('JWT-Token');
         if (cookieStoredToken !== undefined) {
-            cookieStoredToken = JSON.parse(cookieStoredToken)
+            cookieStoredToken = JSON.parse(cookieStoredToken);
             commit('SET_TOKEN_AUTH', {token: cookieStoredToken.token, refreshToken: cookieStoredToken.refreshToken});
             const response = await apolloClient.mutate({
                 mutation: VERIFY_TOKEN_MUTATION,

@@ -11,6 +11,7 @@ RUN set -ex \
     libressl \
     pcre \
     zlib \
+    gettext \
   && apk add --no-cache --virtual .build-deps \
     build-base \
     linux-headers \
@@ -75,10 +76,12 @@ RUN cd /tmp/nginx-${NGINX_VERSION} \
   && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+COPY nginx.default.tmpl /etc/nginx/conf.d/default.tmpl
 
 EXPOSE 80 443
 
 STOPSIGNAL SIGTERM
 
-CMD ["nginx", "-g", "daemon off;"]
+# https://thepracticalsysadmin.com/templated-nginx-configuration-with-bash-and-docker/
+CMD /bin/sh -c "envsubst '\$NGINX_SECRET' < /etc/nginx/conf.d/default.tmpl > /etc/nginx/conf.d/default.conf && \
+ nginx -g 'daemon off;' || /etc/nginx/conf.d/default.conf"
