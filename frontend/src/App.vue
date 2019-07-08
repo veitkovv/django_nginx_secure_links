@@ -14,7 +14,10 @@
 
         <v-footer class="pa-3">
             <v-spacer></v-spacer>
-            <div>&copy; {{ new Date().getFullYear() }}</div>
+            <v-layout align-center>
+                <a class="subheading" href="mailto:it@yamal-region.tv">Задавайте вопросы по электронной почте</a>
+            </v-layout>
+            <div>&copy; {{ new Date().getFullYear() }} by Veytko V.V.</div>
         </v-footer>
     </v-app>
 </template>
