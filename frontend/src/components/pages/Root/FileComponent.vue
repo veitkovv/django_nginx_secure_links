@@ -74,14 +74,25 @@
                             </v-btn>
 
                             <v-btn
-                                    color="success"
+                                    color="secondary"
                                     flat
                                     v-clipboard:copy="secureLink.url"
                                     v-clipboard:success="clipboardSuccessHandler"
                                     v-clipboard:error="clipboardErrorHandler"
                                     @click="dialog = false"
                             >
-                                Скопировать
+                                Скопировать ссылку
+                            </v-btn>
+
+                            <v-btn
+                                    color="success"
+                                    flat
+                                    v-clipboard:copy="humanAnswer"
+                                    v-clipboard:success="clipboardSuccessHandler"
+                                    v-clipboard:error="clipboardErrorHandler"
+                                    @click="dialog = false"
+                            >
+                                Скопировать ответ
                             </v-btn>
                         </v-card-actions>
                     </v-card>
@@ -149,15 +160,24 @@
                 'undefined': 'block'
             }
         }),
-        computed:
-            {
-                linkDeadlineTime: function () {
-                    const moment = require('moment-timezone');
-                    const timezone = moment.tz.guess();
-                    let date = moment(this.secureLink.expires);
-                    return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-                },
+        computed: {
+            linkDeadlineTime: function () {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(this.secureLink.expires);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+            },
+            humanAnswer: function () {
+                return [
+                    'Создана ссылка на файл',
+                    '',
+                    ' - Файл: ' + this.file.filename + '',
+                    ' - Размер: ' + this.humanFileSize(this.file.size, true),
+                    ' - Ссылка действительна до: ' + this.linkDeadlineTime,
+                    ' - URL: ' + this.secureLink.url,
+                ].join("\n");
             }
+        }
         ,
         methods: {
             ...mapMutations(['showSnackbar']),
@@ -214,7 +234,7 @@
                         text: 'Архив данной папки уже создан, создайте ссылку на него.',
                         color: 'info'
 
-                    })
+                    });
                     this.loading = false;
                 } else {
                     this.$apollo.mutate({
@@ -234,14 +254,14 @@
             ,
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({
-                    text: 'Ссылка успешно скопирована'
+                    text: 'Копирование успешно'
                 })
             }
             ,
 
             clipboardErrorHandler({value, event}) {
                 this.showSnackbar({
-                    text: 'Ссылка не скопирована',
+                    text: 'Ошибка копирования',
                     color: 'error'
                 })
             },
