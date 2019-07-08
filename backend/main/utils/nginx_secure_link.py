@@ -6,14 +6,15 @@ from urllib.parse import urlparse
 from django.conf import settings
 
 
-def secure_link(baselink):
+def secure_link(baselink: str, ttl: int):
     """
     :param baselink: base url for signing
+    :param ttl: URL time to live in seconds
     :return: signed link as str
     """
 
     url = urlparse(baselink)
-    dt_expires = datetime.now() + timedelta(seconds=settings.PUBLIC_URL_TTL)
+    dt_expires = datetime.now() + timedelta(seconds=ttl)
 
     expires = int(dt_expires.timestamp())
 

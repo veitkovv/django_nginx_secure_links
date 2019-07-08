@@ -1,0 +1,6 @@
+mutation secureLinkMutation($filename: String!) {
+  createSecureLink(filename: $filename){
+    secureLink
+    linkDeadline
+  }
+}

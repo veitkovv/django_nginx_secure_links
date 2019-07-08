@@ -1,14 +1,17 @@
 <template>
-    <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4>
+    <v-layout align-center justify-center row fill-height>
+        <v-flex xs12 sm7 md4>
             <v-card class="elevation-12" v-if="IS_AUTHENTICATED">
                 <v-card-text>
-                    Вы авторизованы
-                    {{TOKEN_DATA}}
-                    {{CURRENT_USER_DATA}}
+                    Вы авторизованы!
+                    <ul>
+                        <li> {{TOKEN_DATA}}</li>
+                        <li> {{CURRENT_USER_DATA}}</li>
+                    </ul>
                 </v-card-text>
             </v-card>
-            <v-card class="elevation-12" v-else>
+
+            <v-card class="elevation-12 mt-4" v-else>
                 <v-toolbar dark color="primary">
                     <v-toolbar-title>Пожалуйста, авторизуйтесь</v-toolbar-title>
                     <v-spacer></v-spacer>
@@ -23,10 +26,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn
-                            color="primary"
-                            @click="login"
-                    >
+                    <v-btn color="primary" @click.native="appLogin">
                         Войти
                     </v-btn>
                 </v-card-actions>
@@ -36,35 +36,48 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapMutations, mapActions} from 'vuex';
 
     export default {
         name: "AppLogin",
         data: () => ({
             username: '',
-            password: ''
+            password: '',
         }),
         methods: {
-            login() {
-                this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => {
-                    console.log('success auth!');
-                    this.$store.dispatch('verifyToken').then(() =>
-                        this.$store.dispatch('showAlert', {
-                            severity: 'success',
-                            text: 'Успешная авторизация'
-                        }).then(() => this.$store.dispatch('fetchUserData').then(() => this.$router.push('/')))
-                    )
+            ...mapActions([
+                'doLogin',
+                'verifyToken',
+                'fetchUserData',
+                'fetchDefaultSettings'
+            ]),
+            ...mapMutations(['showSnackbar']),
+            appLogin() {
+                this.doLogin({
+                    username: this.username,
+                    password: this.password
+                }).then(() => {
+                    this.verifyToken()
+                        .then(() => this.fetchUserData()
+                            .then(() => {
+                                this.fetchDefaultSettings();
+                                this.showSnackbar({text: 'Успешная авторизация', color: 'success'});
+                                this.$router.push('/')
+                            }))
                 }, error => {
-                    this.$store.dispatch('showAlert', {
-                        severity: 'error',
-                        text: error.graphQLErrors,
-                    }).then(() => console.log(error));
+                    this.showSnackbar({text: error, color: 'error'});
                 })
-            }
+            },
         },
         computed: {
-            ...mapGetters(['IS_AUTHENTICATED', 'TOKEN_DATA', 'CURRENT_USER_DATA'])
-        }
+            ...mapGetters([
+                'IS_AUTHENTICATED',
+                'TOKEN_AUTH',
+                'TOKEN_DATA',
+                'CURRENT_USER_DATA',
+                'CSRF_TOKEN',
+            ])
+        },
     }
 </script>
 

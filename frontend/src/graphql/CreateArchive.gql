@@ -1,0 +1,6 @@
+mutation createArchive($folderName: String!) {
+  createArchive(folderName: $folderName){
+    ok
+    createdArchiveName
+  }
+}

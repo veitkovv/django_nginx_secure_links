@@ -2,7 +2,7 @@ import {apolloClient} from '../../vue-apollo'
 import FILES_QUERY from '../../graphql/Files.gql'
 
 const state = {
-    files: []
+    files: [],
 };
 
 const getters = {
@@ -11,7 +11,12 @@ const getters = {
     },
     // backend contains deleted files too. for history. so filter it
     EXISTING_FILES: state => {
-        return state.files.filter(item => item.exists & !item.isFolder)
+        return state.files.filter(item => item.exists)
+        // return state.files.filter(item => item.exists & !item.isFolder)
+    },
+
+    EXISTING_FS: state => {
+        return state.files.filter(item => item.exists)
     }
 };
 
@@ -25,9 +30,12 @@ const mutations = {
 };
 
 const actions = {
-    async getFiles({commit}) {
+    async getFiles({commit}, search = '') {
         const response = await apolloClient.query({
-            query: FILES_QUERY
+            query: FILES_QUERY,
+            variables: {
+                search: search
+            }
         });
         commit('SET_FILES', response.data.allFiles)
     },

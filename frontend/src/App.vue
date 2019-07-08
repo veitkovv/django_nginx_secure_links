@@ -1,42 +1,69 @@
 <template>
-    <div id="app">
-        <v-app id="inspire">
-            <v-content>
-                <side-nav v-if="IS_AUTHENTICATED"></side-nav>
-                <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
-                <main>
-                    <alerts></alerts>
+    <v-app>
+        <side-nav v-if="IS_AUTHENTICATED"></side-nav>
+        <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
+        <v-content>
+            <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
+            <snackbar></snackbar>
+            <v-container fluid>
+                <v-slide-y-transition mode="out-in">
                     <router-view></router-view>
-                </main>
+                </v-slide-y-transition>
+            </v-container>
+        </v-content>
 
-                <v-footer class="pa-3">
-                    <v-spacer></v-spacer>
-                    <div>&copy; {{ new Date().getFullYear() }}</div>
-                </v-footer>
-            </v-content>
-        </v-app>
-    </div>
+        <v-footer class="pa-3">
+            <v-spacer></v-spacer>
+            <div>&copy; {{ new Date().getFullYear() }}</div>
+        </v-footer>
+    </v-app>
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapActions} from 'vuex';
 
     import SideNav from './components/layout/SideNav'
     import AppToolbar from './components/layout/AppToolbar'
-    import Alerts from '../src/components/Alerts'
+    import Snackbar from './components/Snackbar'
 
     export default {
         name: 'App',
         components: {
             AppToolbar,
             SideNav,
-            Alerts
+            Snackbar,
         },
-        data: () => ({}),
-        methods: {},
-        computed: {
-            ...mapGetters(['IS_AUTHENTICATED'])
-        }
+        data: () => ({
+            loading: 0,
+        }),
+        methods: {
+            ...mapActions([
+                'fetchDefaultSettings',
+                'verifyToken',
+                'fetchUserData',
+                'takeCSRF'
+            ]),
 
+        }
+        ,
+        computed: {
+            ...mapGetters([
+                'IS_AUTHENTICATED',
+                'CSRF_TOKEN',
+            ])
+        }
+        ,
+        mounted() {
+            this.takeCSRF().then(() => {
+                this.verifyToken().then(() => {
+                    this.fetchDefaultSettings();
+                    this.fetchUserData();
+                });
+            });
+        }
     }
 </script>
+
+<style scoped>
+
+</style>

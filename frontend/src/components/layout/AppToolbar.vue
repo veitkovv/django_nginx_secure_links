@@ -1,6 +1,7 @@
 <template>
-    <v-toolbar scroll-toolbar-off-screen color="primary" dark fixed prominent app>
-        <v-toolbar-side-icon @click.stop="changeNavDrawerState"></v-toolbar-side-icon>
+    <v-toolbar scroll-off-screen color="primary" dark fixed prominent app>
+        <v-toolbar-side-icon @click.stop="changeSidenavDrawerState"></v-toolbar-side-icon>
+        <v-toolbar-title class="white--text">Secure Links</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
             <v-btn icon @click="refetchFiles">
@@ -14,21 +15,33 @@
 </template>
 
 <script>
+    import {mapMutations, mapActions} from 'vuex'
+
     export default {
         name: "AppToolbar",
         methods: {
-            changeNavDrawerState() {
-                this.$store.dispatch('changeSidenavDrawerState').then(() => {
-                    console.log('nav state changed')
-                })
-            },
+            ...mapMutations(['showSnackbar']),
+            ...mapActions(['changeSidenavDrawerState', 'getFiles', 'revokeToken']),
             refetchFiles() {
-                this.$store.dispatch('getFiles').then(() => console.log('Список файлов получен с сервера'))
+                this.getFiles()
+                    .then(() => this.showSnackbar({
+                        text: 'Список файлов получен с сервера'
+                    }))
+                    .catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }))
             },
             doLogout() {
-                this.$store.dispatch('logout').then(() => this.$store.dispatch('showAlert', {
-                    text: 'Вы успешно вышли из системы',
-                })).then(() => this.$router.push('/login'))
+                this.revokeToken()
+                    .then(() => this.showSnackbar({
+                            text: 'Вы успешно вышли из системы'
+                        }), this.$router.push('/login')
+                    ).catch(err => this.showSnackbar({
+                    text: err,
+                    color: 'error'
+                }));
+
             }
         }
     }

@@ -1,16 +1,11 @@
-query {
-  allFiles {
-    id
-    file
-    fileDiscovered
-    exists
-    size
-    modified
-    isFolder
-    fileType
-    secureLink {
-      id
-      url
-    }
+query allFiles($search: String){
+  allFiles(search: $search) {
+        filename
+        exists
+		size
+		modified
+		isFolder
+		tarballCreated
+		fileType
   }
 }

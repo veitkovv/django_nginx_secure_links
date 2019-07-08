@@ -1,0 +1,6 @@
+mutation setUrlExpires($newUrlExpires: Int!) {
+  setUrlExpires(newUrlExpires: $newUrlExpires) {
+    ok
+    newUrlExpires
+  }
+}

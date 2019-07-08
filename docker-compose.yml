@@ -1,54 +1,80 @@
 version: '3'
 
 services:
-
   django_nginx_secure_link_db:
-    container_name: pg10
-    image: postgres:10
-    env_file:
-      - config/db/db_env
+    container_name: pg_db
+    image: postgres:alpine
+    restart: always
     networks:
       - db_network
     volumes:
       - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 
   django_nginx_secure_link:
     container_name: backend
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
     volumes:
       - ./backend:/opt/services/django_nginx_secure_link
+      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
     networks:
       - nginx_network
       - db_network
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODE=${MODE} # dev/prod
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - NGINX_SECRET=${NGINX_SECRET}
     depends_on:
       - django_nginx_secure_link_db
-
-  nginx:
-    container_name: nginx
-    build: ./config/nginx
-    ports:
-      - 80:80
-      - 443:443
-      - 8000:8000
-    volumes:
-      - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
-      - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
-    networks:
-      - nginx_network
 
   django_nginx_secure_frontend:
     container_name: frontend
     build: ./frontend
+    restart: always
     volumes:
-      - ./frontend/src:/opt/services/django_nginx_secure_link/frontend/src
+      - ./frontend:/opt/services/django_nginx_secure_link/frontend
+      - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
+      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
     networks:
       - nginx_network
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
+    depends_on:
+      - django_nginx_secure_link
+
+  nginx:
+    container_name: nginx
+    build: ./config/nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
+      - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
+      - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
+      - frontend_dist:/opt/services/django_nginx_secure_link/dist
+    networks:
+      - nginx_network
+    depends_on:
+      - django_nginx_secure_frontend
+      - django_nginx_secure_link
+    environment:
+      - MODE=${MODE} # dev/prod
+      - NGINX_SECRET=${NGINX_SECRET}
 
 networks:
   nginx_network:
@@ -58,5 +84,7 @@ networks:
 
 volumes:
   db_volume:
+  node_modules:
+  frontend_dist:
   static_volume:  # <-- declare the static volume
   media_volume:  # <-- declare the media volume

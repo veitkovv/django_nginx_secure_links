@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate';
+
 // modules
 import auth from './modules/auth'
 import files from './modules/files'
 import alerts from './modules/alerts'
+import appSettings from './modules/appSettings'
 
 Vue.use(Vuex);
 
 const state = {
-    sideNavDrawer: true
+    sideNavDrawer: true,
 };
 const getters = {
     SIDENAV_DRAWER: state => {
         return state.sideNavDrawer;
-    }
+    },
 };
 const mutations = {
     CHANGE_SIDENAV_DRAWER: (state, payload) => {
@@ -36,6 +37,7 @@ export const store = new Vuex.Store({
         auth,
         files,
         alerts,
+        appSettings,
     },
-    plugins: [createPersistedState()],
+    plugins: [],
 });

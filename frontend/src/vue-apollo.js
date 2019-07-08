@@ -1,16 +1,19 @@
 import Vue from 'vue'
 import {ApolloClient} from 'apollo-client'
-import {ApolloLink, concat, split} from 'apollo-link';
+import {ApolloLink, from} from 'apollo-link';
 import {HttpLink} from 'apollo-link-http'
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import {store} from './store/index'
+import Cookies from 'js-cookie'
+import API_SERVER from '../apiServer'
 
-//https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
+
+// https://stackoverflow.com/questions/47879016/how-to-disable-cache-in-apollo-link-or-apollo-client
 const defaultOptions = {
     watchQuery: {
         fetchPolicy: 'network-only',
-        errorPolicy: 'ignore',
+        errorPolicy: 'all',
     },
     query: {
         fetchPolicy: 'network-only',
@@ -20,7 +23,7 @@ const defaultOptions = {
 
 const httpLink = new HttpLink({
     // You should use an absolute URL here
-    uri: 'http://127.0.0.1:8000/graphql/',
+    uri: API_SERVER + '/graphql/',
 });
 
 // https://github.com/Akryum/vue-apollo/issues/144
@@ -29,15 +32,31 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext({
         headers: {
             // https://www.howtographql.com/graphql-python/4-authentication/
-            authorization: 'JWT ' + store.getters.TOKEN,
+            authorization: 'JWT ' + store.getters.TOKEN_AUTH.token,
         }
     });
     return forward(operation);
 });
 
+//https://www.apollographql.com/docs/react/advanced/network-layer/
+const otherMiddleware = new ApolloLink((operation, forward) => {
+    operation.setContext(({headers = {}}) => ({
+        headers: {
+            ...headers,
+            'X-CSRFToken': Cookies.get('csrftoken'),
+        }
+    }));
+    return forward(operation);
+});
+
+
 // Create the apollo client
 export const apolloClient = new ApolloClient({
-    link: concat(authMiddleware, httpLink),
+    link: from([
+        authMiddleware,
+        otherMiddleware,
+        httpLink,
+    ]),
     cache: new InMemoryCache(),
     connectToDevTools: true,
     defaultOptions: defaultOptions
