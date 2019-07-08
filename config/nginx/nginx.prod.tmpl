@@ -79,7 +79,10 @@ server {
     }
 
     location / {
-        root /opt/services/django_nginx_secure_link/dist;
-        try_files $uri /index.html;
+        try_files $uri $uri/ @rewrites;
+    }
+
+    location @rewrites {
+        rewrite ^(.+)$ /index.html last;
     }
 }
