@@ -29,10 +29,12 @@ def app_state(env_mode):
 
     return result
 
+
 def get_secret_key():
     """Docker Build fails without secret key"""
     env_key = os.environ.get('DJANGO_SECRET_KEY')
     return env_key if env_key else '$%e*q@$aav2r92bwuhj867v_9juy1)90c+cdxux6g_68k45rm+'
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
