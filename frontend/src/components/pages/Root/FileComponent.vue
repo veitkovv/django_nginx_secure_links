@@ -5,7 +5,7 @@
                 <v-icon class="grey white--text">{{ fileIcon[file.fileType] }}</v-icon>
             </v-avatar>
             <div>
-                <div class="title">{{ file.filename }}</div>
+                <div class="title text-overflow">{{ file.filename }}</div>
                 <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
 
@@ -88,7 +88,7 @@
 
                 </v-dialog>
 
-                <v-btn icon @click.native="show = !show" disabled>
+                <v-btn icon @click.native="show = !show">
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 
@@ -106,9 +106,7 @@
             <v-card-text v-show="show">
                 <v-layout row wrap>
                     <v-flex xs8>
-                        <div v-if="file.isFolder">
-                            <span>Папка содержит файлы: </span>
-                        </div>
+                        <span>{{file.filename}}</span>
                     </v-flex>
                     <v-flex xs4>
 
@@ -250,3 +248,12 @@
         }
     }
 </script>
+
+<style>
+    .text-overflow {
+        width: 500px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+</style>
