@@ -73,6 +73,7 @@ services:
       - django_nginx_secure_frontend
       - django_nginx_secure_link
     environment:
+      - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
 
 networks:

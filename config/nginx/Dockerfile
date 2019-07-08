@@ -76,12 +76,16 @@ RUN cd /tmp/nginx-${NGINX_VERSION} \
   && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY nginx.default.tmpl /etc/nginx/conf.d/default.tmpl
+COPY nginx.dev.tmpl /etc/nginx/conf.d/nginx.dev.tmpl
+COPY nginx.prod.tmpl /etc/nginx/conf.d/nginx.prod.tmpl
 
 EXPOSE 80 443
 
 STOPSIGNAL SIGTERM
 
 # https://thepracticalsysadmin.com/templated-nginx-configuration-with-bash-and-docker/
-CMD /bin/sh -c "envsubst '\$NGINX_SECRET' < /etc/nginx/conf.d/default.tmpl > /etc/nginx/conf.d/default.conf && \
- nginx -g 'daemon off;' || /etc/nginx/conf.d/default.conf"
+# https://stackoverflow.com/questions/43654656/dockerfile-if-else-condition-with-external-arguments
+CMD if [ "$MODE" = "dev" ] ; then /bin/sh -c "envsubst '\$NGINX_SECRET' < /etc/nginx/conf.d/nginx.dev.tmpl > /etc/nginx/conf.d/default.conf && \
+ nginx -g 'daemon off;' || /etc/nginx/conf.d/nginx.dev.tmpl" ; else /bin/sh -c "envsubst '\$NGINX_SECRET' < /etc/nginx/conf.d/nginx.prod.tmpl > /etc/nginx/conf.d/default.conf && \
+ nginx -g 'daemon off;' || /etc/nginx/conf.d/nginx.prod.tmpl" ; fi
+
