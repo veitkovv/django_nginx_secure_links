@@ -4,6 +4,9 @@
         <v-toolbar-title class="white--text">Secure Links</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
+            <v-layout align-center>
+                <span>Привет, {{FULLNAME()}}!</span>
+            </v-layout>
             <v-btn icon @click="refetchFiles">
                 <v-icon>refresh</v-icon>
             </v-btn>
@@ -15,13 +18,15 @@
 </template>
 
 <script>
-    import {mapMutations, mapActions} from 'vuex'
+    import {mapMutations, mapActions, mapGetters} from 'vuex'
 
     export default {
         name: "AppToolbar",
         methods: {
             ...mapMutations(['showSnackbar']),
             ...mapActions(['changeSidenavDrawerState', 'getFiles', 'revokeToken']),
+            ...mapGetters(['FULLNAME']),
+
             refetchFiles() {
                 this.getFiles()
                     .then(() => this.showSnackbar({
@@ -43,6 +48,6 @@
                 }));
 
             }
-        }
+        },
     }
 </script>

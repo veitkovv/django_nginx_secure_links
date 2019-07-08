@@ -38,6 +38,11 @@ const getters = {
     CURRENT_USER_DATA: state => {
         return state.currentUserData
     },
+    FULLNAME: state => {
+        if (state.currentUserData !== null) {
+            return state.currentUserData.firstName + ' ' + state.currentUserData.lastName
+        }
+    }
 };
 
 const mutations = {
