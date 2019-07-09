@@ -28,7 +28,6 @@
 - docker 
 - docker compose
 - (опционально) LDAP server
-- (опционально) SMB server 
 
 ### Запуск
 - Настроить .env (скопировать из .env-example)
