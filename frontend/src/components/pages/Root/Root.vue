@@ -45,11 +45,11 @@
             ]),
         },
         methods: {
-            ...mapActions(['getFiles'])
+            ...mapActions(['fetchFileList'])
         },
         watch: {
             search: function (val) {
-                this.getFiles(val)
+                this.fetchFileList(val)
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
@@ -58,7 +58,7 @@
             }
         },
         mounted() {
-            this.getFiles().then(() =>
+            this.fetchFileList().then(() =>
                 console.log('Список файлов успешно загружен с сервера')
             )
         }

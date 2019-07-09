@@ -8,7 +8,6 @@
                 <div class="title text-overflow">{{ file.filename }}</div>
                 <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
-
             <v-spacer></v-spacer>
             <v-card-actions>
                 <v-dialog
@@ -57,7 +56,7 @@
                         <v-card-text>
                             <ul>
                                 <li> Файл: {{file.filename}}</li>
-                                <li> Размер: {{humanFileSize(file.size, true)}}</li>
+                                <li> Размер: {{file.size}}</li>
                                 <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
                             </ul>
                         </v-card-text>
@@ -105,7 +104,7 @@
 
                 <v-list-tile-action>
                     <v-list-tile-action-text>
-                        {{humanFileSize(file.size, true)}}
+                        {{file.size}}
                     </v-list-tile-action-text>
                 </v-list-tile-action>
 
@@ -172,7 +171,7 @@
                     'Создана ссылка на файл',
                     '',
                     ' - Файл: ' + this.file.filename + '',
-                    ' - Размер: ' + this.humanFileSize(this.file.size, true),
+                    ' - Размер: ' + this.file.size,
                     ' - Ссылка действительна до: ' + this.linkDeadlineTime,
                     ' - URL: ' + this.secureLink.url,
                 ].join("\n");
@@ -181,30 +180,13 @@
         ,
         methods: {
             ...mapMutations(['showSnackbar']),
-            ...mapActions(['getFiles']),
+            ...mapActions(['fetchFileList']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
                 let date = moment(timestamp * 1000);
                 return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-            }
-            ,
-            humanFileSize(bytes, si) {
-                let thresh = si ? 1000 : 1024;
-                if (Math.abs(bytes) < thresh) {
-                    return bytes + ' B';
-                }
-                let units = si
-                    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-                    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-                let u = -1;
-                do {
-                    bytes /= thresh;
-                    ++u;
-                } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-                return bytes.toFixed(1) + ' ' + units[u];
-            }
-            ,
+            },
             createLink(filename) {
                 this.secureLink.url = '';
                 this.secureLink.expires = 0;

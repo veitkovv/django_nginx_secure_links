@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class FileType(graphene.ObjectType):
     filename = graphene.String()
     exists = graphene.Boolean()
-    size = graphene.Int()
+    size = graphene.String()
     modified = graphene.Float()
     is_folder = graphene.Boolean()
     tarball_created = graphene.Boolean()
@@ -60,7 +60,7 @@ class Query(object):
     file = graphene.Field(FileType)
     all_files = graphene.List(FileType, search=graphene.String())
 
-    @login_required
+    # @login_required
     def resolve_all_files(self, info, **kwargs):
         all_files = filesystem.walk()  # rescan file system
         search = kwargs.get('search')

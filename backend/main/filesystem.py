@@ -6,6 +6,7 @@ import logging
 from django.conf import settings
 
 from .utils.nginx_secure_link import secure_link as make_link_secure
+from .utils.common import sizeof_fmt
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +80,7 @@ class File:
         return sum(os.path.getsize(f) for f in os.scandir(self.file.path) if os.path.isfile(f))
 
     @property
-    def size(self):
+    def _raw_size(self):
         """
         :return: Возвращает размер файла или папки в байтах.
         """
@@ -88,6 +89,10 @@ class File:
                 return self._get_folder_size()
             return os.path.getsize(self.file.path)
         return 0
+
+    @property
+    def size(self):
+        return sizeof_fmt(self._raw_size)
 
     @property
     def modified(self):
