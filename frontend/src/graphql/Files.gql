@@ -7,5 +7,6 @@ query allFiles($search: String){
 		isFolder
 		tarballCreated
 		fileType
+		isOversize
   }
 }

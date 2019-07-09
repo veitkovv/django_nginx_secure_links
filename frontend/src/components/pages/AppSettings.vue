@@ -2,6 +2,7 @@
     <v-flex>
         <div class="pb-3" v-if="isSuperUser">
             <h1>Настройки администратора</h1>
+            <hr>
         </div>
         <hr>
         <div class="mb-3 mt-3">
