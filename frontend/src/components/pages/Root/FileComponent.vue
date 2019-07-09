@@ -5,10 +5,9 @@
                 <v-icon class="grey white--text">{{ fileIcon[file.fileType] }}</v-icon>
             </v-avatar>
             <div>
-                <div class="title">{{ file.filename }}</div>
+                <div class="title text-overflow">{{ file.filename }}</div>
                 <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
-
             <v-spacer></v-spacer>
             <v-card-actions>
                 <v-dialog
@@ -57,7 +56,7 @@
                         <v-card-text>
                             <ul>
                                 <li> Файл: {{file.filename}}</li>
-                                <li> Размер: {{humanFileSize(file.size, true)}}</li>
+                                <li> Размер: {{file.size}}</li>
                                 <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
                             </ul>
                         </v-card-text>
@@ -74,27 +73,38 @@
                             </v-btn>
 
                             <v-btn
-                                    color="success"
+                                    color="secondary"
                                     flat
                                     v-clipboard:copy="secureLink.url"
                                     v-clipboard:success="clipboardSuccessHandler"
                                     v-clipboard:error="clipboardErrorHandler"
                                     @click="dialog = false"
                             >
-                                Скопировать
+                                Скопировать ссылку
+                            </v-btn>
+
+                            <v-btn
+                                    color="success"
+                                    flat
+                                    v-clipboard:copy="humanAnswer"
+                                    v-clipboard:success="clipboardSuccessHandler"
+                                    v-clipboard:error="clipboardErrorHandler"
+                                    @click="dialog = false"
+                            >
+                                Скопировать ответ
                             </v-btn>
                         </v-card-actions>
                     </v-card>
 
                 </v-dialog>
 
-                <v-btn icon @click.native="show = !show" disabled>
+                <v-btn icon @click.native="show = !show">
                     <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
 
                 <v-list-tile-action>
                     <v-list-tile-action-text>
-                        {{humanFileSize(file.size, true)}}
+                        {{file.size}}
                     </v-list-tile-action-text>
                 </v-list-tile-action>
 
@@ -106,9 +116,7 @@
             <v-card-text v-show="show">
                 <v-layout row wrap>
                     <v-flex xs8>
-                        <div v-if="file.isFolder">
-                            <span>Папка содержит файлы: </span>
-                        </div>
+                        <span>{{file.filename}}</span>
                     </v-flex>
                     <v-flex xs4>
 
@@ -151,42 +159,34 @@
                 'undefined': 'block'
             }
         }),
-        computed:
-            {
-                linkDeadlineTime: function () {
-                    const moment = require('moment-timezone');
-                    const timezone = moment.tz.guess();
-                    let date = moment(this.secureLink.expires);
-                    return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-                },
+        computed: {
+            linkDeadlineTime: function () {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(this.secureLink.expires);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+            },
+            humanAnswer: function () {
+                return [
+                    'Создана ссылка на файл',
+                    '',
+                    ' - Файл: ' + this.file.filename + '',
+                    ' - Размер: ' + this.file.size,
+                    ' - Ссылка действительна до: ' + this.linkDeadlineTime,
+                    ' - URL: ' + this.secureLink.url,
+                ].join("\n");
             }
+        }
         ,
         methods: {
             ...mapMutations(['showSnackbar']),
-            ...mapActions(['getFiles']),
+            ...mapActions(['fetchFileList']),
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
                 let date = moment(timestamp * 1000);
                 return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-            }
-            ,
-            humanFileSize(bytes, si) {
-                let thresh = si ? 1000 : 1024;
-                if (Math.abs(bytes) < thresh) {
-                    return bytes + ' B';
-                }
-                let units = si
-                    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-                    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-                let u = -1;
-                do {
-                    bytes /= thresh;
-                    ++u;
-                } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-                return bytes.toFixed(1) + ' ' + units[u];
-            }
-            ,
+            },
             createLink(filename) {
                 this.secureLink.url = '';
                 this.secureLink.expires = 0;
@@ -216,7 +216,7 @@
                         text: 'Архив данной папки уже создан, создайте ссылку на него.',
                         color: 'info'
 
-                    })
+                    });
                     this.loading = false;
                 } else {
                     this.$apollo.mutate({
@@ -236,17 +236,26 @@
             ,
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({
-                    text: 'Ссылка успешно скопирована'
+                    text: 'Копирование успешно'
                 })
             }
             ,
 
             clipboardErrorHandler({value, event}) {
                 this.showSnackbar({
-                    text: 'Ссылка не скопирована',
+                    text: 'Ошибка копирования',
                     color: 'error'
                 })
             },
         }
     }
 </script>
+
+<style>
+    .text-overflow {
+        width: 500px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+</style>

@@ -24,11 +24,11 @@
         name: "AppToolbar",
         methods: {
             ...mapMutations(['showSnackbar']),
-            ...mapActions(['changeSidenavDrawerState', 'getFiles', 'revokeToken']),
+            ...mapActions(['changeSidenavDrawerState', 'fetchFileList', 'revokeToken']),
             ...mapGetters(['FULLNAME']),
 
             refetchFiles() {
-                this.getFiles()
+                this.fetchFileList()
                     .then(() => this.showSnackbar({
                         text: 'Список файлов получен с сервера'
                     }))
@@ -46,7 +46,6 @@
                     text: err,
                     color: 'error'
                 }));
-
             }
         },
     }

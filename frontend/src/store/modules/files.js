@@ -30,7 +30,7 @@ const mutations = {
 };
 
 const actions = {
-    async getFiles({commit}, search = '') {
+    async fetchFileList({commit}, search = '') {
         const response = await apolloClient.query({
             query: FILES_QUERY,
             variables: {

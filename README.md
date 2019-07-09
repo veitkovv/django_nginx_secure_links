@@ -14,11 +14,24 @@
 - postgreSQL
 - API GraphQL (graphene, graphene_django)
 
+### Authentication
+- django-ldap
+- jwt
+
 ### Frontend
 - vue.js, vuetify
 - apollo for GraphQL
 
-## Планы на реализацию
-- [ ] SSO MS AD NGINX
-- [ ] Автоматическое получение сертификата SSL Letsencrypt
-- [ ] Инструкция по запуску
+## Как запускать
+
+### Требования к системе:
+- docker 
+- docker compose
+- (опционально) LDAP server
+- (опционально) SMB server 
+
+### Запуск
+- Настроить .env (скопировать из .env-example)
+- Настроить хост-машину для выхода в интернет и обеспечить доступность 80 443 портов TCP в мир по доменному имени (или IP адресу)
+- Поправить frontend/apiServer файл 
+- docker-compose up --build 
