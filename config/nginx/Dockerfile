@@ -79,7 +79,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.dev.tmpl /etc/nginx/conf.d/nginx.dev.tmpl
 COPY nginx.prod.tmpl /etc/nginx/conf.d/nginx.prod.tmpl
 
-EXPOSE 80
+EXPOSE 80 443
 
 STOPSIGNAL SIGTERM
 

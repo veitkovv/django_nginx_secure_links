@@ -9,8 +9,6 @@ services:
       - db_network
     volumes:
       - db_volume:/var/lib/postgresql/data
-    labels:
-      - traefik.enable=false
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -18,12 +16,8 @@ services:
 
   django_nginx_secure_link:
     container_name: backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     restart: always
-    labels:
-      - traefik.enable=false
     volumes:
       - ./backend:/opt/services/django_nginx_secure_link
       - ./backend/secure:/opt/services/django_nginx_secure_link/secure
@@ -55,8 +49,6 @@ services:
     container_name: frontend
     build: ./frontend
     restart: always
-    labels:
-      - traefik.enable=false
     volumes:
       - ./frontend:/opt/services/django_nginx_secure_link/frontend
       - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
@@ -73,11 +65,9 @@ services:
     container_name: nginx
     build: ./config/nginx
     restart: always
-    labels:
-      - traefik.backend=nginx
-      - traefik.frontend.rule=Host:nginx.${DOMAIN_NAME}
-      - traefik.docker.network=traefik
-      - traefik.port=80
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
@@ -91,31 +81,29 @@ services:
     environment:
       - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
+    labels:
+      - sh.acme.autoload.domain=${DOMAIN_NAME}
 
-  reverse-proxy:
-    container_name: dnsl_traefik
-    image: traefik
-    command: --api # Enables the web UI
-    ports:
-      - 80:80
-      - 443:443
-      - 8080:8080 # The web UI
+  acme.sh:
+    image: neilpang/acme.sh
+    container_name: acme.sh
+    command: daemon
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
-      - .config/traefik/traefik.toml:/traefik.toml # Traefik configuration file
-      - .config/traefik/acme.json:/acme.json # Tell Traefik to save SSL certs here
-    networks:
-      - nginx_network
-      - traefik
-    restart: always
+      - ./acmeout:/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN_NAME}
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/etc/nginx/ssl/example.com/key.pem
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/etc/nginx/ssl/example.com/cert.pem"
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/etc/nginx/ssl/example.com/ca.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/etc/nginx/ssl/example.com/full.pem"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="service nginx force-reload"
 
 networks:
   nginx_network:
     driver: bridge
   db_network:
     driver: bridge
-  traefik:
-    external: true
 
 volumes:
   db_volume:
