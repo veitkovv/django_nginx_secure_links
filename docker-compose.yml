@@ -84,11 +84,30 @@ services:
       - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
 
+  reverse-proxy:
+    container_name: dnsl_traefik
+    image: traefik
+    command: --api # Enables the web UI
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080 # The web UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+      - .config/traefik/traefik.toml:/traefik.toml # Traefik configuration file
+      - .config/traefik/acme.json:/acme.json # Tell Traefik to save SSL certs here
+    networks:
+      - nginx_network
+      - traefik
+    restart: always
+
 networks:
   nginx_network:
     driver: bridge
   db_network:
     driver: bridge
+  traefik:
+    external: true
 
 volumes:
   db_volume:
