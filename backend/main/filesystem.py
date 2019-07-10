@@ -95,11 +95,6 @@ class File:
         return sizeof_fmt(self._raw_size)
 
     @property
-    def is_oversize(self):
-        """Если файл большой, на фронте нужно предупреждение"""
-        return self._raw_size > settings.FILE_SIZE_THRESHOLD if self.is_folder else False
-
-    @property
     def modified(self):
         return self.file.stat().st_mtime if self.exists else None
 

@@ -194,8 +194,6 @@ NGINX_SECRET = os.environ.get('NGINX_SECRET')
 # Путь до папки которую будет раздавать nginx
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
 
-FILE_SIZE_THRESHOLD = 10 * (2 ** 30)  # 10 Гигабайт
-
 # LDAP CONFIG
 
 # Baseline configuration.
@@ -229,8 +227,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     'is_active': os.environ.get('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
-    'is_superuser': os.environ.get('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER'),
     #    'is_staff': 'cn=staff,ou=django,ou=groups,dc=example,dc=com',
+    #    'is_superuser': 'cn=superuser,ou=django,ou=groups,dc=example,dc=com',
 }
 
 # This is the default, but I like to be explicit.

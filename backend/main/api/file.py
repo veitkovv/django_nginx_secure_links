@@ -16,7 +16,6 @@ class FileType(graphene.ObjectType):
     is_folder = graphene.Boolean()
     tarball_created = graphene.Boolean()
     file_type = graphene.String()
-    is_oversize = graphene.Boolean()
 
     def resolve_filename(self, info):
         return self.filename
@@ -40,9 +39,6 @@ class FileType(graphene.ObjectType):
     def resolve_file_type(self, info):
         return self.get_file_type()
 
-    def resolve_is_oversize(self, info):
-        return self.is_oversize
-
 
 class CreateArchiveMutation(graphene.Mutation):
     class Arguments:
@@ -64,12 +60,12 @@ class Query(object):
     file = graphene.Field(FileType)
     all_files = graphene.List(FileType, search=graphene.String())
 
-    @login_required
+    # @login_required
     def resolve_all_files(self, info, **kwargs):
         all_files = filesystem.walk()  # rescan file system
         search = kwargs.get('search')
         if search:
-            return [i for i in all_files if search.lower() in i.filename.lower()]
+            return [i for i in all_files if search in i.filename]
         return all_files
 
 

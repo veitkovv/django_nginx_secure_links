@@ -20,7 +20,6 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
                                     <v-btn
-                                            :disabled="file.isOversize"
                                             color="primary"
                                             outline
                                             :loading="loading"
@@ -116,28 +115,11 @@
             <!--То что в дропдауне-->
             <v-card-text v-show="show">
                 <v-layout row wrap>
-                    <v-flex xs6>
-                        {{file.directoryIsBig}}
-                        <span>Полное имя файла: "{{file.filename}}"</span>
+                    <v-flex xs8>
+                        <span>{{file.filename}}</span>
                     </v-flex>
                     <v-flex xs4>
-                        <div v-if="file.isOversize">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn
-                                            :disabled="file.directoryIsBig"
-                                            color="primary"
-                                            outline
-                                            :loading="loading"
-                                            v-on="on"
-                                            @click.native="createFolderLink(file)"
-                                    >
-                                        Папка очень большая, создать ссылку?
-                                    </v-btn>
-                                </template>
-                                <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
-                            </v-tooltip>
-                        </div>
+
                     </v-flex>
                 </v-layout>
 

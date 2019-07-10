@@ -1,8 +1,8 @@
-version: '3.4'
+version: '3'
 
 services:
   django_nginx_secure_link_db:
-    container_name: dnsl_pg_db
+    container_name: pg_db
     image: postgres:alpine
     restart: always
     networks:
@@ -17,8 +17,10 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
 
   django_nginx_secure_link:
-    container_name: dnsl_backend
-    build: ./backend
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
     labels:
       - traefik.enable=false
@@ -45,13 +47,12 @@ services:
       - AUTH_LDAP_GROUP_SEARCH=${AUTH_LDAP_GROUP_SEARCH}
       - AUTH_LDAP_REQUIRE_GROUP=${AUTH_LDAP_REQUIRE_GROUP}
       - AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE=${AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE}
-      - AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER=${AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER}
       - AUTH_LDAP_CACHE_TIMEOUT=${AUTH_LDAP_CACHE_TIMEOUT}
     depends_on:
       - django_nginx_secure_link_db
 
   django_nginx_secure_frontend:
-    container_name: dnsl_frontend
+    container_name: frontend
     build: ./frontend
     restart: always
     labels:
@@ -63,14 +64,13 @@ services:
     networks:
       - nginx_network
     environment:
-      - MODE=${MODE} # dev/prod
       - CHOKIDAR_USEPOLLING=true
     #      - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
     depends_on:
       - django_nginx_secure_link
 
   nginx:
-    container_name: dnsl_nginx
+    container_name: nginx
     build: ./config/nginx
     restart: always
     labels:

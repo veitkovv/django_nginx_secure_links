@@ -8,13 +8,6 @@
                         <li> {{TOKEN_DATA}}</li>
                         <li> {{CURRENT_USER_DATA}}</li>
                     </ul>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn @click="doLogout">
-                            Выход
-                            <v-icon>exit_to_app</v-icon>
-                        </v-btn>
-                    </v-card-actions>
                 </v-card-text>
             </v-card>
 
@@ -55,7 +48,6 @@
             ...mapActions([
                 'doLogin',
                 'verifyToken',
-                'revokeToken',
                 'fetchUserData',
                 'fetchDefaultSettings'
             ]),
@@ -76,16 +68,6 @@
                     this.showSnackbar({text: error, color: 'error'});
                 })
             },
-            doLogout() {
-                this.revokeToken()
-                    .then(() => this.showSnackbar({
-                            text: 'Вы успешно вышли из системы'
-                        }), this.$router.push('/login')
-                    ).catch(err => this.showSnackbar({
-                    text: err,
-                    color: 'error'
-                }));
-            }
         },
         computed: {
             ...mapGetters([
