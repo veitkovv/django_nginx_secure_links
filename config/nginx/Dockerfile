@@ -87,5 +87,5 @@ STOPSIGNAL SIGTERM
 # https://stackoverflow.com/questions/43654656/dockerfile-if-else-condition-with-external-arguments
 CMD if [ "$MODE" = "dev" ] ; then /bin/sh -c "envsubst '\$NGINX_SECRET' < /etc/nginx/conf.d/nginx.dev.tmpl > /etc/nginx/conf.d/default.conf && \
  nginx -g 'daemon off;' || /etc/nginx/conf.d/nginx.dev.tmpl" ; else /bin/sh -c "envsubst '\$NGINX_SECRET \$DOMAIN_NAME' < /etc/nginx/conf.d/nginx.prod.tmpl > /etc/nginx/conf.d/default.conf && \
- while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'' || /etc/nginx/conf.d/nginx.prod.tmpl" /bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done' ; fi
+ while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;' || /etc/nginx/conf.d/nginx.prod.tmpl" /bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done' ; fi
 
