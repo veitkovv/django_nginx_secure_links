@@ -78,7 +78,6 @@ services:
     networks:
       - nginx_network
     depends_on:
-      - certbot
       - django_nginx_secure_frontend
       - django_nginx_secure_link
     environment:

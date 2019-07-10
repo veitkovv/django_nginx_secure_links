@@ -16,8 +16,12 @@ server {
     listen 80;
     server_name ${DOMAIN_NAME};
 
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+    location ^~ /.well-known/acme-challenge/ {
+      auth_basic off;
+      allow all;
+      root /var/www/certbot;
+      try_files $uri =404;
+      break;
     }
 
     location / {
