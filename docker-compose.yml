@@ -84,6 +84,7 @@ services:
     environment:
       - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
+      - DOMAIN_NAME=${DOMAIN_NAME}
 
   certbot:
     image: certbot/certbot
