@@ -276,4 +276,13 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+
+    @media (max-width: 1000px) {
+        .text-overflow {
+            width: 200px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
 </style>

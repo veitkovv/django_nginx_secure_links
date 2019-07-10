@@ -22,7 +22,7 @@ class SecureLinkMutation(graphene.Mutation):
 
     @login_required
     def mutate(self, info, filename):
-        logger.info(f'User "{info.context.user}" gonna be create secure link to file {filename}')
+        logger.info(f'User "{info.context.user}" gonna be create secure link to file "{filename}"')
         domain_name = info.context.environ['HTTP_HOST']  # получить имя домена, с которого пользователь зашел
         secure_link = filesystem.generate_secure_link(domain_name, filename, info.context.user.profile.url_ttl)
 
@@ -30,7 +30,7 @@ class SecureLinkMutation(graphene.Mutation):
         link_deadline = get_link_deadline(secure_link)
 
         ok = True
-        logger.info(f'User "{info.context.user}" successfully created secure link to file {filename}')
+        logger.info(f'User "{info.context.user}" successfully create secure link to file "{filename}"')
         return SecureLinkMutation(secure_link=secure_link, link_deadline=link_deadline, ok=ok)
 
 
