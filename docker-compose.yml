@@ -73,7 +73,8 @@ services:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
       - frontend_dist:/opt/services/django_nginx_secure_link/dist
-      - ./confog/nginx/ssl:/etc/nginx/ssl
+      - .config/nginx/certbot/conf:/etc/letsencrypt
+      - .config/nginx/certbot/www:/var/www/certbot
     networks:
       - nginx_network
     depends_on:
@@ -83,29 +84,16 @@ services:
     environment:
       - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
-    labels:
-      - sh.acme.autoload.domain=${DOMAIN_NAME}
 
-  letsencrypt:
-    image: linuxserver/letsencrypt
-    container_name: letsencrypt
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-      - URL=${DOMAIN_NAME}
-      - SUBDOMAINS=www,
-      - VALIDATION=http
-      - EMAIL=<e-mail> #optional
-      - DHLEVEL=2048 #optional
+  certbot:
+    image: certbot/certbot
     volumes:
-      - ./config/nginx/ssl:/config
-    ports:
-      - 443:443
-      - 80:80
-    restart: unless-stopped
+      - .config/nginx/certbot/conf:/etc/letsencrypt
+      - .config/nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - nginx_network
+
 
 networks:
   nginx_network:
