@@ -69,7 +69,6 @@ services:
     restart: always
     ports:
       - 80:80
-      - 443:443
     volumes:
       - ./backend/secure:/opt/services/django_nginx_secure_link/secure
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
