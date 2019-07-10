@@ -73,9 +73,11 @@ services:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
       - frontend_dist:/opt/services/django_nginx_secure_link/dist
+      - ./confog/nginx/ssl:/etc/nginx/ssl
     networks:
       - nginx_network
     depends_on:
+      - letsencrypt
       - django_nginx_secure_frontend
       - django_nginx_secure_link
     environment:
@@ -84,20 +86,26 @@ services:
     labels:
       - sh.acme.autoload.domain=${DOMAIN_NAME}
 
-  acme.sh:
-    image: neilpang/acme.sh
-    container_name: acme.sh
-    command: daemon
-    volumes:
-      - ./acmeout:/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: letsencrypt
+    cap_add:
+      - NET_ADMIN
     environment:
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN_NAME}
-      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/etc/nginx/ssl/example.com/key.pem
-      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/etc/nginx/ssl/example.com/cert.pem"
-      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/etc/nginx/ssl/example.com/ca.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/etc/nginx/ssl/example.com/full.pem"
-      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="service nginx force-reload"
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      - URL=${DOMAIN_NAME}
+      - SUBDOMAINS=www,
+      - VALIDATION=http
+      - EMAIL=<e-mail> #optional
+      - DHLEVEL=2048 #optional
+    volumes:
+      - ./config/nginx/ssl:/config
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
 
 networks:
   nginx_network:
