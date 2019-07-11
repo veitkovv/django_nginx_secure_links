@@ -1,8 +1,8 @@
-version: '3.4'
+version: '3'
 
 services:
   django_nginx_secure_link_db:
-    container_name: dnsl_pg_db
+    container_name: pg_db
     image: postgres:alpine
     restart: always
     networks:
@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
 
   django_nginx_secure_link:
-    container_name: dnsl_backend
+    container_name: backend
     build: ./backend
     restart: always
     volumes:
@@ -41,13 +41,12 @@ services:
       - AUTH_LDAP_GROUP_SEARCH=${AUTH_LDAP_GROUP_SEARCH}
       - AUTH_LDAP_REQUIRE_GROUP=${AUTH_LDAP_REQUIRE_GROUP}
       - AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE=${AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE}
-      - AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER=${AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER}
       - AUTH_LDAP_CACHE_TIMEOUT=${AUTH_LDAP_CACHE_TIMEOUT}
     depends_on:
       - django_nginx_secure_link_db
 
   django_nginx_secure_frontend:
-    container_name: dnsl_frontend
+    container_name: frontend
     build: ./frontend
     restart: always
     volumes:
@@ -57,14 +56,13 @@ services:
     networks:
       - nginx_network
     environment:
-      - MODE=${MODE} # dev/prod
       - CHOKIDAR_USEPOLLING=true
     #      - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
     depends_on:
       - django_nginx_secure_link
 
   nginx:
-    container_name: dnsl_nginx
+    container_name: nginx
     build: ./config/nginx
     restart: always
     ports:
@@ -75,6 +73,8 @@ services:
       - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
       - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
       - frontend_dist:/opt/services/django_nginx_secure_link/dist
+      - ./config/nginx/certbot/conf:/etc/letsencrypt
+      - ./config/nginx/certbot/www:/var/www/certbot
     networks:
       - nginx_network
     depends_on:
@@ -83,6 +83,17 @@ services:
     environment:
       - MODE=${MODE} # dev/prod
       - NGINX_SECRET=${NGINX_SECRET}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./config/nginx/certbot/conf:/etc/letsencrypt
+      - ./config/nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - nginx_network
+
 
 networks:
   nginx_network:

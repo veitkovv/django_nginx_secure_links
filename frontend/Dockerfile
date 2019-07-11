@@ -19,4 +19,4 @@ ADD . .
 
 RUN npm run build
 
-CMD if [ "$MODE" = "dev" ] ; then npm run serve ; echo "running production saticfiles serving" ; fi
+CMD [ "npm", "run", "serve" ]
