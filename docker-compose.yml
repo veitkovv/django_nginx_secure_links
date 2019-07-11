@@ -2,7 +2,7 @@ version: '3'
 
 services:
   django_nginx_secure_link_db:
-    container_name: pg_db
+    container_name: dnsl_postgres
     image: postgres:alpine
     restart: always
     networks:
@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
 
   django_nginx_secure_link:
-    container_name: backend
+    container_name: dnsl_backend
     build: ./backend
     restart: always
     volumes:
@@ -46,7 +46,7 @@ services:
       - django_nginx_secure_link_db
 
   django_nginx_secure_frontend:
-    container_name: frontend
+    container_name: dnsl_frontend
     build: ./frontend
     restart: always
     volumes:
@@ -62,7 +62,7 @@ services:
       - django_nginx_secure_link
 
   nginx:
-    container_name: nginx
+    container_name: dnsl_nginx
     build: ./config/nginx
     restart: always
     ports:
@@ -86,6 +86,7 @@ services:
       - DOMAIN_NAME=${DOMAIN_NAME}
 
   certbot:
+    container_name: dnsl_certbot
     image: certbot/certbot
     volumes:
       - ./config/nginx/certbot/conf:/etc/letsencrypt
