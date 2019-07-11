@@ -10,32 +10,9 @@
             </div>
             <v-spacer></v-spacer>
             <v-card-actions>
-                <v-dialog
-                        v-model="dialog"
-                        width="500"
-                >
+                <v-dialog v-model="dialog" width="500">
                     <template v-slot:activator="{ on }">
-                        <!--Если папка-->
-                        <div v-if="file.isFolder">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn
-                                            :disabled="file.isOversize"
-                                            color="primary"
-                                            outline
-                                            :loading="loading"
-                                            v-on="on"
-                                            @click.native="createFolderLink(file)"
-                                    >
-                                        Создать ссылку
-                                    </v-btn>
-                                </template>
-                                <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
-                            </v-tooltip>
-                        </div>
-
-                        <!--Если файл-->
-                        <v-btn v-else
+                        <v-btn :disabled="file.isFolder"
                                color="primary"
                                outline
                                :loading="loading"
@@ -43,7 +20,6 @@
                         >
                             Создать ссылку
                         </v-btn>
-
                     </template>
 
                     <!--Содержимое диалога-->
@@ -117,30 +93,11 @@
             <v-card-text v-show="show">
                 <v-layout row wrap>
                     <v-flex xs6>
-                        {{file.directoryIsBig}}
-                        <span>Полное имя файла: "{{file.filename}}"</span>
-                    </v-flex>
-                    <v-flex xs4>
-                        <div v-if="file.isOversize">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn
-                                            :disabled="file.directoryIsBig"
-                                            color="primary"
-                                            outline
-                                            :loading="loading"
-                                            v-on="on"
-                                            @click.native="createFolderLink(file)"
-                                    >
-                                        Папка очень большая, создать ссылку?
-                                    </v-btn>
-                                </template>
-                                <span>Сервер создаст ссылку на архив без сжатия, это займет некоторое время</span>
-                            </v-tooltip>
-                        </div>
+                        <span>Полное имя файла: "{{file.filename}}"</span><br>
+                        <span class="red--text"
+                              v-if="file.isFolder">Чтобы создать ссылку на папку, поместите ее в архив</span>
                     </v-flex>
                 </v-layout>
-
             </v-card-text>
         </v-slide-y-transition>
         <v-divider></v-divider>
@@ -150,7 +107,6 @@
 
 <script>
     import CREATE_SECURE_LINK from '../../../graphql/CreateSecureLink.gql'
-    import CREATE_ARCHIVE from '../../../graphql/CreateArchive.gql'
     import {mapActions, mapMutations} from 'vuex'
 
     export default {
@@ -162,7 +118,6 @@
             show: false,
             dialog: false,
             loading: false,
-            tarCreatedDialog: false,
             secureLink: {
                 url: '',
                 expires: ''
@@ -225,33 +180,7 @@
                         color: 'error'
                     }
                 ));
-            }
-            ,
-            createFolderLink(file) {
-                this.loading = true;
-                if (file.tarballCreated) {
-                    this.showSnackbar({
-                        text: 'Архив данной папки уже создан, создайте ссылку на него.',
-                        color: 'info'
-
-                    });
-                    this.loading = false;
-                } else {
-                    this.$apollo.mutate({
-                        mutation: CREATE_ARCHIVE,
-                        variables: {
-                            folderName: file.filename
-                        },
-                    }).then((data) => {
-                        this.createLink(data.data.createArchive.createdArchiveName)
-                    }).catch(err => this.showSnackbar({
-                            text: err,
-                            color: 'error'
-                        }
-                    ));
-                }
-            }
-            ,
+            },
             clipboardSuccessHandler({value, event}) {
                 this.showSnackbar({
                     text: 'Копирование успешно'

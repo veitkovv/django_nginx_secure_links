@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import tarfile
 import logging
 
 from django.conf import settings
@@ -27,20 +26,7 @@ class FileSystem:
         logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
         return result
 
-    def make_tarfile(self, output_filename, source_dir):
-        archive_name = os.path.join(self._path, output_filename + '.tar')
-        with tarfile.open(archive_name, "w:tar") as tar:
-            tar.add(os.path.join(self._path, source_dir), arcname=os.path.basename(source_dir))
-        return os.path.basename(archive_name)
-
     def generate_secure_link(self, domain_name, filename, ttl):
-        if self.is_folder(filename):
-            # Проверить есть ли архив
-            # Если да - пересоздать или использовать существующий
-            # Если нет - создать архив
-            # Сгенерировать ссылку на архив
-            pass
-
         secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, ttl)
 
@@ -93,11 +79,6 @@ class File:
     @property
     def size(self):
         return sizeof_fmt(self._raw_size)
-
-    @property
-    def is_oversize(self):
-        """Если файл большой, на фронте нужно предупреждение"""
-        return self._raw_size > settings.FILE_SIZE_THRESHOLD if self.is_folder else False
 
     @property
     def modified(self):
