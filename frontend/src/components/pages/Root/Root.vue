@@ -66,8 +66,8 @@
                     {text: "Сначала новые", value: 'created-desc'},
 
                 ],
-                withoutLinksOnly: false,
                 searchStr: '',
+                withoutLinksOnly: false,
                 // TODO https://github.com/apollographql/react-apollo/issues/1314 loading always false bug
             }
         },
@@ -75,17 +75,18 @@
             ...mapGetters([
                 'EXISTING_FILES',
                 'EXISTING_FS',
+                'WITHOUT_LINKS_ONLY'
             ]),
         },
         methods: {
-            ...mapActions(['fetchFileList'])
+            ...mapActions(['fetchFileList', 'changeWithoutLinksOnly'])
         },
         watch: {
             searchStr: function (val) {
                 this.fetchFileList({
                     searchStr: val,
                     orderBy: this.select,
-                    withoutLinksOnly: this.withoutLinksOnly
+                    withoutLinksOnly: this.WITHOUT_LINKS_ONLY
                 })
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
@@ -97,7 +98,7 @@
                 this.fetchFileList({
                     orderBy: select.value,
                     searchStr: this.searchStr,
-                    withoutLinksOnly: this.withoutLinksOnly
+                    withoutLinksOnly: this.WITHOUT_LINKS_ONLY
                 })
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
@@ -105,17 +106,19 @@
                         color: 'error'
                     }))
             },
-            withoutLinksOnly: function (withoutLinksOnlyState) {
-                this.fetchFileList({
-                    orderBy: this.select,
-                    searchStr: this.searchStr,
-                    withoutLinksOnly: withoutLinksOnlyState
+            withoutLinksOnly: function () {
+                this.changeWithoutLinksOnly().then(() => {
+                    this.fetchFileList({
+                        orderBy: this.select,
+                        searchStr: this.searchStr,
+                        withoutLinksOnly: this.WITHOUT_LINKS_ONLY
+                    })
+                        .then(() => console.log('Список файлов успешно загружен с сервера'))
+                        .catch(err => this.showSnackbar({
+                            text: err,
+                            color: 'error'
+                        }))
                 })
-                    .then(() => console.log('Список файлов успешно загружен с сервера'))
-                    .catch(err => this.showSnackbar({
-                        text: err,
-                        color: 'error'
-                    }))
             }
         },
         mounted() {
