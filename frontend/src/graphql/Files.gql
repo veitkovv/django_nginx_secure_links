@@ -1,5 +1,5 @@
-query allFiles($search: String){
-  allFiles(search: $search) {
+query allFiles($searchStr: String, $orderBy: String){
+  allFiles(searchStr: $searchStr, orderBy: $orderBy) {
         filename
         exists
 		size

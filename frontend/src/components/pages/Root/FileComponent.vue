@@ -2,10 +2,25 @@
     <v-card>
         <v-card-title primary-title>
             <v-avatar class="mr-3">
-                <v-icon class="grey white--text">{{ fileIcon[file.fileType] }}</v-icon>
+                <v-badge color="green" overlap>
+                    <template v-slot:badge>
+                        <v-icon
+                                dark
+                                small
+                        >
+                            star
+                        </v-icon>
+                    </template>
+                    <v-icon
+                            large
+                            color="grey"
+                    >
+                        {{ fileIcon[file.fileType] }}
+                    </v-icon>
+                </v-badge>
             </v-avatar>
             <div>
-                <div class="title text-overflow">{{ file.filename }}</div>
+                <p class="title text-overflow pl-2">{{ file.filename }}</p>
                 <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
             </div>
             <v-spacer></v-spacer>
@@ -102,7 +117,6 @@
         </v-slide-y-transition>
         <v-divider></v-divider>
     </v-card>
-
 </template>
 
 <script>
