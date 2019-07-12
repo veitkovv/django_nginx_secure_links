@@ -14,7 +14,7 @@ class FileType(graphene.ObjectType):
     filename = graphene.String()
     exists = graphene.Boolean()
     size = graphene.String()
-    modified = graphene.Float()
+    modified = graphene.DateTime()
     is_folder = graphene.Boolean()
     tarball_created = graphene.Boolean()
     file_type = graphene.String()

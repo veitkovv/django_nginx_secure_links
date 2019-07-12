@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+from datetime import datetime
 
 from django.conf import settings
+from django.utils import timezone
 
 from .utils.nginx_secure_link import secure_link as make_link_secure
 from .utils.common import sizeof_fmt
@@ -89,7 +91,9 @@ class File:
 
     @property
     def modified(self):
-        return self.file.stat().st_mtime if self.exists else None
+        dt_created = datetime.fromtimestamp(self.file.stat().st_mtime)
+        aware_time = timezone.make_aware(dt_created, timezone.get_current_timezone())
+        return aware_time if self.exists else None
 
     def get_file_type(self):
         """

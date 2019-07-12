@@ -21,7 +21,7 @@
             </v-avatar>
             <div>
                 <p class="title text-overflow pl-2">{{ file.filename }}</p>
-                <span class="grey--text">Изменено: {{dateModified(file.modified) }}</span>
+                <span class="grey--text">Изменено: {{humanDateTime(file.modified) }}</span>
             </div>
             <v-spacer></v-spacer>
             <v-card-actions>
@@ -30,7 +30,6 @@
                         <v-btn :disabled="file.isFolder"
                                color="primary"
                                outline
-                               :loading="loading"
                                @click.native="createLink(file.filename)"
                         >
                             Создать ссылку
@@ -49,7 +48,7 @@
                             <ul>
                                 <li> Файл: {{file.filename}}</li>
                                 <li> Размер: {{file.size}}</li>
-                                <li> Ссылка действительна до: {{linkDeadlineTime}}</li>
+                                <li> Ссылка действительна до: {{humanDateTime(this.secureLink.expires)}}</li>
                             </ul>
                         </v-card-text>
 
@@ -176,19 +175,13 @@
             }
         }),
         computed: {
-            linkDeadlineTime: function () {
-                const moment = require('moment-timezone');
-                const timezone = moment.tz.guess();
-                let date = moment(this.secureLink.expires);
-                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-            },
             humanAnswer: function () {
                 return [
                     'Создана ссылка на файл',
                     '',
                     ' - Файл: ' + this.file.filename + '',
                     ' - Размер: ' + this.file.size,
-                    ' - Ссылка действительна до: ' + this.linkDeadlineTime,
+                    ' - Ссылка действительна до: ' + this.humanDateTime(this.secureLink.expires),
                     ' - URL: ' + this.secureLink.url,
                 ].join("\n");
             }
@@ -201,13 +194,6 @@
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
                 let date = moment(val);
-                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
-
-            },
-            dateModified(timestamp) {
-                const moment = require('moment-timezone');
-                const timezone = moment.tz.guess();
-                let date = moment(timestamp * 1000);
                 return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
             },
             createLink(filename) {
