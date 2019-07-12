@@ -42,12 +42,27 @@ class FileType(graphene.ObjectType):
 
 class Query(object):
     file = graphene.Field(FileType)
-    all_files = graphene.List(FileType, search=graphene.String())
+    all_files = graphene.List(FileType, search_str=graphene.String(), order_by=graphene.String())
 
     @login_required
     def resolve_all_files(self, info, **kwargs):
+        """
+        :param: order_by: ab-asc, ab-desc, created-asc, created-desc;
+        """
         all_files = filesystem.walk()  # rescan file system
-        search = kwargs.get('search')
+
+        search = kwargs.get('search_str')
+        order_by = kwargs.get('order_by')
+
         if search:
-            return [i for i in all_files if search.lower() in i.filename.lower()]
+            all_files = [i for i in all_files if search.lower() in i.filename.lower()]
+        if order_by == 'ab-asc':
+            all_files.sort(key=lambda x: x.filename, reverse=False)
+        elif order_by == 'ab-desc':
+            all_files.sort(key=lambda x: x.filename, reverse=True)
+        elif order_by == 'created-asc':
+            all_files.sort(key=lambda x: x.modified, reverse=False)
+        elif order_by == 'created-desc':
+            all_files.sort(key=lambda x: x.modified, reverse=True)
+
         return all_files

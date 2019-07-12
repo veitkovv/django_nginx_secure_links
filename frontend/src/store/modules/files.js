@@ -30,11 +30,12 @@ const mutations = {
 };
 
 const actions = {
-    async fetchFileList({commit}, search = '') {
+    async fetchFileList({commit}, {searchStr = '', orderBy = ''} = {}) {
         const response = await apolloClient.query({
             query: FILES_QUERY,
             variables: {
-                search: search
+                searchStr: searchStr,
+                orderBy: orderBy
             }
         });
         commit('SET_FILES', response.data.allFiles)

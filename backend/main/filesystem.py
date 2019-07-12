@@ -21,12 +21,18 @@ class FileSystem:
         Сканирование файловой системы по пути из settings.SECURE_LINK_PATH,
         возвращает генератор списка для дальнейшей работы в API
         """
+        result = []
         logger.info(f'filesystem will be rescanned, path: {self._path}')
-        result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
-        logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
-        return result
+        try:
+            result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
+            logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
+        except Exception as e:
+            logger.info(e)
 
-    def generate_secure_link(self, domain_name, filename, ttl):
+        return list(result)
+
+    @staticmethod
+    def generate_secure_link(domain_name, filename, ttl):
         secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, ttl)
 
