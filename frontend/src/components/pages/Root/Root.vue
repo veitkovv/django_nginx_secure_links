@@ -4,7 +4,7 @@
             <v-flex xs8 sm8>
                 <v-layout align-center justify-space-between row wrap>
                     <v-flex xs6 sm6>
-                        <v-text-field v-model="search"
+                        <v-text-field v-model="searchStr"
                                       append-icon="search"
                                       label="Поиск"
                                       single-line
@@ -12,10 +12,10 @@
                         ></v-text-field>
                         <span class="subheader grey--text">Всего элементов: {{EXISTING_FILES.length}}</span>
 
-                        <div v-if="EXISTING_FILES.length === 0 && search.length === 0">
+                        <div v-if="EXISTING_FILES.length === 0 && searchStr.length === 0">
                             <h3>Папка secure пуста</h3>
                         </div>
-                        <div v-if="EXISTING_FILES.length === 0 && search.length !== 0">
+                        <div v-if="EXISTING_FILES.length === 0 && searchStr.length !== 0">
                             <h3>Поиск не дал результата</h3>
                         </div>
                     </v-flex>
@@ -68,7 +68,7 @@
 
                 ],
                 withoutLink: false,
-                search: '',
+                searchStr: '',
                 // TODO https://github.com/apollographql/react-apollo/issues/1314 loading always false bug
             }
         },
@@ -82,8 +82,8 @@
             ...mapActions(['fetchFileList'])
         },
         watch: {
-            search: function (val) {
-                this.fetchFileList({searchStr: val})
+            searchStr: function (val) {
+                this.fetchFileList({searchStr: val, orderBy: this.select})
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
@@ -91,7 +91,7 @@
                     }))
             },
             select: function (select) {
-                this.fetchFileList({orderBy: select.value})
+                this.fetchFileList({orderBy: select.value, searchStr: this.searchStr})
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
