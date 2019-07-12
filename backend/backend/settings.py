@@ -228,7 +228,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     'is_active': os.environ.get('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
     #    'is_staff': 'cn=staff,ou=django,ou=groups,dc=example,dc=com',
-    #    'is_superuser': 'cn=superuser,ou=django,ou=groups,dc=example,dc=com',
+    'is_superuser': os.environ.get('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER'),
 }
 
 # This is the default, but I like to be explicit.

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+import pytz
+from datetime import datetime
 
 from django.conf import settings
 
 from .utils.nginx_secure_link import secure_link as make_link_secure
 from .utils.common import sizeof_fmt
+from .models import SecureLink
 
 logger = logging.getLogger(__name__)
 
@@ -21,12 +24,18 @@ class FileSystem:
         Сканирование файловой системы по пути из settings.SECURE_LINK_PATH,
         возвращает генератор списка для дальнейшей работы в API
         """
+        result = []
         logger.info(f'filesystem will be rescanned, path: {self._path}')
-        result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
-        logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
-        return result
+        try:
+            result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
+            logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
+        except Exception as e:
+            logger.info(e)
 
-    def generate_secure_link(self, domain_name, filename, ttl):
+        return list(result)
+
+    @staticmethod
+    def generate_secure_link(domain_name, filename, ttl):
         secure_link = 'http://' + domain_name + '/secure/' + filename
         return make_link_secure(secure_link, ttl)
 
@@ -82,7 +91,8 @@ class File:
 
     @property
     def modified(self):
-        return self.file.stat().st_mtime if self.exists else None
+        dt_created = datetime.fromtimestamp(int(self.file.stat().st_mtime))
+        return dt_created.replace(tzinfo=pytz.UTC) if self.exists else None
 
     def get_file_type(self):
         """
@@ -93,6 +103,9 @@ class File:
         filename, ext = os.path.splitext(self.file.path)
         result = next((item for item in settings.EXTENSIONS.items() if ext in item[1]), None)
         return result[0] if result else 'undefined'
+
+    def secure_links_created(self):
+        return SecureLink.objects.filter(file_name__exact=self.filename)
 
 
 filesystem = FileSystem(path=settings.SECURE_LINK_PATH)

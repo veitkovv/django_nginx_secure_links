@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app id="inspire">
         <side-nav v-if="IS_AUTHENTICATED"></side-nav>
         <app-toolbar v-if="IS_AUTHENTICATED"></app-toolbar>
         <v-content>
@@ -17,6 +17,7 @@
             <v-layout align-center>
                 <a class="subheading" href="mailto:it@yamal-region.tv">Задавайте вопросы по электронной почте</a>
             </v-layout>
+            <span class="mr-4">ver. 1.1</span>
             <div>&copy; {{ new Date().getFullYear() }} by Veytko V.V.</div>
         </v-footer>
     </v-app>

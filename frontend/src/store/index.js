@@ -11,21 +11,31 @@ Vue.use(Vuex);
 
 const state = {
     sideNavDrawer: true,
+    withoutLinksOnly: false,
 };
 const getters = {
     SIDENAV_DRAWER: state => {
         return state.sideNavDrawer;
     },
+    WITHOUT_LINKS_ONLY: state => {
+        return state.withoutLinksOnly
+    }
 };
 const mutations = {
     CHANGE_SIDENAV_DRAWER: (state, payload) => {
         state.sideNavDrawer = payload
     },
+    CHANGE_WITHOUT_LINKS_ONLY: (state, payload) => {
+        state.withoutLinksOnly = payload
+    }
 };
 const actions = {
     changeSidenavDrawerState({commit}) {
         commit('CHANGE_SIDENAV_DRAWER', !this.getters.SIDENAV_DRAWER)
     },
+    changeWithoutLinksOnly({commit}) {
+        commit('CHANGE_WITHOUT_LINKS_ONLY', !this.getters.WITHOUT_LINKS_ONLY)
+    }
 };
 
 export const store = new Vuex.Store({
