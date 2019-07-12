@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import graphene
+
 from graphql_jwt.decorators import login_required
 
 from ..filesystem import filesystem
@@ -16,7 +17,6 @@ class FileType(graphene.ObjectType):
     size = graphene.String()
     modified = graphene.DateTime()
     is_folder = graphene.Boolean()
-    tarball_created = graphene.Boolean()
     file_type = graphene.String()
     secure_links_created = graphene.List(SecureLinkNode)
 
@@ -34,10 +34,6 @@ class FileType(graphene.ObjectType):
 
     def resolve_is_folder(self, info):
         return self.is_folder
-
-    def resolve_tarball_created(self, info):
-        """Создан ли архив для папки"""
-        return filesystem.is_file_exists(self.filename + '.tar') if self.is_folder else False
 
     def resolve_file_type(self, info):
         return self.get_file_type()

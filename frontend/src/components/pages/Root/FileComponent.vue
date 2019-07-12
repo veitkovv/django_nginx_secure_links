@@ -21,7 +21,7 @@
             </v-avatar>
             <div>
                 <p class="title text-overflow pl-2">{{ file.filename }}</p>
-                <span class="grey--text">Изменено: {{humanDateTime(file.modified) }}</span>
+                <span class="grey--text">Изменено: {{humanDateTime(file.modified)}}</span>
             </div>
             <v-spacer></v-spacer>
             <v-card-actions>
