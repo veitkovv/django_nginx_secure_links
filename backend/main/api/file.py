@@ -4,6 +4,8 @@ import graphene
 from graphql_jwt.decorators import login_required
 
 from ..filesystem import filesystem
+from ..models import SecureLink
+from .secure_link import SecureLinkNode
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,7 @@ class FileType(graphene.ObjectType):
     is_folder = graphene.Boolean()
     tarball_created = graphene.Boolean()
     file_type = graphene.String()
+    secure_links_created = graphene.List(SecureLinkNode)
 
     def resolve_filename(self, info):
         return self.filename
@@ -39,10 +42,16 @@ class FileType(graphene.ObjectType):
     def resolve_file_type(self, info):
         return self.get_file_type()
 
+    def resolve_secure_links_created(self, info):
+        return self.secure_links_created()
+
 
 class Query(object):
     file = graphene.Field(FileType)
-    all_files = graphene.List(FileType, search_str=graphene.String(), order_by=graphene.String())
+    all_files = graphene.List(FileType,
+                              search_str=graphene.String(),
+                              order_by=graphene.String(),
+                              without_links_only=graphene.Boolean())
 
     @login_required
     def resolve_all_files(self, info, **kwargs):
@@ -53,6 +62,12 @@ class Query(object):
 
         search = kwargs.get('search_str')
         order_by = kwargs.get('order_by')
+        without_links_only = kwargs.get('without_links_only')
+
+        if without_links_only:
+            for f in all_files:
+                if SecureLink.objects.filter(file_name__exact=f.filename):
+                    all_files.remove(f)
 
         if search:
             all_files = [i for i in all_files if search.lower() in i.filename.lower()]

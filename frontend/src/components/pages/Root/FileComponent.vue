@@ -3,7 +3,7 @@
         <v-card-title primary-title>
             <v-avatar class="mr-3">
                 <v-badge color="green" overlap>
-                    <template v-slot:badge>
+                    <template v-if="file.secureLinksCreated.length === 0" v-slot:badge>
                         <v-icon
                                 dark
                                 small
@@ -58,7 +58,7 @@
 
                             <v-btn
                                     color="primary"
-                                    flat
+                                    outline
                                     @click="dialog = false"
                             >
                                 Отмена
@@ -66,7 +66,7 @@
 
                             <v-btn
                                     color="secondary"
-                                    flat
+                                    outline
                                     v-clipboard:copy="secureLink.url"
                                     v-clipboard:success="clipboardSuccessHandler"
                                     v-clipboard:error="clipboardErrorHandler"
@@ -77,7 +77,7 @@
 
                             <v-btn
                                     color="success"
-                                    flat
+                                    outline
                                     v-clipboard:copy="humanAnswer"
                                     v-clipboard:success="clipboardSuccessHandler"
                                     v-clipboard:error="clipboardErrorHandler"
@@ -106,13 +106,43 @@
         <v-slide-y-transition>
             <!--То что в дропдауне-->
             <v-card-text v-show="show">
-                <v-layout row wrap>
-                    <v-flex xs6>
-                        <span>Полное имя файла: "{{file.filename}}"</span><br>
-                        <span class="red--text"
-                              v-if="file.isFolder">Чтобы создать ссылку на папку, поместите ее в архив</span>
-                    </v-flex>
-                </v-layout>
+                <p>Полное имя файла: <u>"{{file.filename}}"</u></p>
+                <span class="red--text"
+                      v-if="file.isFolder">Чтобы создать ссылку на папку, поместите ее в архив</span>
+
+                <div v-if="file.secureLinksCreated.length !== 0">
+                    <h3>Созданные ранее ссылки</h3><br>
+                    <table style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th class="text-xs-left">Кто создал</th>
+                            <th class="text-xs-left">Время создания</th>
+                            <th class="text-xs-left">Истекает</th>
+                            <th class="text-xs-center">Ссылка</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="item in file.secureLinksCreated" :key="item.id">
+                            <td>{{item.whoCreates.firstName}} {{item.whoCreates.lastName}}</td>
+                            <td>{{humanDateTime(item.createTime)}}</td>
+                            <td>{{humanDateTime(item.linkDeadline)}}</td>
+                            <td>
+                                                           <v-btn
+                                    color="secondary"
+                                    outline
+                                    v-clipboard:copy="item.secureUrl"
+                                    v-clipboard:success="clipboardSuccessHandler"
+                                    v-clipboard:error="clipboardErrorHandler"
+                                    @click="dialog = false"
+                            >
+                                Скопировать
+                            </v-btn>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </v-card-text>
         </v-slide-y-transition>
         <v-divider></v-divider>
@@ -131,7 +161,6 @@
         data: () => ({
             show: false,
             dialog: false,
-            loading: false,
             secureLink: {
                 url: '',
                 expires: ''
@@ -168,6 +197,13 @@
         methods: {
             ...mapMutations(['showSnackbar']),
             ...mapActions(['fetchFileList']),
+            humanDateTime(val) {
+                const moment = require('moment-timezone');
+                const timezone = moment.tz.guess();
+                let date = moment(val);
+                return date.tz(timezone).locale("ru").format("DD MMM YYYY H:mm")
+
+            },
             dateModified(timestamp) {
                 const moment = require('moment-timezone');
                 const timezone = moment.tz.guess();
@@ -177,7 +213,6 @@
             createLink(filename) {
                 this.secureLink.url = '';
                 this.secureLink.expires = 0;
-                this.loading = true;
 
                 this.$apollo.mutate({
                     mutation: CREATE_SECURE_LINK,
@@ -188,7 +223,6 @@
                     this.secureLink.url = data.data.createSecureLink.secureLink;
                     this.secureLink.expires = data.data.createSecureLink.linkDeadline;
                     this.dialog = true;
-                    this.loading = false;
                 }).catch(err => this.showSnackbar({
                         text: err,
                         color: 'error'

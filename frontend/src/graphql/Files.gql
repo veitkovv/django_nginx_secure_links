@@ -1,11 +1,21 @@
-query allFiles($searchStr: String, $orderBy: String){
-  allFiles(searchStr: $searchStr, orderBy: $orderBy) {
-        filename
-        exists
-		size
-		modified
-		isFolder
-		tarballCreated
-		fileType
+query allFiles($searchStr: String, $orderBy: String, $withoutLinksOnly: Boolean) {
+  allFiles(searchStr: $searchStr, orderBy: $orderBy, withoutLinksOnly: $withoutLinksOnly) {
+    filename
+    exists
+    size
+    modified
+    isFolder
+    fileType
+    secureLinksCreated {
+      id
+      whoCreates {
+        username
+        firstName
+        lastName
+      }
+      secureUrl
+      createTime
+      linkDeadline
+    }
   }
 }

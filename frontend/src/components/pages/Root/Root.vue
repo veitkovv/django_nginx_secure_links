@@ -3,7 +3,7 @@
         <v-layout align-center justify-start column fill-height>
             <v-flex xs8 sm8>
                 <v-layout align-center justify-space-between row wrap>
-                    <v-flex xs6 sm6>
+                    <v-flex xs12 sm6>
                         <v-text-field v-model="searchStr"
                                       append-icon="search"
                                       label="Поиск"
@@ -20,7 +20,7 @@
                         </div>
                     </v-flex>
 
-                    <v-flex xs4 sm4>
+                    <v-flex xs12 sm4>
                         <v-select
                                 v-model="select"
                                 :items="selectItems"
@@ -33,10 +33,9 @@
                         ></v-select>
                     </v-flex>
 
-                    <v-flex xs2 sm2>
-                        <v-switch v-model="withoutLink" label="Только без ссылок"></v-switch>
+                    <v-flex xs12 sm2>
+                        <v-switch v-model="withoutLinksOnly" label="Без ссылок"></v-switch>
                     </v-flex>
-
 
                 </v-layout>
 
@@ -67,7 +66,7 @@
                     {text: "Сначала новые", value: 'created-desc'},
 
                 ],
-                withoutLink: false,
+                withoutLinksOnly: false,
                 searchStr: '',
                 // TODO https://github.com/apollographql/react-apollo/issues/1314 loading always false bug
             }
@@ -83,7 +82,11 @@
         },
         watch: {
             searchStr: function (val) {
-                this.fetchFileList({searchStr: val, orderBy: this.select})
+                this.fetchFileList({
+                    searchStr: val,
+                    orderBy: this.select,
+                    withoutLinksOnly: this.withoutLinksOnly
+                })
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
@@ -91,7 +94,23 @@
                     }))
             },
             select: function (select) {
-                this.fetchFileList({orderBy: select.value, searchStr: this.searchStr})
+                this.fetchFileList({
+                    orderBy: select.value,
+                    searchStr: this.searchStr,
+                    withoutLinksOnly: this.withoutLinksOnly
+                })
+                    .then(() => console.log('Список файлов успешно загружен с сервера'))
+                    .catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }))
+            },
+            withoutLinksOnly: function (withoutLinksOnlyState) {
+                this.fetchFileList({
+                    orderBy: this.select,
+                    searchStr: this.searchStr,
+                    withoutLinksOnly: withoutLinksOnlyState
+                })
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,

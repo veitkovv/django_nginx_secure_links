@@ -6,6 +6,7 @@ from django.conf import settings
 
 from .utils.nginx_secure_link import secure_link as make_link_secure
 from .utils.common import sizeof_fmt
+from .models import SecureLink
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,9 @@ class File:
         filename, ext = os.path.splitext(self.file.path)
         result = next((item for item in settings.EXTENSIONS.items() if ext in item[1]), None)
         return result[0] if result else 'undefined'
+
+    def secure_links_created(self):
+        return SecureLink.objects.filter(file_name__exact=self.filename)
 
 
 filesystem = FileSystem(path=settings.SECURE_LINK_PATH)
