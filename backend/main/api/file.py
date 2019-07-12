@@ -65,8 +65,10 @@ class Query(object):
         without_links_only = kwargs.get('without_links_only')
 
         if without_links_only:
-            for f in all_files:
-                if SecureLink.objects.filter(file_name__exact=f.filename):
+            # https://stackoverflow.com/questions/44633798/what-is-the-meaning-of-list-in-this-code/44633938#44633938
+            for f in all_files[:]:  # copy to prevent magic behaviour
+                qs = SecureLink.objects.filter(file_name=f.filename)
+                if qs:
                     all_files.remove(f)
 
         if search:

@@ -36,6 +36,9 @@ class SecureLink(models.Model):
     who_creates = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, db_index=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'Link: {self.file_name} - {self.create_time} by {self.who_creates.username}'
+
     def link_deadline(self):
         """Берет из строки (URL) число в конце (timestamp) и переводит в datetime"""
         return get_link_deadline(self.secure_url)
