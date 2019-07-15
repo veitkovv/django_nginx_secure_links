@@ -194,6 +194,9 @@ NGINX_SECRET = os.environ.get('NGINX_SECRET')
 # Путь до папки которую будет раздавать nginx
 SECURE_LINK_PATH = os.path.join(os.path.dirname(BASE_DIR), 'secure')
 
+# Имена файлов, которые не надо показывать
+FILTER_FILENAMES = ['Thumbs.db', ]
+
 # LDAP CONFIG
 
 # Baseline configuration.
