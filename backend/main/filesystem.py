@@ -27,7 +27,8 @@ class FileSystem:
         result = []
         logger.info(f'filesystem will be rescanned, path: {self._path}')
         try:
-            result = [File(f) for f in os.scandir(self._path)]  # File objects with helper methods implemented below
+            # File objects with helper methods implemented below
+            result = [File(f) for f in os.scandir(self._path) if f.name not in settings.FILTER_FILENAMES]
             logger.info(f'filesystem rescan complete: {[f.filename for f in result]}')
         except Exception as e:
             logger.info(e)
