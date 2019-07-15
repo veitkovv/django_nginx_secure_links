@@ -22,7 +22,7 @@
 
                     <v-flex xs12 sm4>
                         <v-select
-                                v-model="select"
+                                v-model="orderBy"
                                 :items="selectItems"
                                 item-text="text"
                                 item-value="value"
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-    import {mapGetters, mapActions} from 'vuex';
+    import {mapGetters, mapActions, mapMutations} from 'vuex';
     import FileComponent from './FileComponent';
 
     export default {
@@ -58,7 +58,6 @@
 
         data() {
             return {
-                select: {text: "По алфавиту по возрастанию", value: 'ab-asc'},
                 selectItems: [
                     {text: "По алфавиту вниз", value: 'ab-asc'},
                     {text: "По алфавиту вверх", value: 'ab-desc'},
@@ -66,40 +65,56 @@
                     {text: "Сначала новые", value: 'created-desc'},
 
                 ],
-                searchStr: '',
-                withoutLinksOnly: false,
-                // TODO https://github.com/apollographql/react-apollo/issues/1314 loading always false bug
             }
         },
         computed: {
             ...mapGetters([
                 'EXISTING_FILES',
                 'EXISTING_FS',
-                'WITHOUT_LINKS_ONLY'
+                'WITHOUT_LINKS_ONLY',
+                'ORDER_BY',
+                'SEARCH_STR',
             ]),
+            orderBy: {
+                get() {
+                    return this.ORDER_BY
+                },
+                set(val) {
+                    this.SET_ORDER_BY(val);
+                }
+            },
+            searchStr: {
+                get() {
+                    return this.SEARCH_STR
+                },
+                set(val) {
+                    this.SET_SEARCH_STR(val)
+                }
+            },
+            withoutLinksOnly: {
+                get() {
+                    return this.WITHOUT_LINKS_ONLY
+                },
+                set() {
+                    this.changeWithoutLinksOnly()
+                }
+            }
         },
         methods: {
-            ...mapActions(['fetchFileList', 'changeWithoutLinksOnly'])
+            ...mapActions(['fetchFileList', 'changeWithoutLinksOnly']),
+            ...mapMutations(['SET_ORDER_BY', 'SET_SEARCH_STR'])
         },
         watch: {
-            searchStr: function (val) {
-                this.fetchFileList({
-                    searchStr: val,
-                    orderBy: this.select,
-                    withoutLinksOnly: this.WITHOUT_LINKS_ONLY
-                })
+            searchStr: function () {
+                this.fetchFileList()
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
                         color: 'error'
                     }))
             },
-            select: function (select) {
-                this.fetchFileList({
-                    orderBy: select.value,
-                    searchStr: this.searchStr,
-                    withoutLinksOnly: this.WITHOUT_LINKS_ONLY
-                })
+            orderBy: function () {
+                this.fetchFileList()
                     .then(() => console.log('Список файлов успешно загружен с сервера'))
                     .catch(err => this.showSnackbar({
                         text: err,
@@ -107,18 +122,12 @@
                     }))
             },
             withoutLinksOnly: function () {
-                this.changeWithoutLinksOnly().then(() => {
-                    this.fetchFileList({
-                        orderBy: this.select,
-                        searchStr: this.searchStr,
-                        withoutLinksOnly: this.WITHOUT_LINKS_ONLY
-                    })
-                        .then(() => console.log('Список файлов успешно загружен с сервера'))
-                        .catch(err => this.showSnackbar({
-                            text: err,
-                            color: 'error'
-                        }))
-                })
+                this.fetchFileList()
+                    .then(() => console.log('Список файлов успешно загружен с сервера'))
+                    .catch(err => this.showSnackbar({
+                        text: err,
+                        color: 'error'
+                    }))
             }
         },
         mounted() {

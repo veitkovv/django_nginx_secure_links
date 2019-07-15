@@ -25,10 +25,10 @@
         methods: {
             ...mapMutations(['showSnackbar']),
             ...mapActions(['changeSidenavDrawerState', 'fetchFileList', 'revokeToken']),
-            ...mapGetters(['FULLNAME', 'WITHOUT_LINKS_ONLY']),
+            ...mapGetters(['FULLNAME',]),
 
             refetchFiles() {
-                this.fetchFileList({withoutLinksOnly: this.WITHOUT_LINKS_ONLY()})
+                this.fetchFileList()
                     .then(() => this.showSnackbar({
                         text: 'Список файлов получен с сервера'
                     }))

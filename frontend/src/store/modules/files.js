@@ -1,5 +1,6 @@
 import {apolloClient} from '../../vue-apollo'
 import FILES_QUERY from '../../graphql/Files.gql'
+import {store} from '../../store';
 
 const state = {
     files: [],
@@ -30,13 +31,13 @@ const mutations = {
 };
 
 const actions = {
-    async fetchFileList({commit}, {searchStr = '', orderBy = '', withoutLinksOnly = false} = {}) {
+    async fetchFileList({commit}) {
         const response = await apolloClient.query({
             query: FILES_QUERY,
             variables: {
-                searchStr: searchStr,
-                orderBy: orderBy,
-                withoutLinksOnly: withoutLinksOnly
+                orderBy: store.getters.ORDER_BY.value,
+                searchStr: store.getters.SEARCH_STR,
+                withoutLinksOnly: store.getters.WITHOUT_LINKS_ONLY
             }
         });
         commit('SET_FILES', response.data.allFiles)
