@@ -6,28 +6,23 @@ import auth from './modules/auth'
 import files from './modules/files'
 import alerts from './modules/alerts'
 import appSettings from './modules/appSettings'
+import filesListOptions from './modules/filesListOptions'
 
 Vue.use(Vuex);
 
 const state = {
     sideNavDrawer: true,
-    withoutLinksOnly: false,
+
 };
 const getters = {
     SIDENAV_DRAWER: state => {
         return state.sideNavDrawer;
     },
-    WITHOUT_LINKS_ONLY: state => {
-        return state.withoutLinksOnly
-    }
 };
 const mutations = {
     CHANGE_SIDENAV_DRAWER: (state, payload) => {
         state.sideNavDrawer = payload
     },
-    CHANGE_WITHOUT_LINKS_ONLY: (state, payload) => {
-        state.withoutLinksOnly = payload
-    }
 };
 const actions = {
     changeSidenavDrawerState({commit}) {
@@ -48,6 +43,7 @@ export const store = new Vuex.Store({
         files,
         alerts,
         appSettings,
+        filesListOptions,
     },
     plugins: [],
 });

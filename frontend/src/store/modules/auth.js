@@ -10,12 +10,12 @@ import Cookies from 'js-cookie'
 
 const state = {
     tokenAuth: {
-        token: null,
-        refreshToken: null,
+        token: '',
+        refreshToken: '',
     },
-    tokenData: null,
-    currentUserData: null,
-    csrfToken: null,
+    tokenData: '',
+    currentUserData: '',
+    csrfToken: '',
 };
 
 const getters = {
@@ -48,7 +48,7 @@ const getters = {
 const mutations = {
     SET_TOKEN_AUTH: (state, {token, refreshToken}) => {
         state.tokenAuth.token = token;
-        state.tokenAuth.refreshToken = refreshToken
+        state.tokenAuth.refreshToken = refreshToken;
     },
     SET_VERIFIED_TOKEN: (state, payload) => {
         state.tokenData = payload
@@ -77,16 +77,13 @@ const actions = {
                 password: password
             }
         });
-        commit('SET_TOKEN_AUTH', {
-            token: response.data.tokenAuth.token,
-            refreshToken: response.data.tokenAuth.refreshToken
-        });
+        commit('SET_TOKEN_AUTH', response.data.tokenAuth);
         Cookies.set('JWT-Token', state.tokenAuth)
     },
 
     async verifyToken({commit}) {
         let cookieStoredToken = Cookies.get('JWT-Token');
-        if (cookieStoredToken !== undefined) {
+        if (cookieStoredToken) {
             cookieStoredToken = JSON.parse(cookieStoredToken);
             commit('SET_TOKEN_AUTH', {token: cookieStoredToken.token, refreshToken: cookieStoredToken.refreshToken});
             const response = await apolloClient.mutate({
@@ -121,11 +118,10 @@ const actions = {
                 refreshToken: state.tokenAuth.refreshToken
             }
         });
-        commit('SET_TOKEN_AUTH', {token: null, refreshToken: null});
-        commit('SET_CURRENT_USER_DATA', null);
-        commit('SET_VERIFIED_TOKEN', null);
+        commit('SET_TOKEN_AUTH', {token: '', refreshToken: ''});
+        commit('SET_CURRENT_USER_DATA', '');
+        commit('SET_VERIFIED_TOKEN', '');
         Cookies.remove('JWT-Token');
-        Cookies.remove('JWT-Token-data');
 
     },
 
