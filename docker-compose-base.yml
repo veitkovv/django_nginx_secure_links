@@ -19,10 +19,9 @@ services:
     build: ./backend
     restart: always
     volumes:
-      - ./backend:/opt/services/django_nginx_secure_link
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
-      - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
-      - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
+      - smb_share_with_files:/opt/services/django_nginx_secure_link/secure
+      - static_volume:/opt/services/django_nginx_secure_link/static
+      - media_volume:/opt/services/django_nginx_secure_link/media
     networks:
       - nginx_network
       - db_network
@@ -51,14 +50,11 @@ services:
     build: ./frontend
     restart: always
     volumes:
-      - ./frontend:/opt/services/django_nginx_secure_link/frontend
       - node_modules:/opt/services/django_nginx_secure_link/frontend/node_modules
-      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
     networks:
       - nginx_network
     environment:
       - CHOKIDAR_USEPOLLING=true
-    #      - VUE_APP_BACKEND_SERVER=${BACKEND_SERVER}
     depends_on:
       - django_nginx_secure_link
 
@@ -68,14 +64,10 @@ services:
     restart: always
     ports:
       - 80:80
-      - 443:443
     volumes:
-      - ./backend/secure:/opt/services/django_nginx_secure_link/secure
-      - static_volume:/opt/services/django_nginx_secure_link/static  # <-- bind the static volume
-      - media_volume:/opt/services/django_nginx_secure_link/media  # <-- bind the media volume
-      - frontend_dist:/opt/services/django_nginx_secure_link/dist
-      - ./config/nginx/certbot/conf:/etc/letsencrypt
-      - ./config/nginx/certbot/www:/var/www/certbot
+      - smb_share_with_files:/opt/services/django_nginx_secure_link/secure
+      - static_volume:/opt/services/django_nginx_secure_link/static
+      - media_volume:/opt/services/django_nginx_secure_link/media
     networks:
       - nginx_network
     depends_on:
@@ -86,26 +78,20 @@ services:
       - NGINX_SECRET=${NGINX_SECRET}
       - DOMAIN_NAME=${DOMAIN_NAME}
 
-  certbot:
-    container_name: dnsl_certbot
-    image: certbot/certbot
-    volumes:
-      - ./config/nginx/certbot/conf:/etc/letsencrypt
-      - ./config/nginx/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - nginx_network
-
-
 networks:
   nginx_network:
     driver: bridge
   db_network:
-    driver: bridge
+    external: false
 
 volumes:
   db_volume:
   node_modules:
-  frontend_dist:
-  static_volume:  # <-- declare the static volume
-  media_volume:  # <-- declare the media volume
+  static_volume:
+  media_volume:
+  smb_share_with_files:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: ${SERVERPATH}
+      o: ${MOUNTOPTIONS}
