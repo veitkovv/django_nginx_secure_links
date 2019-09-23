@@ -64,6 +64,9 @@
                     this.fetchUserData();
                 });
             });
+        },
+        created() {
+            document.title = 'Public Secure Links';
         }
     }
 </script>
