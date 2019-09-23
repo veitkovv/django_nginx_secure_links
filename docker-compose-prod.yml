@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: dnsl_nginx_prod
+    ports:
+      - 443:443
+    volumes:
+      - ./config/nginx/certbot/conf:/etc/letsencrypt
+      - ./config/nginx/certbot/www:/var/www/certbot
+      - frontend_dist:/opt/services/django_nginx_secure_link/dist
+
+  certbot:
+    container_name: dnsl_certbot
+    image: certbot/certbot
+    volumes:
+      - ./config/nginx/certbot/conf:/etc/letsencrypt
+      - ./config/nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - nginx_network
+
+  django_nginx_secure_frontend:
+    container_name: dnsl_frontend_prod
+    volumes:
+      - frontend_dist:/opt/services/django_nginx_secure_link/frontend/dist
+    networks:
+      - nginx_network
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - django_nginx_secure_link
+
+
+volumes:
+  frontend_dist:

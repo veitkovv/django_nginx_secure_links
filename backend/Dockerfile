@@ -3,7 +3,9 @@ FROM python:alpine
 RUN mkdir -p /opt/services/django_nginx_secure_link
 WORKDIR /opt/services/django_nginx_secure_link
 
-ADD . /opt/services/django_nginx_secure_link
+COPY . .
+
+ADD . .
 
 RUN \
  apk add --no-cache openldap-dev && \

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  django_nginx_secure_link:
+    container_name: dnsl_backend_dev
+    volumes:
+      - ./backend:/opt/services/django_nginx_secure_link
+
+  django_nginx_secure_frontend:
+    container_name: dnsl_frontend_dev
+    volumes:
+      - ./frontend:/opt/services/django_nginx_secure_link/frontend
+
